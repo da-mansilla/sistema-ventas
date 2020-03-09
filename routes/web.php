@@ -12,12 +12,7 @@
 */
 
 
-Auth::routes();
-
 Route::get('/', 'HomeController@index')->name('home');
-
-Auth::routes();
-
 
 Route::apiResource('products','ProductController');
 Route::get('stock','ProductController@stock')->name('products.stock');
