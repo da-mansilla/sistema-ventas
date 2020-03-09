@@ -257,7 +257,7 @@ class ProductController extends Controller
                     ->select('*')
                     ->where('enabled',1)
                     ->where('n_serie','=',$serie)
-                    ->get();
+                    ->paginate(5);
         return $producto;
     }
     public function todosProductos(){

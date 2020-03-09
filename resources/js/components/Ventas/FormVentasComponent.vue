@@ -910,7 +910,7 @@
           },
           selectProduct(product){
             this.selectedProduct = product;
-            this.producto = this.selectedProduct.nombre;
+            this.producto = this.selectedProduct.n_serie;
             this.precio = this.selectedProduct.precio;
             console.log(this.selectedProduct);
           },

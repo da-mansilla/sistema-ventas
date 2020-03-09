@@ -7288,7 +7288,7 @@ __webpack_require__.r(__webpack_exports__);
     },
     selectProduct: function selectProduct(product) {
       this.selectedProduct = product;
-      this.producto = this.selectedProduct.nombre;
+      this.producto = this.selectedProduct.n_serie;
       this.precio = this.selectedProduct.precio;
       console.log(this.selectedProduct);
     },
@@ -7669,6 +7669,28 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   data: function data() {
     return {
@@ -7680,7 +7702,10 @@ __webpack_require__.r(__webpack_exports__);
       dbproducts: [],
       productsResult: [],
       paginate: ['productsResult'],
-      listaProductos: {}
+      listaProductos: {},
+      activateBusqueda: false,
+      listaProductosBusqueda: {},
+      serieBuscar: ''
     };
   },
   mounted: function mounted() {
@@ -7695,15 +7720,23 @@ __webpack_require__.r(__webpack_exports__);
         _this.listaProductos = response.data;
       });
     },
-    getProducts: function getProducts() {
+    getResultsBusqueda: function getResultsBusqueda() {
       var _this2 = this;
 
-      axios.get('/stock').then(function (response) {
-        _this2.dbproducts = response.data.data;
+      var page = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 1;
+      axios.get('/buscarProducto/' + this.serieBuscar + '?page=' + page).then(function (response) {
+        _this2.listaProductosBusqueda = response.data;
+      });
+    },
+    getProducts: function getProducts() {
+      var _this3 = this;
 
-        _this2.dbproducts.forEach(function (element) {
+      axios.get('/stock').then(function (response) {
+        _this3.dbproducts = response.data.data;
+
+        _this3.dbproducts.forEach(function (element) {
           element.products.forEach(function (product) {
-            _this2.productsResult.push(product);
+            _this3.productsResult.push(product);
           });
         });
       });
@@ -7717,28 +7750,39 @@ __webpack_require__.r(__webpack_exports__);
     },
     paginateChange: function paginateChange(toPage, fromPage) {
       this.page = toPage;
-      console.log('Pagina numero ' + this.page);
     },
     busquedaProduct: function busquedaProduct() {
-      var _this3 = this;
+      console.log(this.serieProduct);
 
       if (this.serieProduct == '') {
-        console.log('vacio');
         this.getResults();
+        this.activateBusqueda = false;
+      } else {
+        this.activateBusqueda = true;
+        this.productsResult = [];
+        var inicio = this.serieProduct.indexOf('%');
+        console.log(inicio);
+
+        if (inicio == -1) {
+          this.serieBuscar = this.serieProduct;
+        } else {
+          this.serieBuscar = this.serieProduct.substring(0, inicio);
+        }
+
+        console.log(this.serieBuscar);
+        this.getResultsBusqueda();
       }
-
-      console.log('busqueda');
-      this.productsResult = [];
-      var inicio = this.serieProduct.indexOf('%');
-      var numSerie = this.serieProduct.substring(0, inicio);
-      axios.get('buscarProducto/' + numSerie).then(function (response) {
+      /*
+      axios.get('buscarProducto/'+numSerie).then(response=>{
         console.log(response.data);
-        response.data.forEach(function (element) {
-          _this3.listaProductos.data = [];
+        response.data.forEach(element=>{
+          this.listaProductos.data = [];
+          this.listaProductos.data.push(element)
+        })
+      })
+      //console.log(this.productsResult);
+      */
 
-          _this3.listaProductos.data.push(element);
-        });
-      }); //console.log(this.productsResult);
     }
   }
 });
@@ -87103,71 +87147,142 @@ var render = function() {
                 _c("table", { staticClass: "table mt-0" }, [
                   _vm._m(1),
                   _vm._v(" "),
-                  _c(
-                    "tbody",
-                    _vm._l(_vm.listaProductos.data, function(product, index) {
-                      return _c("tr", { key: product.id }, [
-                        _c("td", [
-                          _c(
-                            "button",
-                            {
-                              staticClass: "btn btn-success btn-sm ",
-                              attrs: {
-                                type: "button",
-                                "data-dismiss": "modal"
-                              },
-                              on: {
-                                click: function($event) {
-                                  return _vm.selectProduct(product)
-                                }
-                              }
-                            },
-                            [_vm._v("Ok")]
-                          )
-                        ]),
-                        _vm._v(" "),
-                        _c("td", [
-                          _vm._v(
-                            "\n\t                        \t" +
-                              _vm._s(product.n_serie) +
-                              "\n\t                        "
-                          )
-                        ]),
-                        _vm._v(" "),
-                        _c("td", [
-                          _vm._v(
-                            "\n\t                        \t" +
-                              _vm._s(product.precio) +
-                              "\n\t                        "
-                          )
-                        ]),
-                        _vm._v(" "),
-                        _c("td", [
-                          _vm._v(
-                            "\n\t                        \t" +
-                              _vm._s(product.color) +
-                              "\n\t                        "
-                          )
-                        ]),
-                        _vm._v(" "),
-                        _c("td", [
-                          _vm._v(
-                            "\n\t                        \t" +
-                              _vm._s(product.talle) +
-                              "\n\t                        "
-                          )
-                        ])
-                      ])
-                    }),
-                    0
-                  )
+                  _vm.activateBusqueda
+                    ? _c(
+                        "tbody",
+                        _vm._l(_vm.listaProductosBusqueda.data, function(
+                          product,
+                          index
+                        ) {
+                          return _c("tr", { key: product.id }, [
+                            _c("td", [
+                              _c(
+                                "button",
+                                {
+                                  staticClass: "btn btn-success btn-sm ",
+                                  attrs: {
+                                    type: "button",
+                                    "data-dismiss": "modal"
+                                  },
+                                  on: {
+                                    click: function($event) {
+                                      return _vm.selectProduct(product)
+                                    }
+                                  }
+                                },
+                                [_vm._v("Ok")]
+                              )
+                            ]),
+                            _vm._v(" "),
+                            _c("td", [
+                              _vm._v(
+                                "\n\t                        \t" +
+                                  _vm._s(product.n_serie) +
+                                  "\n\t                        "
+                              )
+                            ]),
+                            _vm._v(" "),
+                            _c("td", [
+                              _vm._v(
+                                "\n\t                        \t" +
+                                  _vm._s(product.precio) +
+                                  "\n\t                        "
+                              )
+                            ]),
+                            _vm._v(" "),
+                            _c("td", [
+                              _vm._v(
+                                "\n\t                        \t" +
+                                  _vm._s(product.color) +
+                                  "\n\t                        "
+                              )
+                            ]),
+                            _vm._v(" "),
+                            _c("td", [
+                              _vm._v(
+                                "\n\t                        \t" +
+                                  _vm._s(product.talle) +
+                                  "\n\t                        "
+                              )
+                            ])
+                          ])
+                        }),
+                        0
+                      )
+                    : _c(
+                        "tbody",
+                        _vm._l(_vm.listaProductos.data, function(
+                          product,
+                          index
+                        ) {
+                          return _c("tr", { key: product.id }, [
+                            _c("td", [
+                              _c(
+                                "button",
+                                {
+                                  staticClass: "btn btn-success btn-sm ",
+                                  attrs: {
+                                    type: "button",
+                                    "data-dismiss": "modal"
+                                  },
+                                  on: {
+                                    click: function($event) {
+                                      return _vm.selectProduct(product)
+                                    }
+                                  }
+                                },
+                                [_vm._v("Ok")]
+                              )
+                            ]),
+                            _vm._v(" "),
+                            _c("td", [
+                              _vm._v(
+                                "\n                            " +
+                                  _vm._s(product.n_serie) +
+                                  "\n                          "
+                              )
+                            ]),
+                            _vm._v(" "),
+                            _c("td", [
+                              _vm._v(
+                                "\n                            " +
+                                  _vm._s(product.precio) +
+                                  "\n                          "
+                              )
+                            ]),
+                            _vm._v(" "),
+                            _c("td", [
+                              _vm._v(
+                                "\n                            " +
+                                  _vm._s(product.color) +
+                                  "\n                          "
+                              )
+                            ]),
+                            _vm._v(" "),
+                            _c("td", [
+                              _vm._v(
+                                "\n                            " +
+                                  _vm._s(product.talle) +
+                                  "\n                          "
+                              )
+                            ])
+                          ])
+                        }),
+                        0
+                      )
                 ]),
                 _vm._v(" "),
-                _c("pagination", {
-                  staticClass: "float-right",
-                  attrs: { data: _vm.listaProductos, limit: 3 },
-                  on: { "pagination-change-page": _vm.getResults }
-                })
+                _vm.activateBusqueda
+                  ? _c("pagination", {
+                      staticClass: "float-right",
+                      attrs: { data: _vm.listaProductosBusqueda, limit: 3 },
+                      on: { "pagination-change-page": _vm.getResultsBusqueda }
+                    })
+                  : _c("pagination", {
+                      staticClass: "float-right",
+                      attrs: { data: _vm.listaProductos, limit: 3 },
+                      on: { "pagination-change-page": _vm.getResults }
+                    })
               ],
               1
             )

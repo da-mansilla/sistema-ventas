@@ -24,8 +24,8 @@
 	                      <th scope="col">Talle</th>
 	                    </tr>
 	                  </thead>
-	                  <tbody>
-                      	<tr v-for="(product,index) in listaProductos.data" :key="product.id">
+	                  <tbody v-if="activateBusqueda">
+                      	<tr v-for="(product,index) in listaProductosBusqueda.data" :key="product.id">
 	                        <td>
 		                        <button type="button" class="btn btn-success btn-sm " data-dismiss="modal" v-on:click="selectProduct(product)">Ok</button>
 		                    </td>
@@ -44,9 +44,31 @@
 	                    </tr>
 	                    
 	                    </tbody>
+                      <tbody v-else>
+                        <tr v-for="(product,index) in listaProductos.data" :key="product.id">
+                          <td>
+                            <button type="button" class="btn btn-success btn-sm " data-dismiss="modal" v-on:click="selectProduct(product)">Ok</button>
+                        </td>
+                          <td>
+                            {{product.n_serie}}
+                          </td>
+                          <td>
+                            {{product.precio}}
+                          </td>
+                          <td>
+                            {{product.color}}
+                          </td>
+                          <td>
+                            {{product.talle}}
+                          </td>
+                      </tr>
+                      
+                      </tbody>
 	                </table>
-	                <pagination :data="listaProductos" :limit="3" @pagination-change-page="getResults" class="float-right">
-                    </pagination>
+	                <pagination v-if="activateBusqueda" :data="listaProductosBusqueda" :limit="3" @pagination-change-page="getResultsBusqueda" class="float-right">
+                  </pagination>
+                  <pagination v-else :data="listaProductos" :limit="3" @pagination-change-page="getResults" class="float-right">
+                  </pagination>
 	            </div>
 	        </div>
 	      </div>
@@ -66,7 +88,10 @@
 			dbproducts: [],
           	productsResult: [],
           	paginate: ['productsResult'],
-          	listaProductos: {}
+          	listaProductos: {},
+            activateBusqueda: false,
+            listaProductosBusqueda: {},
+            serieBuscar: ''
 
 
         };
@@ -81,6 +106,13 @@
               this.listaProductos = response.data;
             });
         },
+        getResultsBusqueda(page = 1) {
+          axios.get('/buscarProducto/'+this.serieBuscar+'?page=' + page)
+            .then(response => {
+              this.listaProductosBusqueda = response.data;
+            });
+        },
+
       	getProducts(){
             axios.get('/stock').then((response)=>{
               this.dbproducts = response.data.data;
@@ -101,17 +133,28 @@
          },
         paginateChange(toPage, fromPage){
           this.page = toPage;
-          console.log('Pagina numero ' + this.page);
         },
         busquedaProduct(){
+          console.log(this.serieProduct);
           if(this.serieProduct == ''){
-            console.log('vacio');
             this.getResults();
+            this.activateBusqueda = false;
           }
-        	console.log('busqueda');
-          this.productsResult = [];
-          var inicio = this.serieProduct.indexOf('%');
-          var numSerie = this.serieProduct.substring(0,inicio);
+          else {
+            this.activateBusqueda = true
+            this.productsResult = [];
+            var inicio = this.serieProduct.indexOf('%');
+            console.log(inicio);
+            if(inicio == -1){
+              this.serieBuscar = this.serieProduct;
+            } else {
+              this.serieBuscar = this.serieProduct.substring(0,inicio);
+            }
+            console.log(this.serieBuscar);
+            this.getResultsBusqueda()
+
+          }
+          /*
           axios.get('buscarProducto/'+numSerie).then(response=>{
             console.log(response.data);
             response.data.forEach(element=>{
@@ -120,6 +163,7 @@
             })
           })
           //console.log(this.productsResult);
+          */
         },
       }
     }
