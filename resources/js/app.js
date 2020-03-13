@@ -41,8 +41,8 @@ Vue.component('informacionsection-component', require('./components/Informacion/
 // Proveedores
 Vue.component('sectionproveedores-component', require('./components/Proveedores/SectionProveedoresComponent.vue').default);
 Vue.component('formproveedores-component', require('./components/Proveedores/FormProveedoresComponent.vue').default);
-
-
+// Precio
+Vue.component('preciosection-component', require('./components/Atajos/SectionPrecioComponent.vue').default);
 Vue.use(Toasted);
 Vue.use(VuePaginate);
 

@@ -108,6 +108,8 @@ class VentaController extends Controller
         $venta->total = $request->input('total');
         $venta->seña = $request->input('seña');
         $venta->deuda = $request->input('deuda');
+        $venta->promocion = $request->input('promocion');
+        $venta->recargo = $request->input('recargo');
         $venta->estado = $request->input('estado');
         $venta->enabled = $request->input('enabled');
 

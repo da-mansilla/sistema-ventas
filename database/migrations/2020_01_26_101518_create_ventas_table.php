@@ -23,6 +23,8 @@ class CreateVentasTable extends Migration
             $table->integer('total');
             $table->integer('seña')->nullable();
             $table->integer('deuda')->nullable();
+            $table->string('promocion')->nullable();
+            $table->integer('recargo')->nullable();
             $table->string('estado');
             $table->integer('enabled');
             $table->timestamps();

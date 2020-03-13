@@ -149,7 +149,6 @@
             },
             addVenta(venta){
               this.pagina=1;
-              this.getVentas();
             },
             detail(index,venta){
               this.getProductsVendidos(venta.id)
@@ -164,7 +163,7 @@
                 this.editMode = response.data[0];
               })
             },
-            detailCuenta(venta){
+            detailCuenta(index,venta){
               this.getProductsVendidos(venta.id)
               .then((response)=>{
                 this.pagina = 3;

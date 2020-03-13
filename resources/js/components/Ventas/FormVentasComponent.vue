@@ -61,39 +61,65 @@
               </span>
             </div>
 
-            <div class="form-group col-md-6">
+            
+            
+              <div class="form-group col-md-3">
+                <span v-if="editMode && disabled">
+              
+                </span>
+
+                <span v-else>
+                  <label>Recargo</label>
+                  <div class="input-group">
+                    <input type="number" class="form-control" v-model="recargo">
+                    <div class="input-group-append">
+                      <button class="btn btn-outline-secondary" type="button" v-on:click="cargarRecargo"><i class="fas fa-plus"></i></button>
+                    </div>
+                  </div>
+                </span>
+
+              </div>
+            
+
+            <div class="form-group col-md-3">
               <div v-if="editMode && disabled">
                 <label for="exampleFormControlSelect1">Tarjeta</label>
                 <input type="text" class="form-control" v-bind:placeholder="editMode.tarjeta" v-model="tarjeta" disabled>
               </div>
 
               <div v-else-if="forma_pago=='Tarjeta' || forma_pago=='efectivoTarjeta'">
+                
                 <label for="exampleFormControlSelect1">Tarjeta</label>
-                  <span>
-
-                  <div class="input-group">
-                      <select class="d-block form-control" id="exampleFormControlSelect1" v-model="tarjeta">
-                        <option>Visa</option>
-                        <option>MasterCard</option>
-                        <option>Tarjeta Naranja</option>
-                      </select>
-                      <div class="input-group-append">
-                        <button class="btn btn-outline-secondary" type="button" id="button-addon2" v-on:click="cargarTarjeta"><i class="fas fa-plus"></i></button>
-                      </div>
-                  </div>
-                  </span>
+                <div class="input-group">
+                    <select class="d-block form-control" id="exampleFormControlSelect1" v-model="tarjeta">
+                      <option>Visa</option>
+                      <option>MasterCard</option>
+                      <option>Tarjeta Naranja</option>
+                    </select>
+                    <div class="input-group-append">
+                      <button class="btn btn-outline-secondary" type="button" id="button-addon2" v-on:click="cargarTarjeta"><i class="fas fa-plus"></i></button>
+                    </div>
+                </div>
               </div>
+
               <div v-if="forma_pago=='Cuenta'">
                 <label>Descripcion</label>
                 <textarea v-model="descripcion" class="form-control"></textarea>
               </div>
             </div>
+
+            
             
           </div>
 
           <hr>
           <span>
-            <span v-if='editMode && disabled'></span>
+            <span v-if='editMode && disabled'>
+              <div v-if="editMode.promocion !== '' "class="form-group col-md-6">
+                <label>Promocion</label>
+                <input disabled class="form-control" :value="editMode.promocion">
+              </div>
+            </span>
             <span v-else>
               <div class="form-row">
                 <div class="form-group col-md-4">
@@ -108,12 +134,22 @@
                   <label for="inputState">Precio</label>
                   <input type="number" class="form-control" v-model="precio" disabled="">
                 </div>
+                <div v-if="forma_pago=='Efectivo'||forma_pago=='Tarjeta'||forma_pago=='efectivoTarjeta'"class="form-group col-md-3">
+                  <label for="inputState">Promocion</label>
+                  <select class="form-control" v-on:click="elegirPromocion" v-model="promocion">
+                    <option></option>
+                    <option value="2x1">2 x 1</option>
+                  </select>
+                </div>
                 
               </div>
               
               <div class="form-row row justify-content-end">
-                <div class="form-group">
+                <div v-if="activateAgregar" class="form-group">
                   <button class="btn btn-success btn-lg">Agregar</button>         
+                </div>
+                <div v-else class="form-group">
+                  <button disabled class="btn btn-success btn-lg">Agregar</button>         
                 </div>
               </div>
             </span>
@@ -221,6 +257,10 @@
                     <span>{{(productVenta.precio * productVenta.cantidad) - productVenta.descuento}}$</span>
                   </td>
                 </tr>
+                <tr v-if="editMode.recargo > 0">
+                    <td colspan="7" class="text-right table-light td-venta"><strong>Recargo</strong></td>
+                    <td class="td-venta" v-bind:value="editMode.pagoEfectivo">{{editMode.recargo}}</td> 
+                </tr>
                 <tr v-if="editMode.forma_pago=='Efectivo'">
                     <td colspan="7" class="text-right table-light td-venta"><strong>Efectivo</strong></td>
                     <td class="td-venta" v-bind:value="editMode.pagoEfectivo">{{editMode.pagoEfectivo}}</td> 
@@ -276,6 +316,10 @@
                     <span>{{(productVenta.precio * productVenta.cantidad) - productVenta.descuento}}</span>
                   </td>
                 </tr>
+                <tr v-if="recargoActivate">
+                    <td colspan="7" class="text-right table-light td-venta"><strong>Recargo {{recargo}}%</strong></td>
+                    <td class="td-venta">{{totalRecargo}}</td>
+                </tr>
                 <tr v-if="forma_pago=='Efectivo'">
                     <td colspan="7" class="text-right table-light td-venta"><strong>Efectivo</strong></td>
                     <td class="td-venta">{{totalNeto}}</td> 
@@ -297,6 +341,7 @@
                     <td class="td-venta"><input type="number" :id="tarjeta.nombre" class="input-venta" v-on:keyup="FormaEyT"></td> 
                 </tr>
 
+                
 
 
                 <tr>
@@ -315,7 +360,9 @@
                 <!-- 
                 <button type="submit" class="btn btn-secondary btn-lg" >Editar</button>
               -->
+              <!--
               <button v-if="editMode.estado != 'Cancelado'"type="submit" class="btn btn-secondary btn-lg ml-2" v-on:click="devolucion(editMode)">Devolucion</button>
+            -->
                 <button v-if="editMode.estado != 'Cancelado'"type="submit" class="btn btn-secondary btn-lg ml-2" v-on:click="deleteVenta(editMode.id,indexEdit)">Borrar</button>
 
               </span>
@@ -403,7 +450,13 @@
             cuentaCliente: '',
             hechoDesactivado: true,
             descripcion: '',
-            señaPagado: 0
+            señaPagado: 0,
+            promocion: '',
+            promocion2x1Activate: false,
+            activateAgregar: true,
+            recargoActivate: false,
+            totalRecargo: '',
+            recargo: '',
 
 
         };
@@ -447,12 +500,19 @@
              if(esValido){
               this.productsVenta.push(productVenta);
               this.totalNeto += (this.precio * this.cantidad) - this.descuento;
-
+              if(this.recargoActivate){
+                this.totalRecargo = (this.recargo/100)*this.totalNeto;
+                this.totalNeto += this.totalRecargo;
+              }
+              if(this.promocion2x1Activate){
+                this.promocion2x1() 
+              } 
               if(this.forma_pago == 'Efectivo'){
                 this.pagoEfectivo = this.totalNeto;
               } else {
                 this.pagoEfectivo = 0;
               }
+              
 
               this.pagoTarjeta= 0;
 
@@ -671,7 +731,8 @@
                 var enTotal = this.totalNeto;
                 var seña = '';
                 var deuda = '';
-
+                var promocion = '';
+                var recargo = '';
                 if(estadoCuenta && this.forma_pago == 'Cuenta'){
                   ventaEstado = 'Cuenta Corriente';
                   enEfectivo = 0;
@@ -685,9 +746,16 @@
                   ventaEstado = 'Seña';
                   deuda = (parseInt(this.totalNeto) - parseInt(this.señaPagado))
                 }
-
                 else {
                   ventaEstado = 'Finalizado'
+                  if(this.promocion2x1Activate){
+                    ventaEstado += ' (Promocion)'
+                    promocion = this.promocion
+                  }
+                }
+
+                if(this.recargoActivate){
+                  recargo = this.totalRecargo
                 }
                 // Fin Estado Cuenta
 
@@ -699,6 +767,8 @@
                   total: enTotal,
                   seña: seña,
                   deuda: deuda,
+                  promocion: promocion,
+                  recargo : recargo,
                   estado: ventaEstado,
                   enabled: 1
                 }
@@ -853,6 +923,11 @@
           },
           deleteProductVenta(index){
             this.productsVenta.splice(index,1);
+            if(this.productsVenta.length >= 2){
+                this.activateAgregar = false;
+            }else{
+              this.activateAgregar = true;
+            }
           },
           onClickEdit(){
             this.disabled= false;
@@ -888,7 +963,8 @@
                     precio: product.precio,
                     n_serie: product.n_serie,
                     enabled: 1,
-                    estado: 'Inventario'
+                    estado: 'Inventario',
+                    cantidadProducts: 1
                 };
                 axios.post('/products', params)
                 .then((response)=>{
@@ -1054,7 +1130,32 @@
             this.$emit('devolucion',venta);
             console.log('emitiendo una devolucion');
           },
-          insertSeñaPagado(){
+          elegirPromocion(){
+            if(this.promocion == '2x1'){
+              this.promocion2x1Activate = true;
+              this.promocion2x1()
+            } else {
+              this.promocion2x1Activate = false;
+            }
+          },
+          promocion2x1(){
+            if(this.promocion2x1Activate){
+              this.totalNeto = 0;
+              if(this.productsVenta.length == 2){
+                this.activateAgregar = false;
+                this.totalNeto = this.productsVenta[0].precio;
+                this.productsVenta.forEach(element=>{
+                  if(element.precio >= this.totalNeto){
+                    this.totalNeto =  element.precio
+                  }
+                })
+              }
+            }
+          },
+          cargarRecargo(){
+            this.recargoActivate = true;
+            this.totalRecargo = (this.recargo/100)*this.totalNeto;
+            this.totalNeto += this.totalRecargo;
 
           }
 

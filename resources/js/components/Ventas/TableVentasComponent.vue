@@ -72,7 +72,7 @@
                
               </span>
               <span v-else-if="venta.estado == 'Cancelado'">
-               <button type="button" class="btn btn-secondary btn-sm" v-on:click="editVenta(venta)"><i class="far fa-eye"></i></button> 
+               <button type="button" class="btn btn-secondary btn-sm" v-on:click="editVenta(index,venta)"><i class="far fa-eye"></i></button> 
               </span>
               <span v-else-if="venta.estado == 'Seña'">
                <button type="button" class="btn btn-success btn-sm" v-on:click="editSeña(venta)"><i class="far fa-eye"></i></button> 

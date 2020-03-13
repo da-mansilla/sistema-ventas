@@ -27,6 +27,9 @@
     <template v-if="menu==5">
             <informacionsection-component></informacionsection-component>            
     </template>
+    <template v-if="menu==6">
+            <preciosection-component></preciosection-component>            
+    </template>
 
     <!-- /#page-content-wrapper -->
   </div>
