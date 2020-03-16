@@ -130,7 +130,7 @@
           })
         },
         filtrar(){
-                      var productos = [];
+            var productos = [];
             var inicio = this.n_serie.indexOf('%');
             console.log(inicio);
             if(inicio == -1){

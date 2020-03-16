@@ -92,6 +92,7 @@
                 <label for="exampleFormControlSelect1">Tarjeta</label>
                 <div class="input-group">
                     <select class="d-block form-control" id="exampleFormControlSelect1" v-model="tarjeta">
+                      <option>Debito</option>
                       <option>Visa</option>
                       <option>MasterCard</option>
                       <option>Tarjeta Naranja</option>
@@ -145,11 +146,8 @@
               </div>
               
               <div class="form-row row justify-content-end">
-                <div v-if="activateAgregar" class="form-group">
+                <div class="form-group">
                   <button class="btn btn-success btn-lg">Agregar</button>         
-                </div>
-                <div v-else class="form-group">
-                  <button disabled class="btn btn-success btn-lg">Agregar</button>         
                 </div>
               </div>
             </span>
@@ -1136,19 +1134,32 @@
               this.promocion2x1()
             } else {
               this.promocion2x1Activate = false;
+              this.hechoDesactivado = false;
             }
           },
           promocion2x1(){
             if(this.promocion2x1Activate){
-              this.totalNeto = 0;
-              if(this.productsVenta.length == 2){
-                this.activateAgregar = false;
-                this.totalNeto = this.productsVenta[0].precio;
+              if((this.productsVenta.length%2) == 0 && this.productsVenta.length > 0){
+                this.hechoDesactivado = false;
+                this.totalNeto = 0;
+                var precios = [];
                 this.productsVenta.forEach(element=>{
-                  if(element.precio >= this.totalNeto){
-                    this.totalNeto =  element.precio
-                  }
+                  precios.push(element.precio)
                 })
+                precios.sort(function(a, b) {
+                  return a - b;
+                });
+                console.log(precios);
+                for (var i = this.productsVenta.length-1; i >= (this.productsVenta.length/2); i--) {
+                  console.log(i);
+                  console.log(precios[i])
+                  this.totalNeto += precios[i]
+                }
+
+
+              } else {
+                this.totalNeto = 0;
+                this.hechoDesactivado = true;
               }
             }
           },

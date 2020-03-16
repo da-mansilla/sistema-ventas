@@ -114,10 +114,7 @@
 
     export default {
         props: {
-          categorias: {
-                type: Array,
-                default: ''
-            }
+
         },
     	data(){
     		return {
@@ -134,14 +131,21 @@
                 crearColor: false,
                 clickCategoria: false,
                 factor: 10,
-                seleccionarCategoria: true
+                seleccionarCategoria: true,
+                categorias: []
 
     		}
     	},
         mounted() {
+            this.getCategorias();
             $('#exampleModal').on('hidden.bs.modal', this.cerrarModal);
         },
         methods: {
+            getCategorias(){
+              axios.get('/categoriastodas').then((response)=>{
+                this.categorias= response.data;
+              })
+            },
             cerrarModal(){
 
                 this.categoria= '';
@@ -206,6 +210,16 @@
                     var n_serie = serie;
 
                     axios.post('/categorias',params).then((response)=>{
+                        console.log('Categoria Creada');
+                        var categoriaNueva = response.data;
+                        if(this.tipo == categoriaNueva.tipo){
+                            this.sugerenciasList.push(categoriaNueva)
+                        } else if(this.tipo == categoriaNueva.tipo){
+                            this.sugerenciasList.push(categoriaNueva)
+                        } else if(this.tipo == categoriaNueva.tipo){
+                            this.sugerenciasList.push(categoriaNueva)
+                        }
+
                         let index = this.n_serie.indexOf("%");
                         let serie = this.n_serie.slice(0, index);
                         const params2 = {
@@ -226,7 +240,6 @@
                                         console.log(response);
                                         
                             });
-
                         this.$emit('new');
                         this.$toasted.show('Producto Cargado Exitosamente', { 
                             theme: "toasted-primary", 
@@ -270,8 +283,9 @@
                         duration : 2000
                     });
                 }
+
                 
-                
+
 	            this.nombre= '';	              
                 this.talle= '';
                 this.color= '';

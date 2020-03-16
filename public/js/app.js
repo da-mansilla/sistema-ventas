@@ -3603,12 +3603,7 @@ __webpack_require__.r(__webpack_exports__);
 //
 
 /* harmony default export */ __webpack_exports__["default"] = ({
-  props: {
-    categorias: {
-      type: Array,
-      "default": ''
-    }
-  },
+  props: {},
   data: function data() {
     return {
       nombre: '',
@@ -3624,13 +3619,22 @@ __webpack_require__.r(__webpack_exports__);
       crearColor: false,
       clickCategoria: false,
       factor: 10,
-      seleccionarCategoria: true
+      seleccionarCategoria: true,
+      categorias: []
     };
   },
   mounted: function mounted() {
+    this.getCategorias();
     $('#exampleModal').on('hidden.bs.modal', this.cerrarModal);
   },
   methods: {
+    getCategorias: function getCategorias() {
+      var _this = this;
+
+      axios.get('/categoriastodas').then(function (response) {
+        _this.categorias = response.data;
+      });
+    },
     cerrarModal: function cerrarModal() {
       this.categoria = '';
       this.tipo = '';
@@ -3641,7 +3645,7 @@ __webpack_require__.r(__webpack_exports__);
       this.n_serie = '';
     },
     newProduct: function newProduct() {
-      var _this = this;
+      var _this2 = this;
 
       if (this.crearColor) {
         var index = this.n_serie.indexOf("%");
@@ -3718,9 +3722,20 @@ __webpack_require__.r(__webpack_exports__);
         var precio = this.precio;
         var n_serie = serie;
         axios.post('/categorias', _params).then(function (response) {
-          var index = _this.n_serie.indexOf("%");
+          console.log('Categoria Creada');
+          var categoriaNueva = response.data;
 
-          var serie = _this.n_serie.slice(0, index);
+          if (_this2.tipo == categoriaNueva.tipo) {
+            _this2.sugerenciasList.push(categoriaNueva);
+          } else if (_this2.tipo == categoriaNueva.tipo) {
+            _this2.sugerenciasList.push(categoriaNueva);
+          } else if (_this2.tipo == categoriaNueva.tipo) {
+            _this2.sugerenciasList.push(categoriaNueva);
+          }
+
+          var index = _this2.n_serie.indexOf("%");
+
+          var serie = _this2.n_serie.slice(0, index);
 
           var params2 = {
             nombre: nombre,
@@ -3732,15 +3747,15 @@ __webpack_require__.r(__webpack_exports__);
             n_serie: n_serie,
             enabled: 1,
             estado: 'Inventario',
-            cantidadProducts: _this.cantidad
+            cantidadProducts: _this2.cantidad
           };
           axios.post('/products', params2).then(function (response) {
             console.log(response);
           });
 
-          _this.$emit('new');
+          _this2.$emit('new');
 
-          _this.$toasted.show('Producto Cargado Exitosamente', {
+          _this2.$toasted.show('Producto Cargado Exitosamente', {
             theme: "toasted-primary",
             position: "top-right",
             duration: 2000
@@ -3789,7 +3804,7 @@ __webpack_require__.r(__webpack_exports__);
       this.seleccionarCategoria = true;
     },
     inputSerie: function inputSerie() {
-      var _this2 = this;
+      var _this3 = this;
 
       this.tipo = '';
       var index = this.n_serie.indexOf("%");
@@ -3803,7 +3818,7 @@ __webpack_require__.r(__webpack_exports__);
       console.log('Talle: ' + codigoTalle);
       this.categorias.forEach(function (elemento) {
         if (elemento.tipo == 'Niño') {
-          _this2.sugerenciasList.push(elemento);
+          _this3.sugerenciasList.push(elemento);
         }
       });
       this.talle = codigoTalle;
@@ -3824,10 +3839,10 @@ __webpack_require__.r(__webpack_exports__);
       }
 
       axios.get('seriecolor/' + codigoColor).then(function (response) {
-        _this2.color = response.data;
+        _this3.color = response.data;
       })["catch"](function (err) {
         console.log('No existe ese Color');
-        _this2.crearColor = true;
+        _this3.crearColor = true;
       });
     },
     busquedaCategoria: function busquedaCategoria() {
@@ -3862,7 +3877,7 @@ __webpack_require__.r(__webpack_exports__);
       }
     },
     elegirTipo: function elegirTipo(e) {
-      var _this3 = this;
+      var _this4 = this;
 
       if (this.clickCategoria) {
         console.log('elegir tipo');
@@ -3874,27 +3889,27 @@ __webpack_require__.r(__webpack_exports__);
           console.log('Categorias Niño');
           this.categorias.forEach(function (elemento) {
             if (elemento.tipo == 'Niño') {
-              _this3.sugerenciasList.push(elemento);
+              _this4.sugerenciasList.push(elemento);
 
-              console.log(_this3.sugerenciasList);
+              console.log(_this4.sugerenciasList);
             }
           });
         } else if (tipo == 'Niña') {
           console.log('Categorias Niña');
           this.categorias.forEach(function (elemento) {
             if (elemento.tipo == 'Niña') {
-              _this3.sugerenciasList.push(elemento);
+              _this4.sugerenciasList.push(elemento);
 
-              console.log(_this3.sugerenciasList);
+              console.log(_this4.sugerenciasList);
             }
           });
         } else if (tipo == 'Unisex') {
           console.log('Categorias Unisex');
           this.categorias.forEach(function (elemento) {
             if (elemento.tipo == 'Unisex') {
-              _this3.sugerenciasList.push(elemento);
+              _this4.sugerenciasList.push(elemento);
 
-              console.log(_this3.sugerenciasList);
+              console.log(_this4.sugerenciasList);
             }
           });
         }
@@ -6875,8 +6890,6 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
-//
-//
 /* harmony default export */ __webpack_exports__["default"] = ({
   props: {
     editMode: {},
@@ -7733,22 +7746,31 @@ __webpack_require__.r(__webpack_exports__);
         this.promocion2x1();
       } else {
         this.promocion2x1Activate = false;
+        this.hechoDesactivado = false;
       }
     },
     promocion2x1: function promocion2x1() {
-      var _this7 = this;
-
       if (this.promocion2x1Activate) {
-        this.totalNeto = 0;
-
-        if (this.productsVenta.length == 2) {
-          this.activateAgregar = false;
-          this.totalNeto = this.productsVenta[0].precio;
+        if (this.productsVenta.length % 2 == 0 && this.productsVenta.length > 0) {
+          this.hechoDesactivado = false;
+          this.totalNeto = 0;
+          var precios = [];
           this.productsVenta.forEach(function (element) {
-            if (element.precio >= _this7.totalNeto) {
-              _this7.totalNeto = element.precio;
-            }
+            precios.push(element.precio);
           });
+          precios.sort(function (a, b) {
+            return a - b;
+          });
+          console.log(precios);
+
+          for (var i = this.productsVenta.length - 1; i >= this.productsVenta.length / 2; i--) {
+            console.log(i);
+            console.log(precios[i]);
+            this.totalNeto += precios[i];
+          }
+        } else {
+          this.totalNeto = 0;
+          this.hechoDesactivado = true;
         }
       }
     },
@@ -86629,6 +86651,8 @@ var render = function() {
                         }
                       },
                       [
+                        _c("option", [_vm._v("Debito")]),
+                        _vm._v(" "),
                         _c("option", [_vm._v("Visa")]),
                         _vm._v(" "),
                         _c("option", [_vm._v("MasterCard")]),
@@ -86809,26 +86833,7 @@ var render = function() {
                     : _vm._e()
                 ]),
                 _vm._v(" "),
-                _c("div", { staticClass: "form-row row justify-content-end" }, [
-                  _vm.activateAgregar
-                    ? _c("div", { staticClass: "form-group" }, [
-                        _c(
-                          "button",
-                          { staticClass: "btn btn-success btn-lg" },
-                          [_vm._v("Agregar")]
-                        )
-                      ])
-                    : _c("div", { staticClass: "form-group" }, [
-                        _c(
-                          "button",
-                          {
-                            staticClass: "btn btn-success btn-lg",
-                            attrs: { disabled: "" }
-                          },
-                          [_vm._v("Agregar")]
-                        )
-                      ])
-                ])
+                _vm._m(0)
               ])
         ])
       ]
@@ -86855,7 +86860,7 @@ var render = function() {
       : _vm.forma_pago == "Seña"
       ? _c("div", [
           _c("table", { staticClass: "table table-bordered " }, [
-            _vm._m(0),
+            _vm._m(1),
             _vm._v(" "),
             _c(
               "tbody",
@@ -86893,7 +86898,7 @@ var render = function() {
                 }),
                 _vm._v(" "),
                 _c("tr", [
-                  _vm._m(1),
+                  _vm._m(2),
                   _vm._v(" "),
                   _c("td", { staticClass: "td-venta" }, [
                     _vm._v(_vm._s(_vm.totalNeto))
@@ -86901,7 +86906,7 @@ var render = function() {
                 ]),
                 _vm._v(" "),
                 _c("tr", [
-                  _vm._m(2),
+                  _vm._m(3),
                   _vm._v(" "),
                   _c("td", { staticClass: "td-venta" }, [
                     _c("input", {
@@ -86932,7 +86937,7 @@ var render = function() {
                 ]),
                 _vm._v(" "),
                 _c("tr", [
-                  _vm._m(3),
+                  _vm._m(4),
                   _vm._v(" "),
                   _c("td", { staticClass: "td-venta" }, [
                     _vm._v(_vm._s(_vm.totalNeto - _vm.señaPagado))
@@ -86945,7 +86950,7 @@ var render = function() {
         ])
       : _c("div", [
           _c("table", { staticClass: "table table-bordered table-ventas" }, [
-            _vm._m(4),
+            _vm._m(5),
             _vm._v(" "),
             _vm.editMode && _vm.disabled
               ? _c(
@@ -86996,7 +87001,7 @@ var render = function() {
                     _vm._v(" "),
                     _vm.editMode.recargo > 0
                       ? _c("tr", [
-                          _vm._m(5),
+                          _vm._m(6),
                           _vm._v(" "),
                           _c(
                             "td",
@@ -87011,7 +87016,7 @@ var render = function() {
                     _vm._v(" "),
                     _vm.editMode.forma_pago == "Efectivo"
                       ? _c("tr", [
-                          _vm._m(6),
+                          _vm._m(7),
                           _vm._v(" "),
                           _c(
                             "td",
@@ -87050,7 +87055,7 @@ var render = function() {
                     _vm._v(" "),
                     _vm.editMode.forma_pago == "efectivoTarjeta"
                       ? _c("tr", [
-                          _vm._m(7),
+                          _vm._m(8),
                           _vm._v(" "),
                           _c("td", { staticClass: "td-venta" }, [
                             _c("input", {
@@ -87064,7 +87069,7 @@ var render = function() {
                     _vm._v(" "),
                     _vm.editMode.forma_pago == "efectivoTarjeta"
                       ? _c("tr", [
-                          _vm._m(8),
+                          _vm._m(9),
                           _vm._v(" "),
                           _c("td", { staticClass: "td-venta" }, [
                             _c("input", {
@@ -87077,7 +87082,7 @@ var render = function() {
                       : _vm._e(),
                     _vm._v(" "),
                     _c("tr", [
-                      _vm._m(9),
+                      _vm._m(10),
                       _vm._v(" "),
                       _c("td", [_vm._v(_vm._s(_vm.editMode.total) + "$")])
                     ])
@@ -87167,7 +87172,7 @@ var render = function() {
                     _vm._v(" "),
                     _vm.forma_pago == "Efectivo"
                       ? _c("tr", [
-                          _vm._m(10),
+                          _vm._m(11),
                           _vm._v(" "),
                           _c("td", { staticClass: "td-venta" }, [
                             _vm._v(_vm._s(_vm.totalNeto))
@@ -87205,7 +87210,7 @@ var render = function() {
                     _vm._v(" "),
                     _vm.forma_pago == "efectivoTarjeta"
                       ? _c("tr", [
-                          _vm._m(11),
+                          _vm._m(12),
                           _vm._v(" "),
                           _c("td", { staticClass: "td-venta" }, [
                             _c("input", {
@@ -87258,7 +87263,7 @@ var render = function() {
                     }),
                     _vm._v(" "),
                     _c("tr", [
-                      _vm._m(12),
+                      _vm._m(13),
                       _vm._v(" "),
                       _c("td", [_vm._v(_vm._s(_vm.totalNeto))])
                     ])
@@ -87415,6 +87420,18 @@ var render = function() {
   ])
 }
 var staticRenderFns = [
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("div", { staticClass: "form-row row justify-content-end" }, [
+      _c("div", { staticClass: "form-group" }, [
+        _c("button", { staticClass: "btn btn-success btn-lg" }, [
+          _vm._v("Agregar")
+        ])
+      ])
+    ])
+  },
   function() {
     var _vm = this
     var _h = _vm.$createElement
