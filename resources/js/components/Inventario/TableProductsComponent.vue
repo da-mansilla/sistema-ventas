@@ -72,7 +72,7 @@
                                     <th>{{productos.color}}</th>
                                     <th>{{productos.talle}}</th>
 
-                                    <th>{{productos.precio}}</th>
+                                    <th class="justify-content-center" style="color:green;">${{productos.precio}}</th>
                                   </tr>
                                 </tbody>
                                   

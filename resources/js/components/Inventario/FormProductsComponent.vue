@@ -41,7 +41,7 @@
                         <label for="colFormLabelLg" class="col-sm-2 col-form-label col-form-label-lg">Categoria</label>
                         <div class="input-group col-sm-4">
                             <select v-if="seleccionarCategoria"class="form-control form-control-lg" v-model="categoria" required>
-                                <option v-for="sugerencia in sugerenciasList">{{sugerencia.nombre}} - ({{sugerencia.tipo}})</option>
+                                <option v-for="sugerencia in sugerenciasList" :value="sugerencia.nombre">{{sugerencia.nombre}} - ({{sugerencia.tipo}})</option>
                             </select>
                             <input v-if="!seleccionarCategoria"type="text" class="form-control form-control-lg" v-model="categoria" required>
 

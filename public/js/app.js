@@ -80072,19 +80072,36 @@ var render = function() {
                                         productos,
                                         index
                                       ) {
-                                        return _c("tr", { key: productos.id }, [
-                                          _c("th", [
-                                            _vm._v(_vm._s(productos.color))
-                                          ]),
-                                          _vm._v(" "),
-                                          _c("th", [
-                                            _vm._v(_vm._s(productos.talle))
-                                          ]),
-                                          _vm._v(" "),
-                                          _c("th", [
-                                            _vm._v(_vm._s(productos.precio))
-                                          ])
-                                        ])
+                                        return _c(
+                                          "tr",
+                                          {
+                                            key: productos.id,
+                                            staticClass: "align-middle"
+                                          },
+                                          [
+                                            _c("th", [
+                                              _vm._v(_vm._s(productos.color))
+                                            ]),
+                                            _vm._v(" "),
+                                            _c("th", [
+                                              _vm._v(_vm._s(productos.talle))
+                                            ]),
+                                            _vm._v(" "),
+                                            _c(
+                                              "th",
+                                              {
+                                                staticClass:
+                                                  "justify-content-center",
+                                                staticStyle: { color: "green" }
+                                              },
+                                              [
+                                                _vm._v(
+                                                  "$" + _vm._s(productos.precio)
+                                                )
+                                              ]
+                                            )
+                                          ]
+                                        )
                                       }),
                                       0
                                     )
@@ -82607,14 +82624,18 @@ var render = function() {
                                 }
                               },
                               _vm._l(_vm.sugerenciasList, function(sugerencia) {
-                                return _c("option", [
-                                  _vm._v(
-                                    _vm._s(sugerencia.nombre) +
-                                      " - (" +
-                                      _vm._s(sugerencia.tipo) +
-                                      ")"
-                                  )
-                                ])
+                                return _c(
+                                  "option",
+                                  { domProps: { value: sugerencia.nombre } },
+                                  [
+                                    _vm._v(
+                                      _vm._s(sugerencia.nombre) +
+                                        " - (" +
+                                        _vm._s(sugerencia.tipo) +
+                                        ")"
+                                    )
+                                  ]
+                                )
                               }),
                               0
                             )
@@ -84156,9 +84177,14 @@ var render = function() {
                                         _vm._v(_vm._s(productos.talle))
                                       ]),
                                       _vm._v(" "),
-                                      _c("th", [
-                                        _vm._v(_vm._s(productos.precio))
-                                      ])
+                                      _c(
+                                        "th",
+                                        {
+                                          staticClass: "justify-content-center",
+                                          staticStyle: { color: "green" }
+                                        },
+                                        [_vm._v("$" + _vm._s(productos.precio))]
+                                      )
                                     ])
                                   }),
                                   0
