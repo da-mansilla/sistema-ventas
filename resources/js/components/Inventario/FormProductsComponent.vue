@@ -182,10 +182,10 @@
                 } 
                 var final = this.categoria.indexOf(')');
                 
-                var tipoComparar = this.categoria.substring(inicio+1,final);
+                var tipoComparar = this.categoria
 
                 console.log('Categoria Comparar: ' + categoriaComparar);
-                console.log('Tipo Comparar: ' + tipoComparar);
+                console.log('Tipo Comparar: ' + this.tipo);
                 for(var categoria of this.categorias){
                     if(categoriaComparar == categoria.nombre && parar){
                         if(categoria.tipo == this.tipo){
@@ -243,6 +243,7 @@
                         });
                     })
                 } else {
+                    console.log('Categoria Encontrada')
                     let index = this.n_serie.indexOf("%");
                     let serie = this.n_serie.slice(0, index);
 
@@ -362,7 +363,6 @@
                     this.categorias.forEach((elemento)=>{
                         if(elemento.tipo == 'Niño'){
                             this.sugerenciasList.push(elemento);
-                            console.log(this.sugerenciasList);
                         }
                     })
                 } else if(this.tipo =='Niña'){
@@ -370,7 +370,6 @@
                     this.categorias.forEach((elemento)=>{
                         if(elemento.tipo == 'Niña'){
                             this.sugerenciasList.push(elemento);
-                            console.log(this.sugerenciasList);
                         }
                     })
                 } else if(this.tipo == 'Unisex'){
@@ -378,7 +377,6 @@
                     this.categorias.forEach((elemento)=>{
                         if(elemento.tipo == 'Unisex'){
                             this.sugerenciasList.push(elemento);
-                            console.log(this.sugerenciasList);
                         }
                     })
                 } else {

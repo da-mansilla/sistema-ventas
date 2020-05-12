@@ -3674,9 +3674,9 @@ __webpack_require__.r(__webpack_exports__);
 
       var _final = this.categoria.indexOf(')');
 
-      var tipoComparar = this.categoria.substring(inicio + 1, _final);
+      var tipoComparar = this.categoria;
       console.log('Categoria Comparar: ' + categoriaComparar);
-      console.log('Tipo Comparar: ' + tipoComparar);
+      console.log('Tipo Comparar: ' + this.tipo);
       var _iteratorNormalCompletion = true;
       var _didIteratorError = false;
       var _iteratorError = undefined;
@@ -3758,6 +3758,8 @@ __webpack_require__.r(__webpack_exports__);
           });
         });
       } else {
+        console.log('Categoria Encontrada');
+
         var _index2 = this.n_serie.indexOf("%");
 
         var _serie = this.n_serie.slice(0, _index2);
@@ -3895,8 +3897,6 @@ __webpack_require__.r(__webpack_exports__);
         this.categorias.forEach(function (elemento) {
           if (elemento.tipo == 'Niño') {
             _this4.sugerenciasList.push(elemento);
-
-            console.log(_this4.sugerenciasList);
           }
         });
       } else if (this.tipo == 'Niña') {
@@ -3904,8 +3904,6 @@ __webpack_require__.r(__webpack_exports__);
         this.categorias.forEach(function (elemento) {
           if (elemento.tipo == 'Niña') {
             _this4.sugerenciasList.push(elemento);
-
-            console.log(_this4.sugerenciasList);
           }
         });
       } else if (this.tipo == 'Unisex') {
@@ -3913,8 +3911,6 @@ __webpack_require__.r(__webpack_exports__);
         this.categorias.forEach(function (elemento) {
           if (elemento.tipo == 'Unisex') {
             _this4.sugerenciasList.push(elemento);
-
-            console.log(_this4.sugerenciasList);
           }
         });
       } else {
