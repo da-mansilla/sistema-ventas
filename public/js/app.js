@@ -4782,7 +4782,10 @@ __webpack_require__.r(__webpack_exports__);
             duration: 2000
           });
 
-          _this2.getStock();
+          _this2.filtrar();
+
+          console.log($('#FiltroModalDetalles' + index));
+          $("#FiltroModalDetalles" + index).modal('hide');
         });
       }
     },
@@ -4971,7 +4974,9 @@ __webpack_require__.r(__webpack_exports__);
             duration: 2000
           });
 
-          _this3.getStock();
+          _this3.getResults();
+
+          $("#exampleModalCenter" + index).modal('hide');
         });
       }
     },
@@ -83825,7 +83830,7 @@ var render = function() {
                           attrs: {
                             type: "button",
                             "data-toggle": "modal",
-                            "data-target": "#exampleModalCenter" + index
+                            "data-target": "#FiltroModalDetalles" + index
                           }
                         },
                         [_vm._v(" + ")]
@@ -83866,10 +83871,10 @@ var render = function() {
                     {
                       staticClass: "modal fade ",
                       attrs: {
-                        id: "exampleModalCenter" + index,
+                        id: "FiltroModalDetalles" + index,
                         tabindex: "-1",
                         role: "dialog",
-                        "aria-labelledby": "exampleModalCenterTitle",
+                        "aria-labelledby": "FiltroModalDetallesTitle",
                         "aria-hidden": "true"
                       }
                     },
@@ -83895,8 +83900,7 @@ var render = function() {
                                     _c(
                                       "tbody",
                                       _vm._l(product.products, function(
-                                        productos,
-                                        index
+                                        productos
                                       ) {
                                         return _c("tr", { key: productos.id }, [
                                           _c("th", [
@@ -84136,10 +84140,7 @@ var render = function() {
                                 _vm._v(" "),
                                 _c(
                                   "tbody",
-                                  _vm._l(product.products, function(
-                                    productos,
-                                    index
-                                  ) {
+                                  _vm._l(product.products, function(productos) {
                                     return _c("tr", { key: productos.id }, [
                                       _c("th", [
                                         _c(

@@ -16,7 +16,7 @@
             <tr v-for="(product,index) in listaFiltrada.data" :key="product.id">
               <th scope="row" >
                 <span>
-                  <button  type="button" class="btn btn-secondary btn-sm" data-toggle="modal" :data-target="`#exampleModalCenter${index}`"> + </button>
+                  <button  type="button" class="btn btn-secondary btn-sm" data-toggle="modal" :data-target="`#FiltroModalDetalles${index}`"> + </button>
                   <!--
                   <button  type="button" class="btn btn-secondary btn-sm" v-on:click="onClickOpenEdit(index)"><i class="fas fa-edit"></i></button>
                   -->
@@ -40,7 +40,7 @@
 
 
               <!-- Modal Detalles-->
-              <div class="modal fade " :id="`exampleModalCenter${index}`" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+              <div class="modal fade " :id="`FiltroModalDetalles${index}`" tabindex="-1" role="dialog" aria-labelledby="FiltroModalDetallesTitle" aria-hidden="true">
                 <div class="modal-dialog modal-dialog-scrollable" role="document">
                   <div class="modal-content">
                     <div class="modal-header md-1">
@@ -64,7 +64,7 @@
                                   </tr>
                                 </thead>
                                 <tbody>
-                                  <tr v-for="(productos,index) in product.products" :key="productos.id">
+                                  <tr v-for="productos in product.products" :key="productos.id">
                                     <th>
                                       <button  type="button" class="btn btn-danger btn-sm" v-on:click="onClickDelete(productos,index)"><i class="fas fa-times-circle"></i></button>
                                     </th>
@@ -137,7 +137,9 @@
                      position: "top-right", 
                      duration : 2000
                     });
-                    this.getStock();
+                    this.filtrar();
+                    console.log($('#FiltroModalDetalles'+index))
+                    $("#FiltroModalDetalles"+index).modal('hide')
                   })
               }
                 

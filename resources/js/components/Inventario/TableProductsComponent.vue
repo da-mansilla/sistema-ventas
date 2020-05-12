@@ -65,7 +65,7 @@
                                   </tr>
                                 </thead>
                                 <tbody>
-                                  <tr v-for="(productos,index) in product.products" :key="productos.id">
+                                  <tr v-for="productos in product.products" :key="productos.id">
                                     <th>
                                       <button  type="button" class="btn btn-danger btn-sm" v-on:click="onClickDelete(productos,index)"><i class="fas fa-times-circle"></i></button>
                                     </th>
@@ -138,7 +138,8 @@
                      position: "top-right", 
                      duration : 2000
                     });
-                    this.getStock();
+                    this.getResults();
+                    $("#exampleModalCenter"+index).modal('hide')
                   })
               }
                 
