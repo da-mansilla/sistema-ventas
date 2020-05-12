@@ -6,7 +6,7 @@
       </div>
       <div class="card-body">
         <span v-if='pagina==1 || pagina==4'>
-          <button v-if="pagina != 4" type="button" class="btn btn-secondary" v-on:click="onClickCuenta()">Ir a Cuenta Corriente</button>
+          <button v-if="pagina != 4" type="button" class="btn btn-secondary" v-on:click="onClickCuenta()">Ir a Cuenta Corriente <span class="badge badge-light mr-1">{{ cantidadCuentasActivas }}</span></button>
           <button v-if="pagina != 1"type="button" class="btn btn-secondary" v-on:click="onClickInicio()">Ir a Ventas</button>
           <button type="button" class="btn btn-success" v-on:click="onClickNuevaVenta()">Nueva Venta <i class="fas fa-plus-circle"></i></button>
         </span>
@@ -97,14 +97,21 @@
           señaMode: '',
           ventaDevolucion: '',
           ventasHoy : '',
-          ingresosHoy: ''
+          ingresosHoy: '',
+          cantidadCuentasActivas: 0
         
         };
       },
       mounted() {
-
+        this.getCantidad()
       },
       methods:{
+            getCantidad(){
+              axios.get('cuentasCantidad').then(response=>{
+                  console.log(response.data[0]);
+                  this.cantidadCuentasActivas = response.data[0].cantidad;
+              })
+            },
             getVenta(id){
               const promise = new Promise((resolve,reject)=>{
                 axios.get('ventas/'+id)
@@ -149,6 +156,7 @@
             },
             addVenta(venta){
               this.pagina=1;
+              this.getCantidad();
             },
             detail(index,venta){
               this.getProductsVendidos(venta.id)

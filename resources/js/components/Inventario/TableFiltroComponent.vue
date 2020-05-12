@@ -129,7 +129,7 @@
                 });
             },
             onClickDelete(product,index){
-              var answer = window.confirm("¿Está seguro que desea elimminar?")
+              var answer = window.confirm("¿Está seguro que desea eliminar?")
               if (answer) {
                   axios.delete('/products/'+product.id).then(()=>{
                     this.$toasted.show('Producto Eliminado Exitosamente', { 
@@ -138,7 +138,6 @@
                      duration : 2000
                     });
                     this.filtrar();
-                    console.log($('#FiltroModalDetalles'+index))
                     $("#FiltroModalDetalles"+index).modal('hide')
                   })
               }

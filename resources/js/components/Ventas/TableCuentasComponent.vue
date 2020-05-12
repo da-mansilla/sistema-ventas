@@ -57,7 +57,7 @@
              {{client.cuenta[0].deuda}}
             </th>
             <th>
-             {{client.cuenta[0].estado}}
+              <span v-bind:class="{'colorRojo' : client.cuenta[0].estado == 'Deuda'}">{{client.cuenta[0].estado}}</span>
             </th>
 
           </tr>
@@ -108,6 +108,11 @@
           axios.get('cuentasCobrar').then(response=>{
               console.log(response.data[0]);
               this.cobrarCuenta = response.data[0].cobrar;
+              if(response.data[0].cobrar== null){
+                this.cobrarCuenta = 0
+              } else {
+
+              }
           })
         },
         getResults(page = 1) {
@@ -134,3 +139,15 @@
     }
 
 </script>
+<style>
+    .venta-cancelada{
+        background-color: rgba(0, 0, 0, 0.03);
+    }
+    .colorGris{
+        color: gray;
+    }
+    .colorRojo{
+        color: red;
+    }
+
+</style>
