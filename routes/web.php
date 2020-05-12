@@ -64,4 +64,8 @@ Route::put('finalizarproducto/{id}','ProductVendidoController@finalizarProducto'
 Route::get('seriecolor/{codigo}','SerieColorController@index')->name('seriecolor.index');
 Route::post('seriecolor','SerieColorController@save')->name('seriecolor.save');
 
+Route::apiResource('proveedors','ProveedorController');
+
+Route::apiResource('cuenta_bancarias','CuentaBancariaController');
+
 

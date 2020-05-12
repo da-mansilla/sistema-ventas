@@ -11,7 +11,7 @@
               <div class="card-header">
                   <div class="form-row">
                          <input type="text" class="form-control w-75" v-model="nombreNewClient" v-on:keyup="busquedaClient">
-                         <button class="btn btn-primary btn-sm w-25" data-dismiss="modal" v-on:click="newClient()">Guardar</button>                               
+                         <button class="btn btn-primary btn-sm w-25" data-dismiss="modal" v-on:click="newClient()">Nuevo Cliente</button>                               
                   </div>
               </div>
               <div class="card-body">

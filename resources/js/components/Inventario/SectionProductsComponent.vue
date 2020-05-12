@@ -6,7 +6,6 @@
       <div class="card-body">
         
         <formproducts-component
-            :categorias="categorias"
             @new='addProduct'>
         </formproducts-component>
 

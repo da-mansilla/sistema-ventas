@@ -41,6 +41,8 @@ Vue.component('informacionsection-component', require('./components/Informacion/
 // Proveedores
 Vue.component('sectionproveedores-component', require('./components/Proveedores/SectionProveedoresComponent.vue').default);
 Vue.component('formproveedores-component', require('./components/Proveedores/FormProveedoresComponent.vue').default);
+Vue.component('tableproveedores-component', require('./components/Proveedores/TableProveedoresComponent.vue').default);
+Vue.component('detalleproveedores-component', require('./components/Proveedores/DetalleProveedoresComponent.vue').default);
 // Precio
 Vue.component('preciosection-component', require('./components/Atajos/SectionPrecioComponent.vue').default);
 Vue.use(Toasted);

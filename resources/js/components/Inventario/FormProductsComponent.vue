@@ -41,7 +41,7 @@
                         <label for="colFormLabelLg" class="col-sm-2 col-form-label col-form-label-lg">Categoria</label>
                         <div class="input-group col-sm-4">
                             <select v-if="seleccionarCategoria"class="form-control form-control-lg" v-model="categoria" required>
-                                <option v-for="sugerencia in sugerenciasList">{{sugerencia.nombre}} ({{sugerencia.tipo}})</option>
+                                <option v-for="sugerencia in sugerenciasList">{{sugerencia.nombre}} - ({{sugerencia.tipo}})</option>
                             </select>
                             <input v-if="!seleccionarCategoria"type="text" class="form-control form-control-lg" v-model="categoria" required>
 
@@ -144,6 +144,7 @@
             getCategorias(){
               axios.get('/categoriastodas').then((response)=>{
                 this.categorias= response.data;
+                this.llenarSugerencias();
               })
             },
             cerrarModal(){
@@ -212,13 +213,6 @@
                     axios.post('/categorias',params).then((response)=>{
                         console.log('Categoria Creada');
                         var categoriaNueva = response.data;
-                        if(this.tipo == categoriaNueva.tipo){
-                            this.sugerenciasList.push(categoriaNueva)
-                        } else if(this.tipo == categoriaNueva.tipo){
-                            this.sugerenciasList.push(categoriaNueva)
-                        } else if(this.tipo == categoriaNueva.tipo){
-                            this.sugerenciasList.push(categoriaNueva)
-                        }
 
                         let index = this.n_serie.indexOf("%");
                         let serie = this.n_serie.slice(0, index);
@@ -237,6 +231,7 @@
 
                             axios.post('/products', params2)
                                     .then((response)=>{
+                                        this.getCategorias();
                                         console.log(response);
                                         
                             });
@@ -272,6 +267,7 @@
 
                         axios.post('/products', params)
                                 .then((response)=>{
+                                    this.getCategorias();
                                     console.log(response);
                                     
                         });
@@ -346,43 +342,48 @@
                 }
               }
             },
-            elegirTipo(e){
+            elegirTipo(){
                 if (this.clickCategoria){
                     console.log('elegir tipo');
                     this.clickCategoria = false;
-
-                    var tipo = e.target.value;
-                    this.sugerenciasList = [];
-                    if(tipo == 'Niño'){
-                        console.log('Categorias Niño');
-                        this.categorias.forEach((elemento)=>{
-                            if(elemento.tipo == 'Niño'){
-                                this.sugerenciasList.push(elemento);
-                                console.log(this.sugerenciasList);
-                            }
-                        })
-                    } else if(tipo =='Niña'){
-                        console.log('Categorias Niña');
-                        this.categorias.forEach((elemento)=>{
-                            if(elemento.tipo == 'Niña'){
-                                this.sugerenciasList.push(elemento);
-                                console.log(this.sugerenciasList);
-                            }
-                        })
-                    } else if(tipo == 'Unisex'){
-                        console.log('Categorias Unisex');
-                        this.categorias.forEach((elemento)=>{
-                            if(elemento.tipo == 'Unisex'){
-                                this.sugerenciasList.push(elemento);
-                                console.log(this.sugerenciasList);
-                            }
-                        })
-                    }
+                    console.log(this.tipo);
+                    this.llenarSugerencias();
+                    
                 } else {
                     this.clickCategoria = true;
                     this.sugerenciasList = [];
                 }
                 
+            },
+            llenarSugerencias(){
+                this.sugerenciasList = [];
+                if(this.tipo == 'Niño'){
+                    console.log('Categorias Niño');
+                    this.categorias.forEach((elemento)=>{
+                        if(elemento.tipo == 'Niño'){
+                            this.sugerenciasList.push(elemento);
+                            console.log(this.sugerenciasList);
+                        }
+                    })
+                } else if(this.tipo =='Niña'){
+                    console.log('Categorias Niña');
+                    this.categorias.forEach((elemento)=>{
+                        if(elemento.tipo == 'Niña'){
+                            this.sugerenciasList.push(elemento);
+                            console.log(this.sugerenciasList);
+                        }
+                    })
+                } else if(this.tipo == 'Unisex'){
+                    console.log('Categorias Unisex');
+                    this.categorias.forEach((elemento)=>{
+                        if(elemento.tipo == 'Unisex'){
+                            this.sugerenciasList.push(elemento);
+                            console.log(this.sugerenciasList);
+                        }
+                    })
+                } else {
+                    this.sugerenciasList = [];
+                }
             },
             redondeoAumentar(){
                 this.precio = 0

@@ -6,31 +6,22 @@
       <div class="card-body">
         
 
-        <button type="button" class="btn btn-success" data-toggle="modal" data-target="#exampleModal">Agregar</button>
         
+        <span v-if="pagina==1">
+          <formproveedores-component>
+          </formproveedores-component>
 
-        <div class="row tarjetas">
-          <div class="col-sm-6">
-            <div class="card text-center">
-              <div class="card-body">
-                <h3 class="card-title">Proveedores </h3>
-                <p class="card-text">3</p>
-              </div>
-            </div>
-          </div>
-          <div class="col-sm-6">
-            <div class="card text-center">
-              <div class="card-body">
-                <h5 class="card-title"></h5>
-                <p class="card-text"></p>
-              </div>
-            </div>
-          </div>
-        </div>
+          <tableproveedores-component
+          @verProveedor="verProveedor">
+          </tableproveedores-component>
+        </span>
 
-        <formproveedores-component>
-        </formproveedores-component>
-          
+        <span v-if="pagina==2">
+          <detalleproveedores-component
+            :detailProveedor="detailProveedor"
+            :detailListCuentas="detailListCuentas">
+          </detalleproveedores-component>
+        </span>
 
  
       </div>
@@ -41,8 +32,10 @@
     export default {
       data(){
         return {
+          pagina: 1,
+          detailProveedor: '',
+          detailListCuentas: []
 
-          filtros: {}
 
         };
       },
@@ -51,6 +44,16 @@
 
       },
       methods:{
+        verProveedor(proveedor){
+          this.pagina = 2;
+          axios.get('/cuenta_bancarias/'+proveedor.id).then(response=>{
+            var cuentas = response.data;
+            cuentas.forEach(cuenta=>{
+              this.detailListCuentas.push(cuenta)
+            })
+          })
+          this.detailProveedor = proveedor;
+        }
 
         },
         computed: {

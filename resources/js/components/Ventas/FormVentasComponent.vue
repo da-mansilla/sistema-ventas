@@ -13,7 +13,7 @@
 
               <span v-else>
                 <!-- Modal Button -->
-                <input type="text" class="form-control btn btn-primary" data-toggle="modal" data-target="#exampleModalCenter2" v-model="cliente">
+                <button type="button" class="form-control btn btn-primary" data-toggle="modal" data-target="#exampleModalCenter2">{{cliente}}</button>
               </span>
 
             </div>
@@ -73,7 +73,7 @@
                   <div class="input-group">
                     <input type="number" class="form-control" v-model="recargo">
                     <div class="input-group-append">
-                      <button class="btn btn-outline-secondary" type="button" v-on:click="cargarRecargo"><i class="fas fa-plus"></i></button>
+                      <button :disabled="activarBoton(recargo)" class="btn btn-outline-secondary" type="button" v-on:click="cargarRecargo"><i class="fas fa-plus"></i></button>
                     </div>
                   </div>
                 </span>
@@ -95,10 +95,10 @@
                       <option>Debito</option>
                       <option>Visa</option>
                       <option>MasterCard</option>
-                      <option>Tarjeta Naranja</option>
+                      <option value="TarjetaNaranja">Tarjeta Naranja</option>
                     </select>
                     <div class="input-group-append">
-                      <button class="btn btn-outline-secondary" type="button" id="button-addon2" v-on:click="cargarTarjeta"><i class="fas fa-plus"></i></button>
+                      <button :disabled="activarBoton(tarjeta)" class="btn btn-outline-secondary" type="button" id="button-addon2" v-on:click="cargarTarjeta"><i class="fas fa-plus"></i></button>
                     </div>
                 </div>
               </div>
@@ -128,7 +128,7 @@
                    <!-- Button trigger modal
                   <input type="text" class="form-control" v-model="producto">
                    -->
-                   <input type="text" class="form-control btn btn-primary" data-toggle="modal" data-target="#exampleModalCenter" v-model="producto">
+                   <button type="button" class="form-control btn btn-primary" data-toggle="modal" data-target="#exampleModalCenter">{{producto}}</button>
                   
                 </div>
                 <div class="form-group col-md-2">
@@ -323,9 +323,13 @@
                     <td class="td-venta">{{totalNeto}}</td> 
                 </tr> 
 
-                <tr v-if="forma_pago=='Tarjeta'" v-for='tarjeta in listTarjetas'>
+                <tr v-if="forma_pago=='Tarjeta'" v-for='(tarjeta,index) in listTarjetas'>
 
-                    <td colspan="7" class="text-right table-light td-venta"><strong>{{tarjeta.nombre}}</strong></td>
+                    <td colspan="7" class="text-right table-light td-venta">
+                      <button type="button" class="btn btn-danger btn-sm" v-on:click="eliminarTarjeta(index)">X</button>
+                      <strong>{{tarjeta.nombre}}</strong>
+                    </td>
+
                     <td class="td-venta"><input type="number" value="0"placeholder="0" :id="tarjeta.nombre" class="input-venta" v-on:keyup="FormaTarjeta"></td> 
 
                 </tr>
@@ -361,7 +365,7 @@
               <!--
               <button v-if="editMode.estado != 'Cancelado'"type="submit" class="btn btn-secondary btn-lg ml-2" v-on:click="devolucion(editMode)">Devolucion</button>
             -->
-                <button v-if="editMode.estado != 'Cancelado'"type="submit" class="btn btn-secondary btn-lg ml-2" v-on:click="deleteVenta(editMode.id,indexEdit)">Borrar</button>
+                <button v-if="editMode.estado != 'Cancelado'"type="submit" data-toggle="modal" data-target="#ModalConfirmacion" class="btn btn-secondary btn-lg ml-2" >Borrar</button>
 
               </span>
               <span v-else>
@@ -398,6 +402,31 @@
             
           </modalproducts-component>
         </div>
+
+
+          <div class="modal fade" id="ModalConfirmacion" tabindex="-1" role="dialog" aria-labelledby="ModalConfirmacion" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-scrollable" role="document">
+              <div class="modal-content">
+                <div class="modal-header md-1">
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+                </div>
+                <div class="modal-body pt-0">
+                  <div class="card">
+                      <div class="card-header"> <h2>Confirmación</h2> </div>
+                      <div class="card-body">
+                        <h4 class="mb-5">¿Estas Seguro de Borrar esta Compra?</h4>
+                        <div class="float-right">
+                          <button class="btn btn-secondary btn-lg" data-dismiss="modal">Cancelar</button>  
+                          <button class="btn btn-secondary btn-lg " data-dismiss="modal" v-on:click="deleteVenta(editMode.id,indexEdit)">Borrar</button>  
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
           
  
       </div>
@@ -508,7 +537,11 @@
               if(this.forma_pago == 'Efectivo'){
                 this.pagoEfectivo = this.totalNeto;
               } else {
-                this.pagoEfectivo = 0;
+                if(this.forma_pago=='Tarjeta'){
+                  this.FormaTarjeta();
+                  this.pagoEfectivo = 0;
+                }
+                if(this.forma_pago=='efectivoTarjeta'){this.FormaEyT();} 
               }
               
 
@@ -1075,6 +1108,12 @@
               this.tarjeta = '';
             }
           },
+          eliminarTarjeta(index){
+            console.log(this.listTarjetas)
+            this.listTarjetas.splice(index,1);
+            console.log(this.listTarjetas);
+            this.FormaTarjeta();
+          },
           selectFormaPago(e){
             var formaPago = e.target.value;
             if (formaPago == 'Efectivo'){
@@ -1086,6 +1125,15 @@
             else if(formaPago == 'Seña') {
               this.hechoDesactivado = false;
             }
+
+            if(this.forma_pago == 'Tarjeta'){
+              this.FormaTarjeta();
+              this.pagoEfectivo = 0;
+            }
+            if(this.forma_pago == 'efectivoTarjeta'){
+              this.FormaEyT();
+              this.pagoEfectivo = 0;
+            }
           },
           dejaPagando(valor){
             this.pagando = valor;
@@ -1093,9 +1141,12 @@
           FormaTarjeta(e){
             var total = 0;
             this.listTarjetas.forEach(tarjeta=>{
-              tarjeta.total = $('#'+tarjeta.nombre).val();
-              console.log($('#'+tarjeta.nombre).val());
-              let valor = parseInt($('#'+tarjeta.nombre).val())
+              tarjeta.total = parseInt($('#'+tarjeta.nombre).val());
+              if(isNaN(tarjeta.total)){
+                tarjeta.total = 0;
+              }
+              console.log("El total de la tarjeta es"+tarjeta.total);
+              let valor = tarjeta.total
               total += valor;
             })
             console.log(total);
@@ -1109,9 +1160,12 @@
           FormaEyT(e){
             var totalEnTarjetas = 0;
             this.listTarjetas.forEach(tarjeta=>{
-              tarjeta.total = $('#'+tarjeta.nombre).val();
-              console.log($('#'+tarjeta.nombre).val());
-              let valor = parseInt($('#'+tarjeta.nombre).val())
+              tarjeta.total = parseInt($('#'+tarjeta.nombre).val());
+              if(isNaN(tarjeta.total)){
+                tarjeta.total = 0;
+              }
+              console.log("El total de la tarjeta es"+tarjeta.total);
+              let valor = tarjeta.total;
               totalEnTarjetas += valor;
             })
             console.log('en efectivo '+ parseInt(this.pagoEfectivo));
@@ -1167,6 +1221,14 @@
             this.recargoActivate = true;
             this.totalRecargo = (this.recargo/100)*this.totalNeto;
             this.totalNeto += this.totalRecargo;
+          },
+          //
+          activarBoton(variable){
+            if(variable){
+              return false
+            }else{
+              return true
+            }
 
           }
 
