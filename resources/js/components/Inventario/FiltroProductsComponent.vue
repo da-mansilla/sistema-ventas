@@ -418,6 +418,7 @@ export default {
             		 }
             	};
             	this.$emit('filtrar',opciones);
+                $("#ModalFiltro").modal('hide')
             	this.categoriasList = [];
             	this.fechaElegida = '';
             	this.productsList = [];

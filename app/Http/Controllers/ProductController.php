@@ -262,8 +262,9 @@ class ProductController extends Controller
     }
     public function todosProductos(){
         $productos = DB::table('products')
-                    ->select('*')
-                    ->where('enabled',1)
+                    ->leftJoin('categorias', 'products.categoria_id', '=', 'categorias.id')
+                    ->select('products.*', DB::raw('categorias.nombre as categoria'))
+                    ->where('products.enabled',1)
                     ->get();
         return $productos;
     }

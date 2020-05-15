@@ -88,7 +88,7 @@
 
         </table>
         
-        <pagination  :data="listaProducts" @pagination-change-page="getResults" class="float-right"></pagination>
+        <pagination  :data="listaProducts" :limit="2" @pagination-change-page="getResults" class="float-right"></pagination>
 
     </div>
 </template>

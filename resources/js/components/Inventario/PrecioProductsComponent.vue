@@ -90,28 +90,39 @@
                         <tr class=" table-primary">
                           <th scope="col"></th>
                           <th scope="col">N° Serie</th>
+                          <th scope="col">Categoria</th>
                           <th scope="col">Costo</th>
                           <th scope="col">Precio</th>
                           <th scope="col">Nuevo Precio</th>
                         </tr>
                       </thead>
-                      <tbody>
-                        <tr v-for="(product,index) in productsModificar" :key="product.id">
+                      <paginate ref="paginator" name="productsModificar" :list="productsModificar" :per="5" tag="tbody">
+                        <tr v-for="(product,index) in paginated('productsModificar')" :key="product.id">
                             <td><button  type="button" class="btn btn-danger btn-sm" v-on:click="onClickDelete(index)"><i class="fas fa-times-circle"></i></button></td>
                             <td>{{product.n_serie}}</td>
+                            <td>{{product.categoria}}</td>
                             <td>{{product.costo}}</td>
                             <td>{{product.precio}}</td>
                             <td v-if="accion == 'aumentar'"><strong>{{ redondeoAumentar(product.precio) }}</strong></td>
                             <td v-if="accion == 'disminuir'"><strong>{{ redondeoDisminuir(product.precio) }}</strong></td>
                         </tr>
-                      </tbody>
+                      </paginate>
+                      
                     </table>
-                    <span v-if="productsModificar.length == 0">
-                        <button type="button" disabled v-on:click="modificarPrecio" class="btn btn-primary">Modificar</button>
+                    <div class="mb-3">
+                        
+                      <paginate-links class="justify-content-end" for="productsModificar" :simple="{prev: 'Atras',next: 'Siguiente'}" :async="true":classes="{'ul': 'pagination', 'li': 'page-item', 'a': 'page-link'}"></paginate-links>
+                    <span v-if="$refs.paginator && productsModificar.length >0">
+                          Mostrando {{$refs.paginator.pageItemsCount}} resultados
                     </span>
-                    <span v-else>
+                    </div>
+
+                    <div v-if="productsModificar.length == 0" class="d-flex justify-content-end">
+                        <button type="button" disabled v-on:click="modificarPrecio" class="btn btn-primary ">Modificar</button>
+                    </div>
+                    <div v-else class="d-flex justify-content-end">
                         <button type="button" v-on:click="modificarPrecio" class="btn btn-primary">Modificar</button>
-                    </span>
+                    </div>
                   </div>
                 </form>
               </div>
@@ -142,7 +153,8 @@
                 listaElegida: [],
                 categoriaElegida: '',
                 productsModificar: [],
-                nuevoPrecio: 0
+                paginate: ['productsModificar'],
+                nuevoPrecio: 0,
 
     		}
     	},
@@ -173,7 +185,7 @@
                         this.seleccionado = 3;
                         axios.get('todosproductos').then(response=>{
                             response.data.forEach(element=>{
-                                this.productsModificar.push(element);
+                                //this.productsModificar.push(element);
                             })
                         })
                     }
@@ -251,6 +263,7 @@
                         })
                         console.log('Productos a modificar');
                         console.log(this.productsModificar);
+                        this.$refs.paginator.goToPage(1)
                     })
 
             },
@@ -292,13 +305,12 @@
                         this.cantidad = 0;
                         this.categoriaElegida = '';
                         this.tipo = '';
-                        this.$toasted.show('Se actualizaron los precios exitosamente', { 
+                    })
+                    this.$toasted.show('Se actualizaron los precios exitosamente', { 
                             theme: "toasted-primary", 
                             position: "top-right", 
                             duration : 2000
                         });
-
-                    })
 
                 })
             },
@@ -375,3 +387,8 @@
         }
     }
 </script>
+<style>
+ul.paginate-links:{
+    float: right
+}
+</style>

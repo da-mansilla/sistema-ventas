@@ -71,7 +71,7 @@ class CategoriaController extends Controller
     public function productsPorCategoria($id){
         $productos = DB::table('categorias')
                     ->leftJoin('products', 'products.categoria_id', '=', 'categorias.id')
-                    ->select('products.*')
+                    ->select('products.*',DB::raw('categorias.nombre as categoria'))
                     ->where('categorias.id','=',$id)
                     ->where('products.enabled','=',1)
                     ->get();

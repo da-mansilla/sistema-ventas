@@ -3337,6 +3337,7 @@ __webpack_require__.r(__webpack_exports__);
         }
       };
       this.$emit('filtrar', opciones);
+      $("#ModalFiltro").modal('hide');
       this.categoriasList = [];
       this.fechaElegida = '';
       this.productsList = [];
@@ -4091,6 +4092,17 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   props: {
     categorias: {},
@@ -4110,6 +4122,7 @@ __webpack_require__.r(__webpack_exports__);
       listaElegida: [],
       categoriaElegida: '',
       productsModificar: [],
+      paginate: ['productsModificar'],
       nuevoPrecio: 0
     };
   },
@@ -4126,8 +4139,6 @@ __webpack_require__.r(__webpack_exports__);
       axios.get('todosproductos').then(function (response) {});
     },
     seleccionarPor: function seleccionarPor(e) {
-      var _this = this;
-
       if (this.clickSeleccionar) {
         this.clickSeleccionar = false;
         var seleccionar = e.target.value;
@@ -4137,8 +4148,7 @@ __webpack_require__.r(__webpack_exports__);
         if (seleccionar == 'Todos') {
           this.seleccionado = 3;
           axios.get('todosproductos').then(function (response) {
-            response.data.forEach(function (element) {
-              _this.productsModificar.push(element);
+            response.data.forEach(function (element) {//this.productsModificar.push(element);
             });
           });
         }
@@ -4155,7 +4165,7 @@ __webpack_require__.r(__webpack_exports__);
       }
     },
     elegirTipo: function elegirTipo(e) {
-      var _this2 = this;
+      var _this = this;
 
       if (this.clickCategoria) {
         this.clickCategoria = false;
@@ -4166,35 +4176,35 @@ __webpack_require__.r(__webpack_exports__);
           console.log('Categorias Niño');
           axios.get('tipos/Niño').then(function (response) {
             response.data.forEach(function (element) {
-              _this2.listaElegida.push(element);
+              _this.listaElegida.push(element);
 
-              console.log(_this2.listaElegida);
+              console.log(_this.listaElegida);
             });
           });
         } else if (tipo == 'Niña') {
           console.log('Categorias Niña');
           axios.get('tipos/Niña').then(function (response) {
             response.data.forEach(function (element) {
-              _this2.listaElegida.push(element);
+              _this.listaElegida.push(element);
 
-              console.log(_this2.listaElegida);
+              console.log(_this.listaElegida);
             });
           });
         } else if (tipo == 'Unisex') {
           console.log('Categorias Unisex');
           axios.get('tipos/Unisex').then(function (response) {
             response.data.forEach(function (element) {
-              _this2.listaElegida.push(element);
+              _this.listaElegida.push(element);
 
-              console.log(_this2.listaElegida);
+              console.log(_this.listaElegida);
             });
           });
         } else if (tipo == 'Todos') {
           console.log('Todas Categorias');
           this.categorias.forEach(function (elemento) {
-            _this2.listaElegida.push(elemento);
+            _this.listaElegida.push(elemento);
 
-            console.log(_this2.listaElegida);
+            console.log(_this.listaElegida);
           });
         }
       } else {
@@ -4203,30 +4213,32 @@ __webpack_require__.r(__webpack_exports__);
       }
     },
     inputSerie: function inputSerie() {
-      var _this3 = this;
+      var _this2 = this;
 
       console.log(this.productoSerie);
       var index = this.productoSerie.indexOf("%");
       var serie = this.productoSerie.slice(0, index);
       axios.get('buscarProducto/' + serie).then(function (response) {
         response.data.forEach(function (element) {
-          _this3.productsModificar.push(element);
+          _this2.productsModificar.push(element);
 
-          _this3.productoSerie = '';
+          _this2.productoSerie = '';
         });
       });
     },
     cargarProductos: function cargarProductos() {
-      var _this4 = this;
+      var _this3 = this;
 
       console.log('Id de categoria ' + this.categoriaElegida);
       this.productsModificar = [];
       axios.get('productsporcategoria/' + this.categoriaElegida).then(function (response) {
         response.data.forEach(function (element) {
-          _this4.productsModificar.push(element);
+          _this3.productsModificar.push(element);
         });
         console.log('Productos a modificar');
-        console.log(_this4.productsModificar);
+        console.log(_this3.productsModificar);
+
+        _this3.$refs.paginator.goToPage(1);
       });
     },
     onClickDelete: function onClickDelete(index) {
@@ -4247,16 +4259,16 @@ __webpack_require__.r(__webpack_exports__);
       }
     },
     modificarPrecio: function modificarPrecio() {
-      var _this5 = this;
+      var _this4 = this;
 
       this.productsModificar.forEach(function (elemento) {
         var precioFinal;
 
-        if (_this5.accion == 'aumentar') {
-          precioFinal = _this5.redondeoAumentar(elemento.costo);
+        if (_this4.accion == 'aumentar') {
+          precioFinal = _this4.redondeoAumentar(elemento.costo);
           console.log('El producto ' + elemento.id + ' de precio ' + elemento.precio + ' se modificará a ' + precioFinal);
-        } else if (_this5.accion == 'disminuir') {
-          precioFinal = _this5.redondeoDisminuir(elemento.costo);
+        } else if (_this4.accion == 'disminuir') {
+          precioFinal = _this4.redondeoDisminuir(elemento.costo);
           console.log('El producto ' + elemento.id + ' de precio ' + elemento.precio + ' se modificará a ' + precioFinal);
         }
 
@@ -4264,19 +4276,19 @@ __webpack_require__.r(__webpack_exports__);
           precio: precioFinal
         };
         axios.put('/precio/aumentar/' + elemento.id, params).then(function (response) {
-          _this5.$emit('updatePrecio');
+          _this4.$emit('updatePrecio');
 
           console.log(response);
-          _this5.productsModificar = [];
-          _this5.cantidad = 0;
-          _this5.categoriaElegida = '';
-          _this5.tipo = '';
+          _this4.productsModificar = [];
+          _this4.cantidad = 0;
+          _this4.categoriaElegida = '';
+          _this4.tipo = '';
+        });
 
-          _this5.$toasted.show('Se actualizaron los precios exitosamente', {
-            theme: "toasted-primary",
-            position: "top-right",
-            duration: 2000
-          });
+        _this4.$toasted.show('Se actualizaron los precios exitosamente', {
+          theme: "toasted-primary",
+          position: "top-right",
+          duration: 2000
         });
       });
     },
@@ -29822,6 +29834,25 @@ core_controller.helpers.each(
 return src;
 
 })));
+
+
+/***/ }),
+
+/***/ "./node_modules/css-loader/index.js?!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/Inventario/PrecioProductsComponent.vue?vue&type=style&index=0&lang=css&":
+/*!****************************************************************************************************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/css-loader??ref--6-1!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src??ref--6-2!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/Inventario/PrecioProductsComponent.vue?vue&type=style&index=0&lang=css& ***!
+  \****************************************************************************************************************************************************************************************************************************************************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+exports = module.exports = __webpack_require__(/*! ../../../../node_modules/css-loader/lib/css-base.js */ "./node_modules/css-loader/lib/css-base.js")(false);
+// imports
+
+
+// module
+exports.push([module.i, "\nul.paginate-links:{\r\n    float: right\n}\r\n", ""]);
+
+// exports
 
 
 /***/ }),
@@ -79069,6 +79100,36 @@ process.umask = function() { return 0; };
 
 /***/ }),
 
+/***/ "./node_modules/style-loader/index.js!./node_modules/css-loader/index.js?!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/Inventario/PrecioProductsComponent.vue?vue&type=style&index=0&lang=css&":
+/*!********************************************************************************************************************************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/style-loader!./node_modules/css-loader??ref--6-1!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src??ref--6-2!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/Inventario/PrecioProductsComponent.vue?vue&type=style&index=0&lang=css& ***!
+  \********************************************************************************************************************************************************************************************************************************************************************************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+
+var content = __webpack_require__(/*! !../../../../node_modules/css-loader??ref--6-1!../../../../node_modules/vue-loader/lib/loaders/stylePostLoader.js!../../../../node_modules/postcss-loader/src??ref--6-2!../../../../node_modules/vue-loader/lib??vue-loader-options!./PrecioProductsComponent.vue?vue&type=style&index=0&lang=css& */ "./node_modules/css-loader/index.js?!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/Inventario/PrecioProductsComponent.vue?vue&type=style&index=0&lang=css&");
+
+if(typeof content === 'string') content = [[module.i, content, '']];
+
+var transform;
+var insertInto;
+
+
+
+var options = {"hmr":true}
+
+options.transform = transform
+options.insertInto = undefined;
+
+var update = __webpack_require__(/*! ../../../../node_modules/style-loader/lib/addStyles.js */ "./node_modules/style-loader/lib/addStyles.js")(content, options);
+
+if(content.locals) module.exports = content.locals;
+
+if(false) {}
+
+/***/ }),
+
 /***/ "./node_modules/style-loader/index.js!./node_modules/css-loader/index.js?!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/Inventario/TableCategoriasComponent.vue?vue&type=style&index=0&lang=css&":
 /*!*********************************************************************************************************************************************************************************************************************************************************************************************************************************!*\
   !*** ./node_modules/style-loader!./node_modules/css-loader??ref--6-1!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src??ref--6-2!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/Inventario/TableCategoriasComponent.vue?vue&type=style&index=0&lang=css& ***!
@@ -83344,91 +83405,149 @@ var render = function() {
                     _vm._v(" "),
                     _c("hr"),
                     _vm._v(" "),
-                    _c("table", { staticClass: "table mt-0" }, [
-                      _vm._m(3),
-                      _vm._v(" "),
-                      _c(
-                        "tbody",
-                        _vm._l(_vm.productsModificar, function(product, index) {
-                          return _c("tr", { key: product.id }, [
-                            _c("td", [
-                              _c(
-                                "button",
-                                {
-                                  staticClass: "btn btn-danger btn-sm",
-                                  attrs: { type: "button" },
-                                  on: {
-                                    click: function($event) {
-                                      return _vm.onClickDelete(index)
+                    _c(
+                      "table",
+                      { staticClass: "table mt-0" },
+                      [
+                        _vm._m(3),
+                        _vm._v(" "),
+                        _c(
+                          "paginate",
+                          {
+                            ref: "paginator",
+                            attrs: {
+                              name: "productsModificar",
+                              list: _vm.productsModificar,
+                              per: 5,
+                              tag: "tbody"
+                            }
+                          },
+                          _vm._l(_vm.paginated("productsModificar"), function(
+                            product,
+                            index
+                          ) {
+                            return _c("tr", { key: product.id }, [
+                              _c("td", [
+                                _c(
+                                  "button",
+                                  {
+                                    staticClass: "btn btn-danger btn-sm",
+                                    attrs: { type: "button" },
+                                    on: {
+                                      click: function($event) {
+                                        return _vm.onClickDelete(index)
+                                      }
                                     }
-                                  }
-                                },
-                                [
-                                  _c("i", {
-                                    staticClass: "fas fa-times-circle"
-                                  })
-                                ]
-                              )
-                            ]),
-                            _vm._v(" "),
-                            _c("td", [_vm._v(_vm._s(product.n_serie))]),
-                            _vm._v(" "),
-                            _c("td", [_vm._v(_vm._s(product.costo))]),
-                            _vm._v(" "),
-                            _c("td", [_vm._v(_vm._s(product.precio))]),
-                            _vm._v(" "),
-                            _vm.accion == "aumentar"
-                              ? _c("td", [
-                                  _c("strong", [
-                                    _vm._v(
-                                      _vm._s(
-                                        _vm.redondeoAumentar(product.precio)
+                                  },
+                                  [
+                                    _c("i", {
+                                      staticClass: "fas fa-times-circle"
+                                    })
+                                  ]
+                                )
+                              ]),
+                              _vm._v(" "),
+                              _c("td", [_vm._v(_vm._s(product.n_serie))]),
+                              _vm._v(" "),
+                              _c("td", [_vm._v(_vm._s(product.categoria))]),
+                              _vm._v(" "),
+                              _c("td", [_vm._v(_vm._s(product.costo))]),
+                              _vm._v(" "),
+                              _c("td", [_vm._v(_vm._s(product.precio))]),
+                              _vm._v(" "),
+                              _vm.accion == "aumentar"
+                                ? _c("td", [
+                                    _c("strong", [
+                                      _vm._v(
+                                        _vm._s(
+                                          _vm.redondeoAumentar(product.precio)
+                                        )
                                       )
-                                    )
+                                    ])
                                   ])
-                                ])
-                              : _vm._e(),
-                            _vm._v(" "),
-                            _vm.accion == "disminuir"
-                              ? _c("td", [
-                                  _c("strong", [
-                                    _vm._v(
-                                      _vm._s(
-                                        _vm.redondeoDisminuir(product.precio)
+                                : _vm._e(),
+                              _vm._v(" "),
+                              _vm.accion == "disminuir"
+                                ? _c("td", [
+                                    _c("strong", [
+                                      _vm._v(
+                                        _vm._s(
+                                          _vm.redondeoDisminuir(product.precio)
+                                        )
                                       )
-                                    )
+                                    ])
                                   ])
-                                ])
-                              : _vm._e()
-                          ])
+                                : _vm._e()
+                            ])
+                          }),
+                          0
+                        )
+                      ],
+                      1
+                    ),
+                    _vm._v(" "),
+                    _c(
+                      "div",
+                      { staticClass: "mb-3" },
+                      [
+                        _c("paginate-links", {
+                          staticClass: "justify-content-end",
+                          attrs: {
+                            for: "productsModificar",
+                            simple: { prev: "Atras", next: "Siguiente" },
+                            async: true,
+                            classes: {
+                              ul: "pagination",
+                              li: "page-item",
+                              a: "page-link"
+                            }
+                          }
                         }),
-                        0
-                      )
-                    ]),
+                        _vm._v(" "),
+                        _vm.$refs.paginator && _vm.productsModificar.length > 0
+                          ? _c("span", [
+                              _vm._v(
+                                "\n                      Mostrando " +
+                                  _vm._s(_vm.$refs.paginator.pageItemsCount) +
+                                  " resultados\n                "
+                              )
+                            ])
+                          : _vm._e()
+                      ],
+                      1
+                    ),
                     _vm._v(" "),
                     _vm.productsModificar.length == 0
-                      ? _c("span", [
-                          _c(
-                            "button",
-                            {
-                              staticClass: "btn btn-primary",
-                              attrs: { type: "button", disabled: "" },
-                              on: { click: _vm.modificarPrecio }
-                            },
-                            [_vm._v("Modificar")]
-                          )
-                        ])
-                      : _c("span", [
-                          _c(
-                            "button",
-                            {
-                              staticClass: "btn btn-primary",
-                              attrs: { type: "button" },
-                              on: { click: _vm.modificarPrecio }
-                            },
-                            [_vm._v("Modificar")]
-                          )
-                        ])
+                      ? _c(
+                          "div",
+                          { staticClass: "d-flex justify-content-end" },
+                          [
+                            _c(
+                              "button",
+                              {
+                                staticClass: "btn btn-primary ",
+                                attrs: { type: "button", disabled: "" },
+                                on: { click: _vm.modificarPrecio }
+                              },
+                              [_vm._v("Modificar")]
+                            )
+                          ]
+                        )
+                      : _c(
+                          "div",
+                          { staticClass: "d-flex justify-content-end" },
+                          [
+                            _c(
+                              "button",
+                              {
+                                staticClass: "btn btn-primary",
+                                attrs: { type: "button" },
+                                on: { click: _vm.modificarPrecio }
+                              },
+                              [_vm._v("Modificar")]
+                            )
+                          ]
+                        )
                   ])
                 ])
               ])
@@ -83498,6 +83617,8 @@ var staticRenderFns = [
         _c("th", { attrs: { scope: "col" } }),
         _vm._v(" "),
         _c("th", { attrs: { scope: "col" } }, [_vm._v("N° Serie")]),
+        _vm._v(" "),
+        _c("th", { attrs: { scope: "col" } }, [_vm._v("Categoria")]),
         _vm._v(" "),
         _c("th", { attrs: { scope: "col" } }, [_vm._v("Costo")]),
         _vm._v(" "),
@@ -84267,7 +84388,7 @@ var render = function() {
       _vm._v(" "),
       _c("pagination", {
         staticClass: "float-right",
-        attrs: { data: _vm.listaProducts },
+        attrs: { data: _vm.listaProducts, limit: 2 },
         on: { "pagination-change-page": _vm.getResults }
       })
     ],
@@ -103519,7 +103640,9 @@ __webpack_require__.r(__webpack_exports__);
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _PrecioProductsComponent_vue_vue_type_template_id_3281ddc0___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./PrecioProductsComponent.vue?vue&type=template&id=3281ddc0& */ "./resources/js/components/Inventario/PrecioProductsComponent.vue?vue&type=template&id=3281ddc0&");
 /* harmony import */ var _PrecioProductsComponent_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./PrecioProductsComponent.vue?vue&type=script&lang=js& */ "./resources/js/components/Inventario/PrecioProductsComponent.vue?vue&type=script&lang=js&");
-/* empty/unused harmony star reexport *//* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
+/* empty/unused harmony star reexport *//* harmony import */ var _PrecioProductsComponent_vue_vue_type_style_index_0_lang_css___WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./PrecioProductsComponent.vue?vue&type=style&index=0&lang=css& */ "./resources/js/components/Inventario/PrecioProductsComponent.vue?vue&type=style&index=0&lang=css&");
+/* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
+
 
 
 
@@ -103527,7 +103650,7 @@ __webpack_require__.r(__webpack_exports__);
 
 /* normalize component */
 
-var component = Object(_node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__["default"])(
+var component = Object(_node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_3__["default"])(
   _PrecioProductsComponent_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__["default"],
   _PrecioProductsComponent_vue_vue_type_template_id_3281ddc0___WEBPACK_IMPORTED_MODULE_0__["render"],
   _PrecioProductsComponent_vue_vue_type_template_id_3281ddc0___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"],
@@ -103556,6 +103679,22 @@ component.options.__file = "resources/js/components/Inventario/PrecioProductsCom
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_PrecioProductsComponent_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../node_modules/babel-loader/lib??ref--4-0!../../../../node_modules/vue-loader/lib??vue-loader-options!./PrecioProductsComponent.vue?vue&type=script&lang=js& */ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/Inventario/PrecioProductsComponent.vue?vue&type=script&lang=js&");
 /* empty/unused harmony star reexport */ /* harmony default export */ __webpack_exports__["default"] = (_node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_PrecioProductsComponent_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__["default"]); 
+
+/***/ }),
+
+/***/ "./resources/js/components/Inventario/PrecioProductsComponent.vue?vue&type=style&index=0&lang=css&":
+/*!*********************************************************************************************************!*\
+  !*** ./resources/js/components/Inventario/PrecioProductsComponent.vue?vue&type=style&index=0&lang=css& ***!
+  \*********************************************************************************************************/
+/*! no static exports found */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _node_modules_style_loader_index_js_node_modules_css_loader_index_js_ref_6_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_6_2_node_modules_vue_loader_lib_index_js_vue_loader_options_PrecioProductsComponent_vue_vue_type_style_index_0_lang_css___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../node_modules/style-loader!../../../../node_modules/css-loader??ref--6-1!../../../../node_modules/vue-loader/lib/loaders/stylePostLoader.js!../../../../node_modules/postcss-loader/src??ref--6-2!../../../../node_modules/vue-loader/lib??vue-loader-options!./PrecioProductsComponent.vue?vue&type=style&index=0&lang=css& */ "./node_modules/style-loader/index.js!./node_modules/css-loader/index.js?!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/Inventario/PrecioProductsComponent.vue?vue&type=style&index=0&lang=css&");
+/* harmony import */ var _node_modules_style_loader_index_js_node_modules_css_loader_index_js_ref_6_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_6_2_node_modules_vue_loader_lib_index_js_vue_loader_options_PrecioProductsComponent_vue_vue_type_style_index_0_lang_css___WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_node_modules_style_loader_index_js_node_modules_css_loader_index_js_ref_6_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_6_2_node_modules_vue_loader_lib_index_js_vue_loader_options_PrecioProductsComponent_vue_vue_type_style_index_0_lang_css___WEBPACK_IMPORTED_MODULE_0__);
+/* harmony reexport (unknown) */ for(var __WEBPACK_IMPORT_KEY__ in _node_modules_style_loader_index_js_node_modules_css_loader_index_js_ref_6_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_6_2_node_modules_vue_loader_lib_index_js_vue_loader_options_PrecioProductsComponent_vue_vue_type_style_index_0_lang_css___WEBPACK_IMPORTED_MODULE_0__) if(__WEBPACK_IMPORT_KEY__ !== 'default') (function(key) { __webpack_require__.d(__webpack_exports__, key, function() { return _node_modules_style_loader_index_js_node_modules_css_loader_index_js_ref_6_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_6_2_node_modules_vue_loader_lib_index_js_vue_loader_options_PrecioProductsComponent_vue_vue_type_style_index_0_lang_css___WEBPACK_IMPORTED_MODULE_0__[key]; }) }(__WEBPACK_IMPORT_KEY__));
+ /* harmony default export */ __webpack_exports__["default"] = (_node_modules_style_loader_index_js_node_modules_css_loader_index_js_ref_6_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_6_2_node_modules_vue_loader_lib_index_js_vue_loader_options_PrecioProductsComponent_vue_vue_type_style_index_0_lang_css___WEBPACK_IMPORTED_MODULE_0___default.a); 
 
 /***/ }),
 
