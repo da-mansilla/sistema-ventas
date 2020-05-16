@@ -52,7 +52,7 @@ Route::get('clients/buscar/{nombre}','ClientController@busqueda')->name('clients
 Route::get('cantidadClientes','ClientController@cantidadClientes')->name('clients.cantidadClientes');
 
 Route::get('cantidad','ProductController@cantidad')->name('products.cantidad');
-Route::put('precio/{accion}/{id}','ProductController@precio')->name('products.precio');
+Route::put('precio','ProductController@precio')->name('products.precio');
 
 Route::get('tipos/{tipo}','CategoriaController@categoriaTipo')->name('categorias.tipo');
 

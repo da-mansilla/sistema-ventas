@@ -235,13 +235,18 @@ class ProductController extends Controller
 
         return $products[0]->cantidad; 
     }
-    public function precio (Request $request,$accion,$id){
-        $product = Product::find($id);
-        
-        $product->precio = $request->input('precio');
-        $product->save();
+    public function precio (Request $request){
+        $productosModificados= [];
+        $listaProductos = $request->input();
+        foreach ($listaProductos as $key => $producto) {
+            $product = Product::find($producto[0]);
+            $product->precio = $producto[1];
+            $product->save();
+            array_push($productosModificados,$product);
+        }
+        return $productosModificados;
 
-        return $product;
+
     }
     public function temporadas(){
         $temporadas = DB::table('products')

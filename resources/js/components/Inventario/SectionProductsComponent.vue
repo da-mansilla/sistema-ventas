@@ -11,8 +11,7 @@
 
         <precioproducts-component
           :listStock='listStock'
-          :categorias='categorias'
-          @updatePrecio="addProduct"> 
+          :categorias='categorias'> 
         </precioproducts-component>
             <!-- Button trigger modal -->
   <button type="button" class="btn btn-secondary float-right" data-toggle="modal" data-target="#ModalFiltro" v-on:click="cargarFiltro">
@@ -25,7 +24,7 @@
         </filtroproducts-component>
 
         <button type="button" class="btn btn-success" data-toggle="modal" data-target="#exampleModal">Agregar</button>
-        <button type="button" class="btn btn-success" data-toggle="modal" data-target="#exampleModal2">Precio</button>
+        <button type="button" class="btn btn-success" data-toggle="modal" data-target="#ModalPrecio">Precio</button>
 
         <div class="row tarjetas">
           <div class="col-sm-6">
@@ -94,20 +93,19 @@
           this.getCategorias();
       },
       methods:{
-            getCategorias(){
-              axios.get('/categoriastodas').then((response)=>{
-                this.categorias= response.data;
-              })
+            async getCategorias(){
+                respuesta = await axios.get('/categoriastodas')
+                this.categorias= respuesta.data;
             },
-            getCantidadProducts(){
-              axios.get('/cantidadProducts').then(response=>{
-                this.cantidadProducts = response.data[0].cantidad
-              })
+            async getCantidadProducts(){
+                let respuesta = await axios.get('/cantidadProducts')
+                this.cantidadProducts = respuesta.data[0].cantidad
             },
-            getCantidadCategorias(){
-              axios.get('/cantidadcategorias').then(response=>{
-                this.cantidadCategorias = response.data.length
-              })
+            async getCantidadCategorias(){
+              
+                let cantidad = await axios.get('/cantidadcategorias')
+                this.cantidadCategorias = cantidad.data.length
+              
             },
             addProduct(){
                 this.getCategorias();

@@ -3,7 +3,7 @@
         <!-- Button trigger modal -->
         
         <!-- Modal-->
-        <div class="modal fade" id="exampleModal2" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal fade" id="ModalPrecio" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
           <div class="modal-dialog modal-lg modal-dialog-scrollable" role="document">
             <div class="modal-content">
               <div class="modal-header">
@@ -96,7 +96,7 @@
                           <th scope="col">Nuevo Precio</th>
                         </tr>
                       </thead>
-                      <paginate ref="paginator" name="productsModificar" :list="productsModificar" :per="5" tag="tbody">
+                      <paginate ref="paginator" name="productsModificar" :list="productsModificar" :per="10" tag="tbody">
                         <tr v-for="(product,index) in paginated('productsModificar')" :key="product.id">
                             <td><button  type="button" class="btn btn-danger btn-sm" v-on:click="onClickDelete(index)"><i class="fas fa-times-circle"></i></button></td>
                             <td>{{product.n_serie}}</td>
@@ -159,7 +159,7 @@
     		}
     	},
         mounted() {
-            $('#exampleModal2').on('hidden.bs.modal', this.cerrarModal);
+            $('#ModalPrecio').on('hidden.bs.modal', this.cerrarModal);
         },
         methods: {
             cerrarModal(){
@@ -185,7 +185,8 @@
                         this.seleccionado = 3;
                         axios.get('todosproductos').then(response=>{
                             response.data.forEach(element=>{
-                                //this.productsModificar.push(element);
+                                this.productsModificar.push(element);
+                                this.$refs.paginator.goToPage(1)
                             })
                         })
                     }
@@ -285,16 +286,22 @@
                     this.clickAccion = true;
                 }
             },
-            modificarPrecio(){
+            async modificarPrecio(){
+                let cantidadProductos=this.productsModificar.length
+                var listaParam = [];
                 this.productsModificar.forEach((elemento)=>{
                     var precioFinal
                     if(this.accion == 'aumentar'){
-                        precioFinal = this.redondeoAumentar(elemento.costo);
-                        console.log('El producto ' + elemento.id + ' de precio ' + elemento.precio+ ' se modificará a '+ precioFinal);
+                        precioFinal = this.redondeoAumentar(elemento.precio);
+                        console.log('El producto ' + elemento.id + ' de precio ' + elemento.precio+ ' se aumentara a '+ this.redondeoAumentar(elemento.precio));
                     } else if(this.accion == 'disminuir'){
-                        precioFinal = this.redondeoDisminuir(elemento.costo);
-                        console.log('El producto ' + elemento.id + ' de precio ' + elemento.precio+ ' se modificará a '+ precioFinal);
+                        precioFinal = this.redondeoDisminuir(elemento.precio);
+                        console.log('El producto ' + elemento.id + ' de precio ' + elemento.precio+ ' se disminuira a '+ this.redondeoAumentar(elemento.precio));
                     }
+                    let productoCambiar = [elemento.id,precioFinal];
+                    listaParam.push(productoCambiar);
+                    
+                    /*
                     let params= {
                         precio: precioFinal
                     }
@@ -306,13 +313,23 @@
                         this.categoriaElegida = '';
                         this.tipo = '';
                     })
-                    this.$toasted.show('Se actualizaron los precios exitosamente', { 
+                    */
+                })
+                await axios.put('/precio',listaParam)
+                    .then((response)=>{
+                        console.log(response);
+                        this.$toasted.show('Se actualizaron los precios de '+cantidadProductos+' productos exitosamente', { 
                             theme: "toasted-primary", 
                             position: "top-right", 
                             duration : 2000
                         });
-
+                        $("#ModalPrecio").modal('hide');
+                    })
+                    .catch(error =>{
+                        console.log(error);
                 })
+                
+                
             },
             redondeoAumentar(costo){
                 var precioFinal = Math.ceil( ((this.cantidad/100)* costo )+costo );
