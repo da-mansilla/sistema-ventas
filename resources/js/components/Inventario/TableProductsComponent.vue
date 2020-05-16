@@ -89,6 +89,7 @@
         </table>
         
         <pagination  :data="listaProducts" :limit="2" @pagination-change-page="getResults" class="float-right"></pagination>
+        <span>Mostrando {{(listaProducts.current_page-1) * 5}} - {{(listaProducts.current_page) * 5}} de {{listaProducts.total}} elementos</span>
 
     </div>
 </template>

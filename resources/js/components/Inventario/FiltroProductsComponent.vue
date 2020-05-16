@@ -76,7 +76,7 @@
 						      <div class="card-body">
 					        	<div class="input-group w-100" >
 								  <select class="form-control" v-model="categoriaSeleccionada">
-								  	<option v-for="categoria in sugerenciasList">{{categoria.nombre}} ({{categoria.tipo}})</option>
+								  	<option v-for="categoria in sortedArray">{{categoria.nombre}} ({{categoria.tipo}})</option>
 								  </select>
 								  <div class="input-group-append">
 								    <button class="btn btn-outline-secondary" type="button" v-on:click="agregarCategoria"><i class="fas fa-plus"></i></button>
@@ -427,6 +427,20 @@ export default {
 
         	
 
+        },
+        computed: {
+            sortedArray: function() {
+                function compare(a, b) {
+                  if (a.nombre.toLowerCase() < b.nombre.toLowerCase() )
+                    return -1;
+                  if (a.nombre > b.nombre)
+                    return 1;
+                  return 0;
+                }
+
+                return this.sugerenciasList.sort(compare);
+
+            }
         }
     }
 </script>

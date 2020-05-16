@@ -94,7 +94,7 @@
       },
       methods:{
             async getCategorias(){
-                respuesta = await axios.get('/categoriastodas')
+                let respuesta = await axios.get('/categoriastodas')
                 this.categorias= respuesta.data;
             },
             async getCantidadProducts(){
@@ -137,7 +137,7 @@
             },
             filtrar(opc){
               axios.post('/filtrar',opc).then(response=>{
-                console.log(response.data);
+                console.log(response);
                 this.listaFiltrada = response.data;
                 this.filtros = opc;
                 this.pagina =3 ;

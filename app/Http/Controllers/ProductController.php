@@ -47,7 +47,7 @@ class ProductController extends Controller
         if($request->input('categoria')['enabled']) {
             $listaCategorias = $request->input('categoria')['categorias'];
             foreach ($listaCategorias as $key => $categoria) {
-                array_push($categoriasElegidas,$categoria['nombre']);
+                array_push($categoriasElegidas,$categoria['id']);
             };
         }
         //Temporada
@@ -92,7 +92,7 @@ class ProductController extends Controller
                     return $query->whereBetween('products.precio',$precio);
                 })
                 ->when($request->input('categoria')['enabled'], function($query) use($categoriasElegidas) {
-                    return $query->whereIn('categorias.nombre',$categoriasElegidas);
+                    return $query->whereIn('categorias.id',$categoriasElegidas);
                 })
                 ->when($request->input('temporada')['enabled'], function($query) use($temporada) {
                     return $query->where('products.nombre',$temporada);

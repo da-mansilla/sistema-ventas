@@ -1,5 +1,9 @@
 <template>
     <div>
+      <div v-if="filtros.categoria.enabled">
+        Mostrando Categorias: 
+        <span v-for="categoria in filtros.categoria.categorias"> {{categoria.nombre}} ({{categoria.tipo}}),</span>
+      </div>
         <table class="table table-bordered table-products ">
           <thead>
             <tr class=" table-primary ">
@@ -88,7 +92,8 @@
           
 
         </table>
-            <pagination  :data="listaFiltrada" @pagination-change-page="filtrar" class="float-right"></pagination>
+        <span>Mostrando {{(listaFiltrada.current_page-1) * 5}} - {{(listaFiltrada.current_page) * 5}} de {{listaFiltrada.total}} elementos</span>
+            <pagination  :data="listaFiltrada" :limit="2" @pagination-change-page="filtrar" class="float-right"></pagination>
         
 
     </div>
@@ -168,10 +173,12 @@
                  duration : 2000
                 });
               })
-
-              
-
             }
+        },
+        watch:{
+          listaFiltrada: function(){
+            console.log('La lista cambioo')
+          }
         },
         computed: {
         }

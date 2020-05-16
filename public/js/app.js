@@ -3355,6 +3355,17 @@ __webpack_require__.r(__webpack_exports__);
       this.productsList = [];
       console.log(opciones);
     }
+  },
+  computed: {
+    sortedArray: function sortedArray() {
+      function compare(a, b) {
+        if (a.nombre.toLowerCase() < b.nombre.toLowerCase()) return -1;
+        if (a.nombre > b.nombre) return 1;
+        return 0;
+      }
+
+      return this.sugerenciasList.sort(compare);
+    }
   }
 });
 
@@ -4524,6 +4535,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       var _getCategorias = _asyncToGenerator(
       /*#__PURE__*/
       _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee() {
+        var respuesta;
         return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee$(_context) {
           while (1) {
             switch (_context.prev = _context.next) {
@@ -4643,7 +4655,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       var _this2 = this;
 
       axios.post('/filtrar', opc).then(function (response) {
-        console.log(response.data);
+        console.log(response);
         _this2.listaFiltrada = response.data;
         _this2.filtros = opc;
         _this2.pagina = 3;
@@ -4887,6 +4899,11 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   props: {
     filtros: {},
@@ -4965,6 +4982,11 @@ __webpack_require__.r(__webpack_exports__);
       });
     }
   },
+  watch: {
+    listaFiltrada: function listaFiltrada() {
+      console.log('La lista cambioo');
+    }
+  },
   computed: {}
 });
 
@@ -4979,6 +5001,7 @@ __webpack_require__.r(__webpack_exports__);
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
+//
 //
 //
 //
@@ -82458,7 +82481,7 @@ var render = function() {
                                             }
                                           }
                                         },
-                                        _vm._l(_vm.sugerenciasList, function(
+                                        _vm._l(_vm.sortedArray, function(
                                           categoria
                                         ) {
                                           return _c("option", [
@@ -84869,6 +84892,27 @@ var render = function() {
   return _c(
     "div",
     [
+      _vm.filtros.categoria.enabled
+        ? _c(
+            "div",
+            [
+              _vm._v("\n    Mostrando Categorias: \n    "),
+              _vm._l(_vm.filtros.categoria.categorias, function(categoria) {
+                return _c("span", [
+                  _vm._v(
+                    " " +
+                      _vm._s(categoria.nombre) +
+                      " (" +
+                      _vm._s(categoria.tipo) +
+                      "),"
+                  )
+                ])
+              })
+            ],
+            2
+          )
+        : _vm._e(),
+      _vm._v(" "),
       _c("table", { staticClass: "table table-bordered table-products " }, [
         _vm._m(0),
         _vm._v(" "),
@@ -85019,9 +85063,21 @@ var render = function() {
           : _vm._e()
       ]),
       _vm._v(" "),
+      _c("span", [
+        _vm._v(
+          "Mostrando " +
+            _vm._s((_vm.listaFiltrada.current_page - 1) * 5) +
+            " - " +
+            _vm._s(_vm.listaFiltrada.current_page * 5) +
+            " de " +
+            _vm._s(_vm.listaFiltrada.total) +
+            " elementos"
+        )
+      ]),
+      _vm._v(" "),
       _c("pagination", {
         staticClass: "float-right",
-        attrs: { data: _vm.listaFiltrada },
+        attrs: { data: _vm.listaFiltrada, limit: 2 },
         on: { "pagination-change-page": _vm.filtrar }
       })
     ],
@@ -85261,7 +85317,19 @@ var render = function() {
         staticClass: "float-right",
         attrs: { data: _vm.listaProducts, limit: 2 },
         on: { "pagination-change-page": _vm.getResults }
-      })
+      }),
+      _vm._v(" "),
+      _c("span", [
+        _vm._v(
+          "Mostrando " +
+            _vm._s((_vm.listaProducts.current_page - 1) * 5) +
+            " - " +
+            _vm._s(_vm.listaProducts.current_page * 5) +
+            " de " +
+            _vm._s(_vm.listaProducts.total) +
+            " elementos"
+        )
+      ])
     ],
     1
   )
