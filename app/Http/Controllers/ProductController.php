@@ -112,7 +112,7 @@ class ProductController extends Controller
         foreach ($products as $key => $product) {
             array_push($id,$product->id);
         };
-        
+    
         $stocks = DB::table('products')
                     ->leftJoin('categorias', 'products.categoria_id', '=', 'categorias.id')
                     ->select('n_serie')
@@ -127,9 +127,7 @@ class ProductController extends Controller
                 };
             };
             $stocks[$key]->products = $lista;
-            $lista= [];
         }
-
         return $stocks;
 
     }

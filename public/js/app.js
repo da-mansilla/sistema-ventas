@@ -3236,8 +3236,8 @@ __webpack_require__.r(__webpack_exports__);
 
         var tipoComparar = _this4.categoriaSeleccionada.substring(inicio + 1, _final);
 
-        if (elemento.tipo == tipoComparar) {
-          if (elemento.nombre == categoriaComparar) {
+        if (elemento.tipo.toLowerCase() == tipoComparar.toLowerCase()) {
+          if (elemento.nombre.toLowerCase() == categoriaComparar.toLowerCase()) {
             _this4.categoriasList.push(elemento);
           }
         }
@@ -4417,6 +4417,17 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
         return precioFinal;
       }
     }
+  },
+  computed: {
+    sortedArray: function sortedArray() {
+      function compare(a, b) {
+        if (a.nombre.toLowerCase() < b.nombre.toLowerCase()) return -1;
+        if (a.nombre.toLowerCase() > b.nombre.toLowerCase()) return 1;
+        return 0;
+      }
+
+      return this.listaElegida.sort(compare);
+    }
   }
 });
 
@@ -4655,8 +4666,8 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       var _this2 = this;
 
       axios.post('/filtrar', opc).then(function (response) {
-        console.log(response);
         _this2.listaFiltrada = response.data;
+        console.log(_this2.listaFiltrada);
         _this2.filtros = opc;
         _this2.pagina = 3;
       });
@@ -82486,7 +82497,19 @@ var render = function() {
                                         ) {
                                           return _c("option", [
                                             _vm._v(
-                                              _vm._s(categoria.nombre) +
+                                              _vm._s(
+                                                categoria.nombre.replace(
+                                                  /\w\S*/g,
+                                                  function(w) {
+                                                    return w.replace(
+                                                      /^\w/,
+                                                      function(c) {
+                                                        return c.toUpperCase()
+                                                      }
+                                                    )
+                                                  }
+                                                )
+                                              ) +
                                                 " (" +
                                                 _vm._s(categoria.tipo) +
                                                 ")"
@@ -84152,13 +84175,24 @@ var render = function() {
                                     }
                                   }
                                 },
-                                _vm._l(_vm.listaElegida, function(sugerencia) {
+                                _vm._l(_vm.sortedArray, function(sugerencia) {
                                   return _c(
                                     "option",
                                     { domProps: { value: sugerencia.id } },
                                     [
                                       _vm._v(
-                                        _vm._s(sugerencia.nombre) +
+                                        _vm._s(
+                                          sugerencia.nombre.replace(
+                                            /\w\S*/g,
+                                            function(w) {
+                                              return w.replace(/^\w/, function(
+                                                c
+                                              ) {
+                                                return c.toUpperCase()
+                                              })
+                                            }
+                                          )
+                                        ) +
                                           " (" +
                                           _vm._s(sugerencia.tipo) +
                                           ")"

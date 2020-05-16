@@ -76,7 +76,7 @@
 						      <div class="card-body">
 					        	<div class="input-group w-100" >
 								  <select class="form-control" v-model="categoriaSeleccionada">
-								  	<option v-for="categoria in sortedArray">{{categoria.nombre}} ({{categoria.tipo}})</option>
+								  	<option v-for="categoria in sortedArray">{{categoria.nombre.replace(/\w\S*/g, (w) => (w.replace(/^\w/, (c) => c.toUpperCase())))}} ({{categoria.tipo}})</option>
 								  </select>
 								  <div class="input-group-append">
 								    <button class="btn btn-outline-secondary" type="button" v-on:click="agregarCategoria"><i class="fas fa-plus"></i></button>
@@ -313,8 +313,8 @@ export default {
                     var categoriaComparar = this.categoriaSeleccionada.substring(0,inicio-1);
                     var tipoComparar = this.categoriaSeleccionada.substring(inicio+1,final);
 
-                    if(elemento.tipo == tipoComparar){
-                        if(elemento.nombre == categoriaComparar){
+                    if(elemento.tipo.toLowerCase() == tipoComparar.toLowerCase()){
+                        if(elemento.nombre.toLowerCase() == categoriaComparar.toLowerCase()){
                         	this.categoriasList.push(elemento);
                         }
                 	}

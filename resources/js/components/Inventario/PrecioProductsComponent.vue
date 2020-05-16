@@ -47,7 +47,7 @@
                                   </datalist>
                                 -->
                                     <select class="form-control" id="sub-grupo-categoria" v-model="categoriaElegida">
-                                        <option v-for="sugerencia in listaElegida" :value="sugerencia.id">{{sugerencia.nombre}} ({{sugerencia.tipo}})</option>
+                                        <option v-for="sugerencia in sortedArray" :value="sugerencia.id">{{sugerencia.nombre.replace(/\w\S*/g, (w) => (w.replace(/^\w/, (c) => c.toUpperCase())))}} ({{sugerencia.tipo}})</option>
                                     </select>
                                   <div class="input-group-append">
                                     <button class="btn btn-outline-secondary" type="button" v-on:click="cargarProductos"><i class="fas fa-plus"></i></button>
@@ -400,6 +400,20 @@
                 } else {
                     return precioFinal
                }
+            }
+        },
+        computed: {
+            sortedArray: function() {
+                function compare(a, b) {
+                  if (a.nombre.toLowerCase() < b.nombre.toLowerCase() )
+                    return -1;
+                  if (a.nombre.toLowerCase() > b.nombre.toLowerCase())
+                    return 1;
+                  return 0;
+                }
+
+                return this.listaElegida.sort(compare);
+
             }
         }
     }

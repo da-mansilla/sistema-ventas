@@ -137,8 +137,8 @@
             },
             filtrar(opc){
               axios.post('/filtrar',opc).then(response=>{
-                console.log(response);
                 this.listaFiltrada = response.data;
+                console.log(this.listaFiltrada)
                 this.filtros = opc;
                 this.pagina =3 ;
               })
