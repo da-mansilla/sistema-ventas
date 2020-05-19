@@ -23,6 +23,7 @@ Route::get('buscarProducto/{serie}','ProductController@buscarProducto')->name('p
 Route::get('todosproductos','ProductController@todosProductos')->name('products.todosProductos');
 Route::post('filtrar','ProductController@filtrar')->name('products.filtrar');
 Route::post('informacionFiltro','ProductController@informacionFiltro')->name('products.informacionFiltro');
+Route::get('productosPorSerie/{serie}','ProductController@productosPorSerie')->name('products.productosPorSerie');
 
 Route::apiResource('ventas','VentaController');
 Route::get('ingresos/{fecha}','VentaController@ingresos')->name('ventas.ingresos');

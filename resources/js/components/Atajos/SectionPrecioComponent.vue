@@ -16,46 +16,43 @@
             </div>
           </div>
         </div>
+        <h4>N° de Serie: {{titulo}}</h4>
 
 
         <div>
           <table class="table table-bordered table-products ">
               <thead>
                 <tr class=" table-primary ">
-                  <th scope="col">Opciones</th>
-                  <th scope="col">Temporada</th>
+
                   <th scope="col">Categoria</th>
-                  <th scope="col">Stock</th>
                   <th scope="col">Tipo</th>
                   <th scope="col">N° Serie</th>
+                  <th scope="col">Talle</th>
+                  <th scope="col">Color</th>
+                  <th scope="col">Precio</th>
 
                 </tr>
               </thead>
               
               <tbody >
-                <tr v-for="(product,index) in listaProducts.data" :key="product.id">
-                  <th scope="row" >
-                    <span>
-                      <button  type="button" class="btn btn-secondary btn-sm" data-toggle="modal" :data-target="`#exampleModalCenter${index}`"> + </button>
-                      <!--
-                      <button  type="button" class="btn btn-secondary btn-sm" v-on:click="onClickOpenEdit(index)"><i class="fas fa-edit"></i></button>
-                      -->
-                    </span>
+                <tr v-for="(product,index) in listaProducts" :key="product.id">
+                  <th>
+                    <span> {{product.categoria}} </span>
                   </th>
                   <th>
-                    <span> {{product.products[0].nombre}} </span>
-                  </th>
-                  <th>
-                    <span> {{product.products[0].categoria}} </span>
-                  </th>
-                  <th>
-                    <span> {{product.products.length}} </span>
-                  </th>
-                  <th>
-                    <span> {{product.products[0].tipo}} </span>
+                    <span> {{product.tipo}} </span>
                   </th>
                   <th>
                     <span> {{product.n_serie}} </span>
+                  </th>
+                  <th>
+                    <span> {{product.talle}} </span>
+                  </th>
+                  <th>
+                    <span> {{product.color}} </span>
+                  </th>
+                  <th>
+                    <span style="color: green; font-size: 16px;"> ${{product.precio}} </span>
                   </th>
 
 
@@ -101,7 +98,6 @@
 
             </table>
             
-            <pagination  :data="listaProducts" @pagination-change-page="getResults" class="float-right"></pagination>
 
         </div>
       </div>
@@ -114,7 +110,8 @@
         return {
           listaProducts: {},
           n_serie : '',
-          filtro : {}
+          filtro : {},
+          titulo: ''
 
         };
       },
@@ -130,52 +127,23 @@
           })
         },
         filtrar(){
-            var productos = [];
+            this.titulo = this.n_serie
+            var numSerie = 0;
             var inicio = this.n_serie.indexOf('%');
             console.log(inicio);
             if(inicio == -1){
-              productos.push(this.n_serie)
+              numSerie = this.n_serie
             } else {
-              var numSerie = this.n_serie.substring(0,inicio);  
-              productos.push(numSerie)
+              numSerie = this.n_serie.substring(0,inicio);  
             }
-            console.log('filtrar');
+            axios.get('productosPorSerie/'+numSerie).then(response=>{
+              console.log(response.data);
+              this.listaProducts = response.data;
+              this.n_serie = '';
+            })
 
             
-            let opciones={
-               tipo : {
-                Niño: true,
-                Niña: true,
-                Unisex: true
-               },
-               categoria: {
-                enabled: false,
-                categorias: []
-               },
-               precio: {
-                enabled: false,
-                desde: '',
-                hasta: ''
-               },
-               temporada: {
-                enabled: false,
-                temporada: ''
-               },
-               producto: {
-                enabled: true,
-                productos: productos
-               },
-               fecha: {
-                enabled: false,
-                fecha: '',
-                intervaloFechas: '',
-                fechaDesde: '',
-                fechaHasta: ''
-               }
-            };
-            this.filtro = opciones;
-            console.log(this.filtro);
-            this.getResults();
+
             
           }
 

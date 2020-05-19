@@ -172,8 +172,7 @@
               this.ingresosTarjeta = parseInt(response.data[0].totalTarjeta);
               if(this.ingresosEfectivo == null){ this.ingresosEfectivo = 0}
               if(this.ingresosTarjeta == NaN){ this.ingresosTarjeta = 0}
-              console.log(this.ingresosEfectivo);
-              console.log(this.ingresosTarjeta);
+
               this.ingresosHoy = parseInt(this.ingresosEfectivo+this.ingresosTarjeta)
               if(this.ingresosHoy == null){
                 this.ingresosHoy = 0;
@@ -196,7 +195,6 @@
             this.$emit('detailSena',venta);
           },
           mostrarVentas(){
-            console.log('click');
             this.getResults();
             this.getTotal();
             this.verSeñas = false;

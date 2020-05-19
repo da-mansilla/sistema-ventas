@@ -312,4 +312,13 @@ class ProductController extends Controller
                     ->get();
         return $productos;
     }
+    public function productosPorSerie($n_serie){
+        $productos = DB::table('products')
+                    ->leftJoin('categorias', 'products.categoria_id', '=', 'categorias.id')
+                    ->select('products.*', DB::raw('categorias.nombre as categoria'),'categorias.tipo')
+                    ->where('products.enabled',1)
+                    ->where('products.n_serie','=',$n_serie)
+                    ->get();
+        return $productos;
+    }
 }

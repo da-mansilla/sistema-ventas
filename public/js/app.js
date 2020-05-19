@@ -2026,16 +2026,13 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
-//
-//
-//
-//
 /* harmony default export */ __webpack_exports__["default"] = ({
   data: function data() {
     return {
       listaProducts: {},
       n_serie: '',
-      filtro: {}
+      filtro: {},
+      titulo: ''
     };
   },
   mounted: function mounted() {},
@@ -2050,52 +2047,24 @@ __webpack_require__.r(__webpack_exports__);
       });
     },
     filtrar: function filtrar() {
-      var productos = [];
+      var _this2 = this;
+
+      this.titulo = this.n_serie;
+      var numSerie = 0;
       var inicio = this.n_serie.indexOf('%');
       console.log(inicio);
 
       if (inicio == -1) {
-        productos.push(this.n_serie);
+        numSerie = this.n_serie;
       } else {
-        var numSerie = this.n_serie.substring(0, inicio);
-        productos.push(numSerie);
+        numSerie = this.n_serie.substring(0, inicio);
       }
 
-      console.log('filtrar');
-      var opciones = {
-        tipo: {
-          Niño: true,
-          Niña: true,
-          Unisex: true
-        },
-        categoria: {
-          enabled: false,
-          categorias: []
-        },
-        precio: {
-          enabled: false,
-          desde: '',
-          hasta: ''
-        },
-        temporada: {
-          enabled: false,
-          temporada: ''
-        },
-        producto: {
-          enabled: true,
-          productos: productos
-        },
-        fecha: {
-          enabled: false,
-          fecha: '',
-          intervaloFechas: '',
-          fechaDesde: '',
-          fechaHasta: ''
-        }
-      };
-      this.filtro = opciones;
-      console.log(this.filtro);
-      this.getResults();
+      axios.get('productosPorSerie/' + numSerie).then(function (response) {
+        console.log(response.data);
+        _this2.listaProducts = response.data;
+        _this2.n_serie = '';
+      });
     }
   },
   computed: {}
@@ -3969,6 +3938,17 @@ __webpack_require__.r(__webpack_exports__);
         this.categoria = '';
       }
     }
+  },
+  computed: {
+    sortedArray: function sortedArray() {
+      function compare(a, b) {
+        if (a.nombre.toLowerCase() < b.nombre.toLowerCase()) return -1;
+        if (a.nombre > b.nombre) return 1;
+        return 0;
+      }
+
+      return this.sugerenciasList.sort(compare);
+    }
   }
 });
 
@@ -4244,14 +4224,23 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       var _this3 = this;
 
       console.log(this.productoSerie);
+      var numSerie = '';
       var index = this.productoSerie.indexOf("%");
-      var serie = this.productoSerie.slice(0, index);
-      axios.get('buscarProducto/' + serie).then(function (response) {
+
+      if (index == -1) {
+        numSerie = this.productoSerie;
+      } else {
+        numSerie = this.productoSerie.substring(0, index);
+      }
+
+      axios.get('productosPorSerie/' + numSerie).then(function (response) {
         response.data.forEach(function (element) {
           _this3.productsModificar.push(element);
 
           _this3.productoSerie = '';
         });
+
+        _this3.$refs.paginator.goToPage(1);
       });
     },
     cargarProductos: function cargarProductos() {
@@ -8699,14 +8688,6 @@ __webpack_require__.r(__webpack_exports__);
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @babel/runtime/regenerator */ "./node_modules/@babel/runtime/regenerator/index.js");
-/* harmony import */ var _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0__);
-
-
-function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { Promise.resolve(value).then(_next, _throw); } }
-
-function _asyncToGenerator(fn) { return function () { var self = this, args = arguments; return new Promise(function (resolve, reject) { var gen = fn.apply(self, args); function _next(value) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value); } function _throw(err) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err); } _next(undefined); }); }; }
-
 //
 //
 //
@@ -8813,36 +8794,13 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
     this.getCantidad();
   },
   methods: {
-    getCantidad: function () {
-      var _getCantidad = _asyncToGenerator(
-      /*#__PURE__*/
-      _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee() {
-        var _this = this;
+    getCantidad: function getCantidad() {
+      var _this = this;
 
-        return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee$(_context) {
-          while (1) {
-            switch (_context.prev = _context.next) {
-              case 0:
-                _context.next = 2;
-                return axios.get('cuentasCantidad').then(function (response) {
-                  console.log(response.data[0]);
-                  _this.cantidadCuentasActivas = response.data[0].cantidad;
-                });
-
-              case 2:
-              case "end":
-                return _context.stop();
-            }
-          }
-        }, _callee);
-      }));
-
-      function getCantidad() {
-        return _getCantidad.apply(this, arguments);
-      }
-
-      return getCantidad;
-    }(),
+      axios.get('cuentasCantidad').then(function (response) {
+        _this.cantidadCuentasActivas = response.data[0].cantidad;
+      });
+    },
     getVenta: function getVenta(id) {
       var promise = new Promise(function (resolve, reject) {
         axios.get('ventas/' + id).then(function (response) {
@@ -9371,8 +9329,6 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
                     _this2.ingresosTarjeta = 0;
                   }
 
-                  console.log(_this2.ingresosEfectivo);
-                  console.log(_this2.ingresosTarjeta);
                   _this2.ingresosHoy = parseInt(_this2.ingresosEfectivo + _this2.ingresosTarjeta);
 
                   if (_this2.ingresosHoy == null) {
@@ -9436,7 +9392,6 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       this.$emit('detailSena', venta);
     },
     mostrarVentas: function mostrarVentas() {
-      console.log('click');
       this.getResults();
       this.getTotal();
       this.verSeñas = false;
@@ -84469,154 +84424,129 @@ var render = function() {
         ])
       ]),
       _vm._v(" "),
-      _c(
-        "div",
-        [
-          _c("table", { staticClass: "table table-bordered table-products " }, [
-            _vm._m(1),
-            _vm._v(" "),
-            _c(
-              "tbody",
-              _vm._l(_vm.listaProducts.data, function(product, index) {
-                return _c("tr", { key: product.id }, [
-                  _c("th", { attrs: { scope: "row" } }, [
-                    _c("span", [
-                      _c(
-                        "button",
-                        {
-                          staticClass: "btn btn-secondary btn-sm",
-                          attrs: {
-                            type: "button",
-                            "data-toggle": "modal",
-                            "data-target": "#exampleModalCenter" + index
-                          }
-                        },
-                        [_vm._v(" + ")]
-                      )
-                    ])
-                  ]),
-                  _vm._v(" "),
-                  _c("th", [
-                    _c("span", [
-                      _vm._v(" " + _vm._s(product.products[0].nombre) + " ")
-                    ])
-                  ]),
-                  _vm._v(" "),
-                  _c("th", [
-                    _c("span", [
-                      _vm._v(" " + _vm._s(product.products[0].categoria) + " ")
-                    ])
-                  ]),
-                  _vm._v(" "),
-                  _c("th", [
-                    _c("span", [
-                      _vm._v(" " + _vm._s(product.products.length) + " ")
-                    ])
-                  ]),
-                  _vm._v(" "),
-                  _c("th", [
-                    _c("span", [
-                      _vm._v(" " + _vm._s(product.products[0].tipo) + " ")
-                    ])
-                  ]),
-                  _vm._v(" "),
-                  _c("th", [
-                    _c("span", [_vm._v(" " + _vm._s(product.n_serie) + " ")])
-                  ]),
-                  _vm._v(" "),
+      _c("h4", [_vm._v("N° de Serie: " + _vm._s(_vm.titulo))]),
+      _vm._v(" "),
+      _c("div", [
+        _c("table", { staticClass: "table table-bordered table-products " }, [
+          _vm._m(1),
+          _vm._v(" "),
+          _c(
+            "tbody",
+            _vm._l(_vm.listaProducts, function(product, index) {
+              return _c("tr", { key: product.id }, [
+                _c("th", [
+                  _c("span", [_vm._v(" " + _vm._s(product.categoria) + " ")])
+                ]),
+                _vm._v(" "),
+                _c("th", [
+                  _c("span", [_vm._v(" " + _vm._s(product.tipo) + " ")])
+                ]),
+                _vm._v(" "),
+                _c("th", [
+                  _c("span", [_vm._v(" " + _vm._s(product.n_serie) + " ")])
+                ]),
+                _vm._v(" "),
+                _c("th", [
+                  _c("span", [_vm._v(" " + _vm._s(product.talle) + " ")])
+                ]),
+                _vm._v(" "),
+                _c("th", [
+                  _c("span", [_vm._v(" " + _vm._s(product.color) + " ")])
+                ]),
+                _vm._v(" "),
+                _c("th", [
                   _c(
-                    "div",
-                    {
-                      staticClass: "modal fade ",
-                      attrs: {
-                        id: "exampleModalCenter" + index,
-                        tabindex: "-1",
-                        role: "dialog",
-                        "aria-labelledby": "exampleModalCenterTitle",
-                        "aria-hidden": "true"
-                      }
-                    },
-                    [
-                      _c(
-                        "div",
-                        {
-                          staticClass: "modal-dialog modal-dialog-scrollable",
-                          attrs: { role: "document" }
-                        },
-                        [
-                          _c("div", { staticClass: "modal-content" }, [
-                            _vm._m(2, true),
-                            _vm._v(" "),
-                            _c("div", { staticClass: "modal-body pt-0" }, [
-                              _c("div", { staticClass: "card" }, [
-                                _c("div", { staticClass: "card-header" }),
-                                _vm._v(" "),
-                                _c("div", { staticClass: "card-body" }, [
-                                  _c("table", { staticClass: "table mt-0" }, [
-                                    _vm._m(3, true),
-                                    _vm._v(" "),
-                                    _c(
-                                      "tbody",
-                                      _vm._l(product.products, function(
-                                        productos,
-                                        index
-                                      ) {
-                                        return _c(
-                                          "tr",
-                                          {
-                                            key: productos.id,
-                                            staticClass: "align-middle"
-                                          },
-                                          [
-                                            _c("th", [
-                                              _vm._v(_vm._s(productos.color))
-                                            ]),
-                                            _vm._v(" "),
-                                            _c("th", [
-                                              _vm._v(_vm._s(productos.talle))
-                                            ]),
-                                            _vm._v(" "),
-                                            _c(
-                                              "th",
-                                              {
-                                                staticClass:
-                                                  "justify-content-center",
-                                                staticStyle: { color: "green" }
-                                              },
-                                              [
-                                                _vm._v(
-                                                  "$" + _vm._s(productos.precio)
-                                                )
-                                              ]
-                                            )
-                                          ]
-                                        )
-                                      }),
-                                      0
-                                    )
-                                  ])
+                    "span",
+                    { staticStyle: { color: "green", "font-size": "16px" } },
+                    [_vm._v(" $" + _vm._s(product.precio) + " ")]
+                  )
+                ]),
+                _vm._v(" "),
+                _c(
+                  "div",
+                  {
+                    staticClass: "modal fade ",
+                    attrs: {
+                      id: "exampleModalCenter" + index,
+                      tabindex: "-1",
+                      role: "dialog",
+                      "aria-labelledby": "exampleModalCenterTitle",
+                      "aria-hidden": "true"
+                    }
+                  },
+                  [
+                    _c(
+                      "div",
+                      {
+                        staticClass: "modal-dialog modal-dialog-scrollable",
+                        attrs: { role: "document" }
+                      },
+                      [
+                        _c("div", { staticClass: "modal-content" }, [
+                          _vm._m(2, true),
+                          _vm._v(" "),
+                          _c("div", { staticClass: "modal-body pt-0" }, [
+                            _c("div", { staticClass: "card" }, [
+                              _c("div", { staticClass: "card-header" }),
+                              _vm._v(" "),
+                              _c("div", { staticClass: "card-body" }, [
+                                _c("table", { staticClass: "table mt-0" }, [
+                                  _vm._m(3, true),
+                                  _vm._v(" "),
+                                  _c(
+                                    "tbody",
+                                    _vm._l(product.products, function(
+                                      productos,
+                                      index
+                                    ) {
+                                      return _c(
+                                        "tr",
+                                        {
+                                          key: productos.id,
+                                          staticClass: "align-middle"
+                                        },
+                                        [
+                                          _c("th", [
+                                            _vm._v(_vm._s(productos.color))
+                                          ]),
+                                          _vm._v(" "),
+                                          _c("th", [
+                                            _vm._v(_vm._s(productos.talle))
+                                          ]),
+                                          _vm._v(" "),
+                                          _c(
+                                            "th",
+                                            {
+                                              staticClass:
+                                                "justify-content-center",
+                                              staticStyle: { color: "green" }
+                                            },
+                                            [
+                                              _vm._v(
+                                                "$" + _vm._s(productos.precio)
+                                              )
+                                            ]
+                                          )
+                                        ]
+                                      )
+                                    }),
+                                    0
+                                  )
                                 ])
                               ])
                             ])
                           ])
-                        ]
-                      )
-                    ]
-                  )
-                ])
-              }),
-              0
-            )
-          ]),
-          _vm._v(" "),
-          _c("pagination", {
-            staticClass: "float-right",
-            attrs: { data: _vm.listaProducts },
-            on: { "pagination-change-page": _vm.getResults }
-          })
-        ],
-        1
-      )
+                        ])
+                      ]
+                    )
+                  ]
+                )
+              ])
+            }),
+            0
+          )
+        ])
+      ])
     ])
   ])
 }
@@ -84635,17 +84565,17 @@ var staticRenderFns = [
     var _c = _vm._self._c || _h
     return _c("thead", [
       _c("tr", { staticClass: " table-primary " }, [
-        _c("th", { attrs: { scope: "col" } }, [_vm._v("Opciones")]),
-        _vm._v(" "),
-        _c("th", { attrs: { scope: "col" } }, [_vm._v("Temporada")]),
-        _vm._v(" "),
         _c("th", { attrs: { scope: "col" } }, [_vm._v("Categoria")]),
-        _vm._v(" "),
-        _c("th", { attrs: { scope: "col" } }, [_vm._v("Stock")]),
         _vm._v(" "),
         _c("th", { attrs: { scope: "col" } }, [_vm._v("Tipo")]),
         _vm._v(" "),
-        _c("th", { attrs: { scope: "col" } }, [_vm._v("N° Serie")])
+        _c("th", { attrs: { scope: "col" } }, [_vm._v("N° Serie")]),
+        _vm._v(" "),
+        _c("th", { attrs: { scope: "col" } }, [_vm._v("Talle")]),
+        _vm._v(" "),
+        _c("th", { attrs: { scope: "col" } }, [_vm._v("Color")]),
+        _vm._v(" "),
+        _c("th", { attrs: { scope: "col" } }, [_vm._v("Precio")])
       ])
     ])
   },
@@ -87108,7 +87038,7 @@ var render = function() {
                                   }
                                 }
                               },
-                              _vm._l(_vm.sugerenciasList, function(sugerencia) {
+                              _vm._l(_vm.sortedArray, function(sugerencia) {
                                 return _c(
                                   "option",
                                   { domProps: { value: sugerencia.nombre } },

@@ -246,13 +246,23 @@
             },
             inputSerie(){
                 console.log(this.productoSerie);
+                let numSerie = '';
                 let index = this.productoSerie.indexOf("%");
-                let serie = this.productoSerie.slice(0, index);
-                axios.get('buscarProducto/'+serie).then(response=>{
+                if(index == -1){
+                  numSerie = this.productoSerie
+                } else {
+                  numSerie = this.productoSerie.substring(0,index);  
+                }
+
+
+
+                axios.get('productosPorSerie/'+numSerie).then(response=>{
+
                     response.data.forEach(element=>{
                         this.productsModificar.push(element);
                         this.productoSerie = '';
                     })
+                    this.$refs.paginator.goToPage(1)
                 })
             },
             cargarProductos(){
