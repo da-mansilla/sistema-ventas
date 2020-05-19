@@ -5,7 +5,7 @@
       </div>
       <div class="card-body">
       	<div class="row tarjetas">
-          <div class="col-sm-4">
+          <div class="col-sm-6">
             <div class="card text-center">
               <div class="card-body">
                 <h5 class="card-title"><h3>Ventas</h3></h5>
@@ -13,19 +13,11 @@
               </div>
             </div>
           </div>
-          <div class="col-sm-4">
+          <div class="col-sm-6">
             <div class="card text-center">
               <div class="card-body">
                 <h5 class="card-title"><h3>Ingresos</h3></h5>
                 <p class="card-text" style="color: green;" >$6500</p>
-              </div>
-            </div>
-          </div>
-          <div class="col-sm-4">
-            <div class="card text-center">
-              <div class="card-body">
-                <h5 class="card-title"><h3>Egresos</h3></h5>
-                <p class="card-text" style="color: red;">$750</p>
               </div>
             </div>
           </div>

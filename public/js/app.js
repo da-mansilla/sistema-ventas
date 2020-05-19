@@ -2460,14 +2460,6 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
-//
-//
-//
-//
-//
-//
-//
-//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   data: function data() {
@@ -9285,6 +9277,9 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
 //
 //
 //
+//
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   props: {},
   data: function data() {
@@ -9293,7 +9288,10 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       ventasHoy: 0,
       ingresosHoy: 0,
       ventasSeña: [],
-      verSeñas: false
+      verSeñas: false,
+      ingresosEfectivo: 0,
+      ingresosTarjeta: 0,
+      mostrarDetallesIngresos: false
     };
   },
   mounted: function mounted() {
@@ -9348,7 +9346,10 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
                 _context2.next = 2;
                 return axios.get('/ingresos').then(function (response) {
                   _this2.ventasHoy = response.data[0].cantidad;
-                  _this2.ingresosHoy = response.data[0].total;
+                  console.log(response.data);
+                  _this2.ingresosEfectivo = parseInt(response.data[0].totalEfectivo);
+                  _this2.ingresosTarjeta = parseInt(response.data[0].totalTarjeta);
+                  _this2.ingresosHoy = _this2.ingresosEfectivo + _this2.ingresosTarjeta;
 
                   if (_this2.ingresosHoy == null) {
                     _this2.ingresosHoy = 0;
@@ -9426,6 +9427,13 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
         console.log(response.data);
         _this4.listaVentas = response.data;
       });
+    },
+    detallesIngresos: function detallesIngresos() {
+      if (this.mostrarDetallesIngresos) {
+        this.mostrarDetallesIngresos = false;
+      } else {
+        this.mostrarDetallesIngresos = true;
+      }
     }
   },
   computed: {
@@ -30367,7 +30375,7 @@ exports = module.exports = __webpack_require__(/*! ../../../../node_modules/css-
 
 
 // module
-exports.push([module.i, "\n.venta-cancelada{\n    background-color: rgba(0, 0, 0, 0.03);\n}\n.colorGris{\n    color: gray;\n}\n.colorRojo{\n    color: red;\n}\n\n", ""]);
+exports.push([module.i, "\n.venta-cancelada{\n    background-color: rgba(0, 0, 0, 0.03);\n}\n.colorGris{\n    color: gray;\n}\n.colorRojo{\n    color: red;\n}\n.pointer{\n  cursor:pointer;\n}\n\n", ""]);
 
 // exports
 
@@ -81930,7 +81938,7 @@ var staticRenderFns = [
       _vm._v(" "),
       _c("div", { staticClass: "card-body" }, [
         _c("div", { staticClass: "row tarjetas" }, [
-          _c("div", { staticClass: "col-sm-4" }, [
+          _c("div", { staticClass: "col-sm-6" }, [
             _c("div", { staticClass: "card text-center" }, [
               _c("div", { staticClass: "card-body" }, [
                 _c("h5", { staticClass: "card-title" }, [
@@ -81942,7 +81950,7 @@ var staticRenderFns = [
             ])
           ]),
           _vm._v(" "),
-          _c("div", { staticClass: "col-sm-4" }, [
+          _c("div", { staticClass: "col-sm-6" }, [
             _c("div", { staticClass: "card text-center" }, [
               _c("div", { staticClass: "card-body" }, [
                 _c("h5", { staticClass: "card-title" }, [
@@ -81953,22 +81961,6 @@ var staticRenderFns = [
                   "p",
                   { staticClass: "card-text", staticStyle: { color: "green" } },
                   [_vm._v("$6500")]
-                )
-              ])
-            ])
-          ]),
-          _vm._v(" "),
-          _c("div", { staticClass: "col-sm-4" }, [
-            _c("div", { staticClass: "card text-center" }, [
-              _c("div", { staticClass: "card-body" }, [
-                _c("h5", { staticClass: "card-title" }, [
-                  _c("h3", [_vm._v("Egresos")])
-                ]),
-                _vm._v(" "),
-                _c(
-                  "p",
-                  { staticClass: "card-text", staticStyle: { color: "red" } },
-                  [_vm._v("$750")]
                 )
               ])
             ])
@@ -91065,15 +91057,44 @@ var render = function() {
           _vm._v(" "),
           _c("div", { staticClass: "col-sm-6" }, [
             _c("div", { staticClass: "card text-center" }, [
-              _c("div", { staticClass: "card-body" }, [
-                _c("h4", { staticClass: "card-title" }, [_vm._v("Ingresos")]),
-                _vm._v(" "),
-                _c(
-                  "h5",
-                  { staticClass: "card-text", staticStyle: { color: "green" } },
-                  [_vm._v("$" + _vm._s(_vm.ingresosHoy))]
-                )
-              ])
+              _c(
+                "div",
+                {
+                  staticClass: "card-body pointer",
+                  on: {
+                    click: function($event) {
+                      return _vm.detallesIngresos()
+                    }
+                  }
+                },
+                [
+                  _c("h4", { staticClass: "card-title " }, [
+                    _vm._v("Ingresos")
+                  ]),
+                  _vm._v(" "),
+                  _c(
+                    "h5",
+                    {
+                      staticClass: "card-text",
+                      staticStyle: { color: "green" }
+                    },
+                    [_vm._v("$" + _vm._s(_vm.ingresosHoy))]
+                  ),
+                  _vm._v(" "),
+                  _vm.mostrarDetallesIngresos
+                    ? _c("span", [
+                        _c("h5", [
+                          _vm._v(
+                            "Efectivo: $" +
+                              _vm._s(_vm.ingresosEfectivo) +
+                              "  -  Tarjeta: $" +
+                              _vm._s(_vm.ingresosTarjeta)
+                          )
+                        ])
+                      ])
+                    : _vm._e()
+                ]
+              )
             ])
           ])
         ]),

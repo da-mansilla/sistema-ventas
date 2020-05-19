@@ -79,7 +79,7 @@ class VentaController extends Controller
     public function ingresos()
     {
         $venta = DB::table('ventas')
-                ->select(DB::raw('sum(total) as total'),DB::raw('count(id) as cantidad'))
+                ->select(DB::raw('sum(pagoEfectivo) as totalEfectivo'),DB::raw('sum(pagoTarjeta) as totalTarjeta'),DB::raw('count(id) as cantidad'))
                 ->where('enabled',1)
                 ->where('estado','!=','Seña')
                 ->where('created_at','>',date('Y-m-d 00:00:00'))
@@ -93,7 +93,7 @@ class VentaController extends Controller
         $totalSena = $sena[0]->total;
         $cantidadSena = $sena[0]->cantidad;
 
-        $venta[0]->total += $totalSena;
+        $venta[0]->totalEfectivo += $totalSena;
         $venta[0]->cantidad += $cantidadSena;
         return $venta;
     }

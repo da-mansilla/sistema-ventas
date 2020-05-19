@@ -41,9 +41,12 @@
       </div>
       <div class="col-sm-6">
         <div class="card text-center">
-          <div class="card-body">
-            <h4 class="card-title">Ingresos</h4>
+          <div class="card-body pointer"  v-on:click="detallesIngresos()">
+            <h4 class="card-title " >Ingresos</h4>
             <h5 class="card-text" style="color: green;">${{ingresosHoy}}</h5>
+            <span v-if="mostrarDetallesIngresos">
+              <h5>Efectivo: ${{ingresosEfectivo}}  -  Tarjeta: ${{ingresosTarjeta}}</h5>
+            </span>
           </div>
         </div>
       </div>
@@ -123,7 +126,10 @@
           ventasHoy: 0,
           ingresosHoy: 0,
           ventasSeña:[],
-          verSeñas: false
+          verSeñas: false,
+          ingresosEfectivo: 0,
+          ingresosTarjeta: 0,
+          mostrarDetallesIngresos:false
 
 
         
@@ -144,7 +150,10 @@
           async getTotal(){
             await axios.get('/ingresos').then(response=>{
               this.ventasHoy = response.data[0].cantidad;
-              this.ingresosHoy = response.data[0].total
+              console.log(response.data);
+              this.ingresosEfectivo = parseInt(response.data[0].totalEfectivo);
+              this.ingresosTarjeta= parseInt(response.data[0].totalTarjeta);
+              this.ingresosHoy = this.ingresosEfectivo+this.ingresosTarjeta
               if(this.ingresosHoy == null){
                 this.ingresosHoy = 0;
               }
@@ -178,6 +187,13 @@
               console.log(response.data);
               this.listaVentas = response.data;
             })
+          },
+          detallesIngresos(){
+            if(this.mostrarDetallesIngresos){
+              this.mostrarDetallesIngresos= false;
+            } else {
+              this.mostrarDetallesIngresos = true;
+            }
           }
       },
       computed: {
@@ -213,6 +229,9 @@
     }
     .colorRojo{
         color: red;
+    }
+    .pointer{
+      cursor:pointer;
     }
 
 </style>
