@@ -171,4 +171,23 @@ class VentaController extends Controller
                 ->paginate(5);
         return $venta;
     }
+    public function ventasPorFecha(Request $request){
+        $desde = date_create($request->input('fecha')['fecha']);
+        $hasta = date_create($request->input('fecha')['fecha']);
+        date_modify($hasta,"+1 days");
+
+        date_format($desde,"Y-m-d 00:00:00");
+        date_format($hasta,"Y-m-d 00:00:00");
+
+        $ventas = DB::table('ventas')
+                ->leftJoin('clients', 'ventas.cliente_id', '=', 'clients.id')
+                ->select('ventas.*', DB::raw('clients.nombre as cliente'), 'clients.telefono','clients.email')
+                ->when($request->input('fecha')['enabled'], function($query) use($desde,$hasta) {
+                    return $query->whereBetween('ventas.created_at',[$desde,$hasta]);
+                })
+                ->orderBy('created_at','desc')
+                ->paginate(5);
+        return $ventas;
+
+    }
 }

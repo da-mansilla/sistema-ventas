@@ -1,6 +1,13 @@
 import Toasted from 'vue-toasted';
 import VuePaginate from 'vue-paginate';
+import moment from 'moment';
+import VueMoment from 'vue-moment';
 
+// Load Locales ('en' comes loaded by default)
+require('moment/locale/es');
+
+// Choose Locale
+moment.locale('es');
 
 const $ = require('jquery');
 window.$ = $
@@ -47,7 +54,8 @@ Vue.component('detalleproveedores-component', require('./components/Proveedores/
 Vue.component('preciosection-component', require('./components/Atajos/SectionPrecioComponent.vue').default);
 Vue.use(Toasted);
 Vue.use(VuePaginate);
-
+Vue.use(moment);
+Vue.use(VueMoment,{moment});
 
 
 const app = new Vue({

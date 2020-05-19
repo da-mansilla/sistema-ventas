@@ -28,6 +28,7 @@ Route::apiResource('ventas','VentaController');
 Route::get('ingresos','VentaController@ingresos')->name('ventas.ingresos');
 Route::post('datosventas','VentaController@datosVentas')->name('ventas.datosVentas');
 Route::get('ventasseña','VentaController@ventasSeña')->name('ventas.ventasSeña');
+Route::post('ventasPorFecha','VentaController@ventasPorFecha')->name('ventas.ventasPorFecha');
 
 
 Route::apiResource('clients','ClientController');

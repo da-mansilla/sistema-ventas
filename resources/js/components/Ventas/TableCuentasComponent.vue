@@ -92,7 +92,6 @@
           this.getCuenta().then(response=>{
             this.listClients = response.data;
             this.cargado = true;
-            console.log(this.listClients);
             this.getCantidad();
             this.getCobrar();
           })
@@ -119,6 +118,7 @@
             axios.get('/clientsCuentas?page=' + page)
               .then(response => {
                 this.listaCuentas = response.data;
+                console.log(this.listaCuentas);
               });
         },
         getCuenta(){

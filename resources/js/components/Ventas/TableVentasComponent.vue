@@ -1,12 +1,17 @@
 <template>
   <div>
-
+    <div class="form-group d-flex justify-content-end">
+      <h5 class="mb-0 pt-2 pr-2 align-bottom">Fecha: </h5>
+      <input id="fechaVenta"type="date"  class="form-control w-25" v-model="fechaElegida">
+      <button type="button" class="btn btn-success btn-sm" v-on:click="habilitarFecha">Buscar</button> 
+      
+    </div>
     <div class="row tarjetas" v-if="ventasSeña.length > 0" >
 
       <div class="col-sm-4" style="cursor:pointer;" v-on:click="mostrarVentas">
         <div class="card text-center">
           <div class="card-body">
-            <h4 class="card-title">Ventas de hoy</h4>
+            <h4 class="card-title">Ventas</h4>
             <h5 class="card-text" style="color: blue;">{{ventasHoy}}</h5>
           </div>
         </div>
@@ -34,7 +39,7 @@
       <div class="col-sm-6">
         <div class="card text-center">
           <div class="card-body">
-            <h4 class="card-title">Ventas de hoy</h4>
+            <h4 class="card-title">Ventas</h4>
             <h5 class="card-text" style="color: blue;">{{ventasHoy}}</h5>
           </div>
         </div>
@@ -52,9 +57,13 @@
       </div>
     </div>
 
+    <div class="mt-2 mb-0" v-if="busquedaPorFecha">
+      <h5 class="float-left">Fecha: {{$moment(fechaElegida).format("DD MMMM YYYY")}}</h5> 
+      <button type="button" class="btn btn-secondary btn-sm float-left ml-2 mb-1" v-on:click="desabilitarFecha">Mostrar Todo</button>  
+    </div>
 
     <div>
-      <table class="table table-bordered ">
+      <table class="table table-bordered mt-2">
         <thead >
           <tr class=" table-info ">
             <th scope="col">Opciones</th>
@@ -93,7 +102,7 @@
               <span>{{venta.cliente}}</span>
             </th>
             <th>
-              <span>{{venta.created_at}}</span>
+              <span>{{$moment(venta.created_at).format("DD MMMM YYYY HH:mm:ss")}}</span>
             </th>
             <th>
               <span>${{venta.total}}</span>
@@ -129,7 +138,9 @@
           verSeñas: false,
           ingresosEfectivo: 0,
           ingresosTarjeta: 0,
-          mostrarDetallesIngresos:false
+          mostrarDetallesIngresos:false,
+          fechaElegida: new Date(),
+          busquedaPorFecha: false
 
 
         
@@ -159,7 +170,7 @@
               }
             })
           },
-          async getResults(page = 1) {
+          async getResults2(page = 1) {
             await axios.get('/ventas?page=' + page)
               .then(response => {
                 this.listaVentas = response.data;
@@ -194,9 +205,33 @@
             } else {
               this.mostrarDetallesIngresos = true;
             }
+          },
+          habilitarFecha(){
+            this.busquedaPorFecha=true;
+            this.getResults()
+          },
+          desabilitarFecha(){
+            this.busquedaPorFecha=false;
+            this.getResults()
+          },
+          getResults(page = 1){
+            console.log(this.fechaElegida)
+            let param= {
+              fecha:{
+                fecha: this.fechaElegida,
+                enabled: this.busquedaPorFecha
+              }
+            }
+            axios.post('ventasPorFecha?page=' + page,param).then(response=>{
+              console.log(response.data);
+              this.listaVentas = response.data;
+            })
+
+
           }
       },
       computed: {
+
         /*
           ventasHoy(){
             var listVentas = [];
