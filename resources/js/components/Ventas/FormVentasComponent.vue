@@ -666,7 +666,7 @@
             var params = {
               cliente_id: this.id,
               forma_pago: this.forma_pago,
-              pagoEfectivo: 0,
+              pagoEfectivo: this.pagando,
               pagoTarjeta: 0,
               total: this.pagando,
               estado: ventaEstado,
@@ -766,7 +766,7 @@
                 var recargo = '';
                 if(estadoCuenta && this.forma_pago == 'Cuenta'){
                   ventaEstado = 'Cuenta Corriente';
-                  enEfectivo = 0;
+                  enEfectivo = this.pagando;
                   enTarjeta = 0;
                   enTotal = this.pagando;
 

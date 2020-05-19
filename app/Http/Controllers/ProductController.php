@@ -21,7 +21,7 @@ class ProductController extends Controller
 
         return $products; 
     }
-    public function filtrar(Request $request){
+    public function buscarFiltro(Request $request){
         // Tipo 
         $tipos = [];
         $precio = [0,20000];
@@ -108,6 +108,12 @@ class ProductController extends Controller
                 })
                 ->orderBy('created_at','desc')
                 ->get();
+    
+        return $products;
+
+    }
+    public function filtrar(Request $request){
+        $products = $this->buscarFiltro($request);
         $id = [];
         foreach ($products as $key => $product) {
             array_push($id,$product->id);
@@ -122,15 +128,50 @@ class ProductController extends Controller
         $lista = [];
         foreach ($stocks as $key => $stock) {
             foreach ($products as $product) {
-                if($stocks[$key]->n_serie == $product->n_serie){
+                if($stock->n_serie == $product->n_serie){
                     array_push($lista,$product);
                 };
             };
             $stocks[$key]->products = $lista;
+            $lista = [];
         }
         return $stocks;
+    }
+    public function informacionFiltro(Request $request){
+        $products = $this->buscarFiltro($request);
+        $id = [];
+        foreach ($products as $key => $product) {
+            array_push($id,$product->id);
+        };
+        $productosTotal=0;
+        $productosNiñas=0;
+        $productosNiños=0;
+        $productosUnisex=0;
+        foreach ($products as $key => $product) {
+            $productosTotal++;
+            if($product->tipo == 'Niño'){
+                $productosNiños++;
+            }
+            elseif($product->tipo == 'Niña'){
+                $productosNiñas++;
+            }
+            elseif($product->tipo == 'Unisex'){
+                $productosUnisex++;
+            }
+        }
+        $informacionCantidad = array(
+            "productosTotal"=>$productosTotal,
+            "productosNiños"=>$productosNiños,
+            "productosNiñas"=>$productosNiñas,
+            "productosUnisex"=>$productosUnisex,
+            "products" => $products,
+            "id"=>$id
+        );
+
+        return $informacionCantidad;
 
     }
+
     public function cantidadProducts(){
         $products = DB::table('products')
                 ->select(DB::raw('count(id) as cantidad'))

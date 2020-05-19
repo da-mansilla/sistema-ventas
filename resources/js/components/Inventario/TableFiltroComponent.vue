@@ -4,7 +4,8 @@
         Mostrando Categorias: 
         <span v-for="categoria in filtros.categoria.categorias"> {{categoria.nombre}} ({{categoria.tipo}}),</span>
       </div>
-        <table class="table table-bordered table-products ">
+      <span>Productos: {{informacionListaFiltrada.productosTotal}}</span>
+        <table class="table table-bordered table-products mt-1">
           <thead>
             <tr class=" table-primary ">
               <th scope="col">Opciones</th>
@@ -93,6 +94,7 @@
 
         </table>
         <span>Mostrando {{(listaFiltrada.current_page-1) * 5}} - {{(listaFiltrada.current_page) * 5}} de {{listaFiltrada.total}} elementos</span>
+
             <pagination  :data="listaFiltrada" :limit="2" @pagination-change-page="filtrar" class="float-right"></pagination>
         
 
@@ -106,6 +108,9 @@
 
             },
             listaFiltrada:{
+            },
+            informacionListaFiltrada:{
+
             }
 
         },

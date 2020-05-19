@@ -57,6 +57,7 @@
         <tablefiltro-component v-if="pagina==3"
         :listaFiltrada='listaFiltrada'
         :filtros="filtros"
+        :informacionListaFiltrada="informacionListaFiltrada"
         @updateProduct="updateProduct"
         @deleteProduct="deleteProduct"
         @filtrarOtraVez="filtrarOtraVez">
@@ -79,6 +80,7 @@
           categorias: [],
           pagina: 1,
           listaFiltrada: [],
+          informacionListaFiltrada: [],
           cantidadProducts: 0,
           cantidadCategorias: 0,
           filtros: {},
@@ -135,13 +137,19 @@
             cargarFiltro(){
               this.modalFiltro = true;
             },
-            filtrar(opc){
-              axios.post('/filtrar',opc).then(response=>{
+            async filtrar(opc){
+              await axios.post('/filtrar',opc).then(response=>{
+                console.log(response.data);
                 this.listaFiltrada = response.data;
-                console.log(this.listaFiltrada)
                 this.filtros = opc;
-                this.pagina =3 ;
+                axios.post('informacionFiltro',opc).then(response=>{
+                  console.log(response.data);
+                  this.informacionListaFiltrada= response.data;
+                  this.pagina =3 ;
+                })
+                
               })
+              
              
             }
         },

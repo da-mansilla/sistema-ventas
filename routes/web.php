@@ -22,6 +22,7 @@ Route::get('temporadas','ProductController@temporadas')->name('products.temporad
 Route::get('buscarProducto/{serie}','ProductController@buscarProducto')->name('products.buscarProducto');
 Route::get('todosproductos','ProductController@todosProductos')->name('products.todosProductos');
 Route::post('filtrar','ProductController@filtrar')->name('products.filtrar');
+Route::post('informacionFiltro','ProductController@informacionFiltro')->name('products.informacionFiltro');
 
 Route::apiResource('ventas','VentaController');
 Route::get('ingresos','VentaController@ingresos')->name('ventas.ingresos');

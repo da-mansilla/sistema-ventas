@@ -135,14 +135,14 @@
           this.getVentasSeña();
       },
       methods:{
-          getVentasSeña(page = 1){
-            axios.get('ventasseña?page=' + page).then(response=>{
+          async getVentasSeña(page = 1){
+            await axios.get('ventasseña?page=' + page).then(response=>{
               console.log(response.data.data);
               this.ventasSeña = response.data.data;
             })
           },
-          getTotal(){
-            axios.get('/ingresos').then(response=>{
+          async getTotal(){
+            await axios.get('/ingresos').then(response=>{
               this.ventasHoy = response.data[0].cantidad;
               this.ingresosHoy = response.data[0].total
               if(this.ingresosHoy == null){
@@ -150,8 +150,8 @@
               }
             })
           },
-          getResults(page = 1) {
-            axios.get('/ventas?page=' + page)
+          async getResults(page = 1) {
+            await axios.get('/ventas?page=' + page)
               .then(response => {
                 this.listaVentas = response.data;
               });

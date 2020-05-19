@@ -4523,6 +4523,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
 //
 //
 //
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   data: function data() {
     return {
@@ -4530,6 +4531,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       categorias: [],
       pagina: 1,
       listaFiltrada: [],
+      informacionListaFiltrada: [],
       cantidadProducts: 0,
       cantidadCategorias: 0,
       filtros: {},
@@ -4662,16 +4664,42 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
     cargarFiltro: function cargarFiltro() {
       this.modalFiltro = true;
     },
-    filtrar: function filtrar(opc) {
-      var _this2 = this;
+    filtrar: function () {
+      var _filtrar = _asyncToGenerator(
+      /*#__PURE__*/
+      _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee4(opc) {
+        var _this2 = this;
 
-      axios.post('/filtrar', opc).then(function (response) {
-        _this2.listaFiltrada = response.data;
-        console.log(_this2.listaFiltrada);
-        _this2.filtros = opc;
-        _this2.pagina = 3;
-      });
-    }
+        return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee4$(_context4) {
+          while (1) {
+            switch (_context4.prev = _context4.next) {
+              case 0:
+                _context4.next = 2;
+                return axios.post('/filtrar', opc).then(function (response) {
+                  console.log(response.data);
+                  _this2.listaFiltrada = response.data;
+                  _this2.filtros = opc;
+                  axios.post('informacionFiltro', opc).then(function (response) {
+                    console.log(response.data);
+                    _this2.informacionListaFiltrada = response.data;
+                    _this2.pagina = 3;
+                  });
+                });
+
+              case 2:
+              case "end":
+                return _context4.stop();
+            }
+          }
+        }, _callee4);
+      }));
+
+      function filtrar(_x) {
+        return _filtrar.apply(this, arguments);
+      }
+
+      return filtrar;
+    }()
   },
   computed: {}
 });
@@ -4915,10 +4943,13 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   props: {
     filtros: {},
-    listaFiltrada: {}
+    listaFiltrada: {},
+    informacionListaFiltrada: {}
   },
   data: function data() {
     return {
@@ -7641,7 +7672,7 @@ __webpack_require__.r(__webpack_exports__);
       var params = {
         cliente_id: this.id,
         forma_pago: this.forma_pago,
-        pagoEfectivo: 0,
+        pagoEfectivo: this.pagando,
         pagoTarjeta: 0,
         total: this.pagando,
         estado: ventaEstado,
@@ -7769,7 +7800,7 @@ __webpack_require__.r(__webpack_exports__);
 
         if (estadoCuenta && _this3.forma_pago == 'Cuenta') {
           ventaEstado = 'Cuenta Corriente';
-          enEfectivo = 0;
+          enEfectivo = _this3.pagando;
           enTarjeta = 0;
           enTotal = _this3.pagando;
         } else if (_this3.forma_pago == 'Seña') {
@@ -8678,6 +8709,14 @@ __webpack_require__.r(__webpack_exports__);
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @babel/runtime/regenerator */ "./node_modules/@babel/runtime/regenerator/index.js");
+/* harmony import */ var _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0__);
+
+
+function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { Promise.resolve(value).then(_next, _throw); } }
+
+function _asyncToGenerator(fn) { return function () { var self = this, args = arguments; return new Promise(function (resolve, reject) { var gen = fn.apply(self, args); function _next(value) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value); } function _throw(err) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err); } _next(undefined); }); }; }
+
 //
 //
 //
@@ -8784,14 +8823,36 @@ __webpack_require__.r(__webpack_exports__);
     this.getCantidad();
   },
   methods: {
-    getCantidad: function getCantidad() {
-      var _this = this;
+    getCantidad: function () {
+      var _getCantidad = _asyncToGenerator(
+      /*#__PURE__*/
+      _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee() {
+        var _this = this;
 
-      axios.get('cuentasCantidad').then(function (response) {
-        console.log(response.data[0]);
-        _this.cantidadCuentasActivas = response.data[0].cantidad;
-      });
-    },
+        return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee$(_context) {
+          while (1) {
+            switch (_context.prev = _context.next) {
+              case 0:
+                _context.next = 2;
+                return axios.get('cuentasCantidad').then(function (response) {
+                  console.log(response.data[0]);
+                  _this.cantidadCuentasActivas = response.data[0].cantidad;
+                });
+
+              case 2:
+              case "end":
+                return _context.stop();
+            }
+          }
+        }, _callee);
+      }));
+
+      function getCantidad() {
+        return _getCantidad.apply(this, arguments);
+      }
+
+      return getCantidad;
+    }(),
     getVenta: function getVenta(id) {
       var promise = new Promise(function (resolve, reject) {
         axios.get('ventas/' + id).then(function (response) {
@@ -9102,6 +9163,14 @@ __webpack_require__.r(__webpack_exports__);
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @babel/runtime/regenerator */ "./node_modules/@babel/runtime/regenerator/index.js");
+/* harmony import */ var _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0__);
+
+
+function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { Promise.resolve(value).then(_next, _throw); } }
+
+function _asyncToGenerator(fn) { return function () { var self = this, args = arguments; return new Promise(function (resolve, reject) { var gen = fn.apply(self, args); function _next(value) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value); } function _throw(err) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err); } _next(undefined); }); }; }
+
 //
 //
 //
@@ -9233,35 +9302,105 @@ __webpack_require__.r(__webpack_exports__);
     this.getVentasSeña();
   },
   methods: {
-    getVentasSeña: function getVentasSeA() {
-      var _this = this;
+    getVentasSeña: function () {
+      var _getVentasSeA = _asyncToGenerator(
+      /*#__PURE__*/
+      _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee() {
+        var _this = this;
 
-      var page = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 1;
-      axios.get('ventasseña?page=' + page).then(function (response) {
-        console.log(response.data.data);
-        _this.ventasSeña = response.data.data;
-      });
-    },
-    getTotal: function getTotal() {
-      var _this2 = this;
+        var page,
+            _args = arguments;
+        return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee$(_context) {
+          while (1) {
+            switch (_context.prev = _context.next) {
+              case 0:
+                page = _args.length > 0 && _args[0] !== undefined ? _args[0] : 1;
+                _context.next = 3;
+                return axios.get('ventasseña?page=' + page).then(function (response) {
+                  console.log(response.data.data);
+                  _this.ventasSeña = response.data.data;
+                });
 
-      axios.get('/ingresos').then(function (response) {
-        _this2.ventasHoy = response.data[0].cantidad;
-        _this2.ingresosHoy = response.data[0].total;
+              case 3:
+              case "end":
+                return _context.stop();
+            }
+          }
+        }, _callee);
+      }));
 
-        if (_this2.ingresosHoy == null) {
-          _this2.ingresosHoy = 0;
-        }
-      });
-    },
-    getResults: function getResults() {
-      var _this3 = this;
+      function getVentasSeA() {
+        return _getVentasSeA.apply(this, arguments);
+      }
 
-      var page = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 1;
-      axios.get('/ventas?page=' + page).then(function (response) {
-        _this3.listaVentas = response.data;
-      });
-    },
+      return getVentasSeA;
+    }(),
+    getTotal: function () {
+      var _getTotal = _asyncToGenerator(
+      /*#__PURE__*/
+      _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee2() {
+        var _this2 = this;
+
+        return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee2$(_context2) {
+          while (1) {
+            switch (_context2.prev = _context2.next) {
+              case 0:
+                _context2.next = 2;
+                return axios.get('/ingresos').then(function (response) {
+                  _this2.ventasHoy = response.data[0].cantidad;
+                  _this2.ingresosHoy = response.data[0].total;
+
+                  if (_this2.ingresosHoy == null) {
+                    _this2.ingresosHoy = 0;
+                  }
+                });
+
+              case 2:
+              case "end":
+                return _context2.stop();
+            }
+          }
+        }, _callee2);
+      }));
+
+      function getTotal() {
+        return _getTotal.apply(this, arguments);
+      }
+
+      return getTotal;
+    }(),
+    getResults: function () {
+      var _getResults = _asyncToGenerator(
+      /*#__PURE__*/
+      _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee3() {
+        var _this3 = this;
+
+        var page,
+            _args3 = arguments;
+        return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee3$(_context3) {
+          while (1) {
+            switch (_context3.prev = _context3.next) {
+              case 0:
+                page = _args3.length > 0 && _args3[0] !== undefined ? _args3[0] : 1;
+                _context3.next = 3;
+                return axios.get('/ventas?page=' + page).then(function (response) {
+                  _this3.listaVentas = response.data;
+                });
+
+              case 3:
+              case "end":
+                return _context3.stop();
+            }
+          }
+        }, _callee3);
+      }));
+
+      function getResults() {
+        return _getResults.apply(this, arguments);
+      }
+
+      return getResults;
+    }(),
     editVenta: function editVenta(index, venta) {
       this.$emit('detail', index, venta);
     },
@@ -84693,7 +84832,11 @@ var render = function() {
         _vm._v(" "),
         _vm.pagina == 3
           ? _c("tablefiltro-component", {
-              attrs: { listaFiltrada: _vm.listaFiltrada, filtros: _vm.filtros },
+              attrs: {
+                listaFiltrada: _vm.listaFiltrada,
+                filtros: _vm.filtros,
+                informacionListaFiltrada: _vm.informacionListaFiltrada
+              },
               on: {
                 updateProduct: _vm.updateProduct,
                 deleteProduct: _vm.deleteProduct,
@@ -84947,7 +85090,13 @@ var render = function() {
           )
         : _vm._e(),
       _vm._v(" "),
-      _c("table", { staticClass: "table table-bordered table-products " }, [
+      _c("span", [
+        _vm._v(
+          "Productos: " + _vm._s(_vm.informacionListaFiltrada.productosTotal)
+        )
+      ]),
+      _vm._v(" "),
+      _c("table", { staticClass: "table table-bordered table-products mt-1" }, [
         _vm._m(0),
         _vm._v(" "),
         _vm.listaFiltrada.data.length

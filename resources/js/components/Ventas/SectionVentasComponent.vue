@@ -106,8 +106,8 @@
         this.getCantidad()
       },
       methods:{
-            getCantidad(){
-              axios.get('cuentasCantidad').then(response=>{
+            async getCantidad(){
+              await axios.get('cuentasCantidad').then(response=>{
                   console.log(response.data[0]);
                   this.cantidadCuentasActivas = response.data[0].cantidad;
               })
