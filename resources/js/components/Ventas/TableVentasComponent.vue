@@ -147,6 +147,12 @@
         };
       },
       mounted() {
+          let day = this.fechaElegida.getDate();
+          let month = parseInt(this.fechaElegida.getMonth()+1);
+          let year = this.fechaElegida.getFullYear();
+          let fechaCadena = day+"-"+month+"-"+year;
+          this.fechaElegida = fechaCadena;
+
           this.getResults();
           this.getTotal();
           this.getVentasSeña();
@@ -159,12 +165,16 @@
             })
           },
           async getTotal(){
-            await axios.get('/ingresos').then(response=>{
+            await axios.get('/ingresos/'+this.fechaElegida).then(response=>{
               this.ventasHoy = response.data[0].cantidad;
-              console.log(response.data);
+
               this.ingresosEfectivo = parseInt(response.data[0].totalEfectivo);
-              this.ingresosTarjeta= parseInt(response.data[0].totalTarjeta);
-              this.ingresosHoy = this.ingresosEfectivo+this.ingresosTarjeta
+              this.ingresosTarjeta = parseInt(response.data[0].totalTarjeta);
+              if(this.ingresosEfectivo == null){ this.ingresosEfectivo = 0}
+              if(this.ingresosTarjeta == NaN){ this.ingresosTarjeta = 0}
+              console.log(this.ingresosEfectivo);
+              console.log(this.ingresosTarjeta);
+              this.ingresosHoy = parseInt(this.ingresosEfectivo+this.ingresosTarjeta)
               if(this.ingresosHoy == null){
                 this.ingresosHoy = 0;
               }
@@ -212,6 +222,14 @@
           },
           desabilitarFecha(){
             this.busquedaPorFecha=false;
+
+            this.fechaElegida = new Date()
+
+            let day = this.fechaElegida.getDate();
+            let month = parseInt(this.fechaElegida.getMonth()+1);
+            let year = this.fechaElegida.getFullYear();
+            let fechaCadena = day+"-"+month+"-"+year;
+            this.fechaElegida = fechaCadena;
             this.getResults()
           },
           getResults(page = 1){
@@ -225,6 +243,7 @@
             axios.post('ventasPorFecha?page=' + page,param).then(response=>{
               console.log(response.data);
               this.listaVentas = response.data;
+              this.getTotal();
             })
 
 

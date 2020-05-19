@@ -76,24 +76,32 @@ class VentaController extends Controller
 
         return $resultado; 
     }
-    public function ingresos()
+    public function ingresos($fecha)
     {
+        $desde = date_create($fecha);
+        $hasta = date_create($fecha);
+        date_modify($hasta,"+1 days");
+
+        date_format($desde,"Y-m-d 00:00:00");
+        date_format($hasta,"Y-m-d 00:00:00");
+
         $venta = DB::table('ventas')
                 ->select(DB::raw('sum(pagoEfectivo) as totalEfectivo'),DB::raw('sum(pagoTarjeta) as totalTarjeta'),DB::raw('count(id) as cantidad'))
                 ->where('enabled',1)
                 ->where('estado','!=','Seña')
-                ->where('created_at','>',date('Y-m-d 00:00:00'))
+                ->whereBetween('ventas.created_at',[$desde,$hasta])
                 ->get();
         $sena = DB::table('ventas')
                 ->select(DB::raw('sum(seña) as total'),DB::raw('count(id) as cantidad'))
                 ->where('enabled',1)
                 ->where('estado','=','Seña')
-                ->where('created_at','>',date('Y-m-d 00:00:00'))
+                ->whereBetween('ventas.created_at',[$desde,$hasta])
                 ->get();
         $totalSena = $sena[0]->total;
         $cantidadSena = $sena[0]->cantidad;
 
         $venta[0]->totalEfectivo += $totalSena;
+        $venta[0]->totalTarjeta += 0;
         $venta[0]->cantidad += $cantidadSena;
         return $venta;
     }

@@ -363,7 +363,7 @@
             var paramVenta= {
                 cliente_id: this.cuentaMode.id,
                 forma_pago: 'Cuenta',
-                pagoEfectivo: 0,
+                pagoEfectivo: parseInt(this.valorPago),
                 pagoTarjeta: 0,
                 total: parseInt(this.valorPago),
                 deuda: (parseInt(this.cuentaMode.cuenta[0].deuda) - parseInt(this.valorPago)),

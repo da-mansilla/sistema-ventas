@@ -6633,7 +6633,7 @@ __webpack_require__.r(__webpack_exports__);
       var paramVenta = {
         cliente_id: this.cuentaMode.id,
         forma_pago: 'Cuenta',
-        pagoEfectivo: 0,
+        pagoEfectivo: parseInt(this.valorPago),
         pagoTarjeta: 0,
         total: parseInt(this.valorPago),
         deuda: parseInt(this.cuentaMode.cuenta[0].deuda) - parseInt(this.valorPago),
@@ -7920,9 +7920,7 @@ __webpack_require__.r(__webpack_exports__);
               position: "top-right",
               duration: 2000
             });
-          }
-
-          if (venta.estado == 'Seña') {
+          } else if (venta.estado == 'Seña') {
             // Productos Venta
             var _iteratorNormalCompletion4 = true;
             var _didIteratorError4 = false;
@@ -9306,6 +9304,11 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
     };
   },
   mounted: function mounted() {
+    var day = this.fechaElegida.getDate();
+    var month = parseInt(this.fechaElegida.getMonth() + 1);
+    var year = this.fechaElegida.getFullYear();
+    var fechaCadena = day + "-" + month + "-" + year;
+    this.fechaElegida = fechaCadena;
     this.getResults();
     this.getTotal();
     this.getVentasSeña();
@@ -9355,12 +9358,22 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
             switch (_context2.prev = _context2.next) {
               case 0:
                 _context2.next = 2;
-                return axios.get('/ingresos').then(function (response) {
+                return axios.get('/ingresos/' + this.fechaElegida).then(function (response) {
                   _this2.ventasHoy = response.data[0].cantidad;
-                  console.log(response.data);
                   _this2.ingresosEfectivo = parseInt(response.data[0].totalEfectivo);
                   _this2.ingresosTarjeta = parseInt(response.data[0].totalTarjeta);
-                  _this2.ingresosHoy = _this2.ingresosEfectivo + _this2.ingresosTarjeta;
+
+                  if (_this2.ingresosEfectivo == null) {
+                    _this2.ingresosEfectivo = 0;
+                  }
+
+                  if (_this2.ingresosTarjeta == NaN) {
+                    _this2.ingresosTarjeta = 0;
+                  }
+
+                  console.log(_this2.ingresosEfectivo);
+                  console.log(_this2.ingresosTarjeta);
+                  _this2.ingresosHoy = parseInt(_this2.ingresosEfectivo + _this2.ingresosTarjeta);
 
                   if (_this2.ingresosHoy == null) {
                     _this2.ingresosHoy = 0;
@@ -9372,7 +9385,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
                 return _context2.stop();
             }
           }
-        }, _callee2);
+        }, _callee2, this);
       }));
 
       function getTotal() {
@@ -9452,6 +9465,12 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
     },
     desabilitarFecha: function desabilitarFecha() {
       this.busquedaPorFecha = false;
+      this.fechaElegida = new Date();
+      var day = this.fechaElegida.getDate();
+      var month = parseInt(this.fechaElegida.getMonth() + 1);
+      var year = this.fechaElegida.getFullYear();
+      var fechaCadena = day + "-" + month + "-" + year;
+      this.fechaElegida = fechaCadena;
       this.getResults();
     },
     getResults: function getResults() {
@@ -9468,6 +9487,8 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       axios.post('ventasPorFecha?page=' + page, param).then(function (response) {
         console.log(response.data);
         _this5.listaVentas = response.data;
+
+        _this5.getTotal();
       });
     }
   },

@@ -25,7 +25,7 @@ Route::post('filtrar','ProductController@filtrar')->name('products.filtrar');
 Route::post('informacionFiltro','ProductController@informacionFiltro')->name('products.informacionFiltro');
 
 Route::apiResource('ventas','VentaController');
-Route::get('ingresos','VentaController@ingresos')->name('ventas.ingresos');
+Route::get('ingresos/{fecha}','VentaController@ingresos')->name('ventas.ingresos');
 Route::post('datosventas','VentaController@datosVentas')->name('ventas.datosVentas');
 Route::get('ventasseña','VentaController@ventasSeña')->name('ventas.ventasSeña');
 Route::post('ventasPorFecha','VentaController@ventasPorFecha')->name('ventas.ventasPorFecha');

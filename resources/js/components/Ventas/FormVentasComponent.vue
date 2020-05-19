@@ -875,7 +875,7 @@
                        duration : 2000
                       });
 
-                  }if(venta.estado == 'Seña'){
+                  }else if(venta.estado == 'Seña'){
                     // Productos Venta
                     for(var product of this.productsVenta)
                     {
