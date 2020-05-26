@@ -198,12 +198,7 @@
 </template>
 <script >
 export default {
-		props: {
-          listStock: {
-          		type:Array
-          }
 
-        },
     	data(){
     		return {
     			tipoNiño: true,

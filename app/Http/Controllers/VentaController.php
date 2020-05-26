@@ -42,24 +42,73 @@ class VentaController extends Controller
                 ->when($request->fecha['semana']['enabled'], function($query) use($desde,$hasta) {
                     return $query->whereBetween('created_at',[$desde,$hasta]);
                 })
+                ->when($request->fecha['mes']['enabled'], function($query) use($desde,$hasta) {
+                    return $query->whereBetween('created_at',[$desde,$hasta]);
+                })
                 ->orderBy('date')
                 ->get();
-        $listaFechas = [];
+
+        $ventasCompletas = DB::table('ventas')
+                ->leftJoin('clients', 'ventas.cliente_id', '=', 'clients.id')
+                ->select('ventas.*', DB::raw('clients.nombre as cliente'), 'clients.telefono','clients.email',DB::raw('DATE(ventas.created_at) as fechaComparar'))
+                ->where('ventas.enabled',1)
+                ->where('ventas.forma_pago','!=','Cuenta' )
+                ->when($request->fecha['semana']['enabled'], function($query) use($desde,$hasta) {
+                    return $query->whereBetween('ventas.created_at',[$desde,$hasta]);
+                })
+                ->when($request->fecha['mes']['enabled'], function($query) use($desde,$hasta) {
+                    return $query->whereBetween('ventas.created_at',[$desde,$hasta]);
+                })
+                ->orderBy('ventas.created_at')
+                ->get();
+        $listaIdVentas = [];
+        foreach ($ventasCompletas as $key => $venta) {
+            array_push($listaIdVentas,$venta->id);
+        }
+
+        $productosVendidos = DB::table('product_vendidos')
+                            ->leftJoin('categorias','product_vendidos.categoria_id','=','categorias.id')
+                            ->select('product_vendidos.*','categorias.nombre')
+                            ->where('product_vendidos.estado','=','Vendido')
+                            ->whereIn('product_vendidos.venta_id',$listaIdVentas)
+                            ->get();
+
+        foreach ($ventasCompletas as $key => $venta) {
+            $listaproductos= [];
+            foreach ($productosVendidos as $key => $product) {
+                if($product->venta_id == $venta->id){
+                    array_push($listaproductos, $product);
+                }
+            }
+            $venta->productos = $listaproductos;
+        }
 
         $arrayVacioCantidad = [];
         $arrayVacioTotal = [];
+        $arrayVacioVentas= [];
+        $listaVacia = [];
+
 
         foreach ($ventas as $key => $venta) {
             $fecha = date_create($venta->date);
-            array_push($listaFechas,date_format($fecha,'d'));
-            for ($contador; $contador < date_format($fecha,'d'); $contador++) { 
+
+            for ($contador; $contador <= date_format($fecha,'d'); $contador++) { 
                 array_push($arrayVacioCantidad,0);
                 array_push($arrayVacioTotal,0);
+                array_push($arrayVacioVentas,0);
 
             }
             $contador++;
             array_push($arrayVacioCantidad,$venta->cantidad);
             array_push($arrayVacioTotal,$venta->total);
+            $listaVacia = [];
+            foreach ($ventasCompletas as $key => $ventacompleta) {
+                $comparar = date_create($ventacompleta->fechaComparar);
+                if($comparar == $fecha){
+                    array_push($listaVacia,$ventacompleta);
+                }
+            }
+            array_push($arrayVacioVentas,$listaVacia);
         }
         for ($i=1; count($arrayVacioCantidad) < $cantidadDias ; $i++) { 
             array_push($arrayVacioCantidad,0);
@@ -67,9 +116,13 @@ class VentaController extends Controller
         for ($i=1; count($arrayVacioTotal) < $cantidadDias ; $i++) { 
             array_push($arrayVacioTotal,0);
         }
+        for ($i=1; count($arrayVacioVentas) < $cantidadDias ; $i++) { 
+            array_push($arrayVacioVentas,0);
+        }
         $resultado = [];
        array_push($resultado,$arrayVacioCantidad);
        array_push($resultado,$arrayVacioTotal);
+       array_push($resultado,$arrayVacioVentas);
        array_push($resultado,$cantidadDias);
 
 
