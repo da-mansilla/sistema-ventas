@@ -31,108 +31,145 @@
           </div>
         </div>
 
-        <div class="row mt-5">
-          <div class="col-md-4">
+        <div class="m-3">
+
             <div class="card">
               <div class="card-header text-center">
                 <h5><strong>Ventas</strong></h5>
               </div>
               <div class="card-body">
-                <div class="form-group row">
-                  <label class="col-sm-4 col-form-label">Forma de Pago</label>
-                  <div class="col-sm-8">
-                    <input type="text" class="form-control">
-                  </div>
-                </div>
-                <hr>
-                <div class="form-group row">
-                  <label class="col-sm-4 col-form-label">Tipo</label>
-                  <div class="col-sm-8">
-                    <input type="text" class="form-control">
-                  </div>
-                </div>
-                <div class="form-group row">
-                  <label class="col-sm-4 col-form-label">Categoria</label>
-                  <div class="col-sm-8">
-                    <input type="text" class="form-control">
-                  </div>
-                </div>
-                <div class="form-group row">
-                  <label class="col-sm-4 col-form-label">Talle</label>
-                  <div class="col-sm-8">
-                    <input type="text" class="form-control">
-                  </div>
-                </div>
-                <div class="form-group row">
-                  <label class="col-sm-4 col-form-label">Color</label>
-                  <div class="col-sm-8">
-                    <input type="text" class="form-control">
-                  </div>
-                </div>
-                <hr>
-                <button class="btn btn-secondary float-right">Agregar</button>
-              </div>
-            </div>
-            <div class="card mt-3">
-              <div class="card-header text-center">
-                <h5><strong>Fecha</strong></h5>
-              </div>
-              <div class="card-body">
-                <div class="form-group row">
-                  <label class="col-sm-4 col-form-label">Ordenar Por</label>
-                  <div class="col-sm-8">
-                    <select class="form-control" v-model="ordenarPor">
-                      <option value="dia">Dia</option>
-                      <option value="semana">Semana</option>
-                      <option value="mes">Mes</option>
-                      <option value="year">Año</option>
-                    </select>
-                  </div>
-                </div>
-                <div class="form-group row" v-if="ordenarPor == 'dia'">
-                  <label class="col-sm-4 col-form-label">Dia</label>
-                  <div class="col-sm-8">
-                    <input type="date" name="" v-model="intervaloFecha">
-                  </div>
-                </div>
-                <div class="form-group row" v-if="ordenarPor == 'semana'">
-                  <label class="col-sm-4 col-form-label">Semana</label>
-                  <div class="col-sm-8">
-                    <input type="week" name="" v-model="intervaloFecha">
-                  </div>
-                </div>
-                <div class="form-group row" v-if="ordenarPor == 'mes'">
-                  <label class="col-sm-4 col-form-label">Mes</label>
-                  <div class="col-sm-8">
-                    <input type="month" name="" v-model="intervaloFecha" :placeholder="new Date().getMonth()">
-                  </div>
-                </div>
-                <div class="form-group row" v-if="ordenarPor == 'year'">
-                  <label class="col-sm-4 col-form-label">Año</label>
-                  <div class="col-sm-8">
-                    <select class="form-control"></select v-model="intervaloFecha">
-                      <option>2020</option>
-                    </select>
-                  </div>
-                </div>
-                
-                <button class="btn btn-secondary float-right" v-on:click="ordenarPorFecha">Agregar</button>
-              </div>
-              
-            </div>
-          </div>
 
-          <div class="col-md-8">
-            <div class="card">
-              <div class="card-body">
-                <canvas id="myChart" height="100"></canvas>
-                <canvas id="myChartt" height="100"></canvas>
+                
+                <div class="row">
+                  <div class="col-md-3">
+                    
+                  </div>
+                  <div class="col-md-3">
+                    <div class="form-group">
+                      <label class=" col-sm-4 colform-label">Ordenar Por</label>
+                      <div class="col-sm-8">
+                        <select class="form-control" v-model="ordenarPor">
+                          <option value="dia">Dia</option>
+                          <option value="semana">Semana</option>
+                          <option value="mes">Mes</option>
+                          <option value="year">Año</option>
+                        </select>
+                      </div>
+                    </div>
+                  </div>
+
+
+                  <div class="col-md-3">
+                    
+                  
+                    <div class="" v-if="ordenarPor == 'dia'">
+                      <label class="col-sm-5 col-form-label">Dia</label>
+                      <div class="col-sm-7">
+                        <input type="date" name="" v-model="intervaloFecha">
+                      </div>
+                    </div>
+                    <div class="" v-if="ordenarPor == 'semana'">
+                      <label class="col-sm-5 col-form-label">Semana</label>
+                      <div class="col-sm-7">
+                        <input type="week" name="" v-model="intervaloFecha">
+                      </div>
+                    </div>
+                    <div class="" v-if="ordenarPor == 'mes'">
+                      <label class="col-sm-5 col-form-label">Mes</label>
+                      <div class="col-sm-7">
+                        <input type="month" name="" v-model="intervaloFecha" :placeholder="new Date().getMonth()">
+                      </div>
+                    </div>
+                    <div class="" v-if="ordenarPor == 'year'">
+                      <label class="col-sm-5 col-form-label">Año</label>
+                      <div class="col-sm-7">
+                        <select class="form-control" v-model="intervaloFecha">
+                          <option>2020</option>
+                        </select>
+                      </div>
+                    </div>
+
+                  </div>
+
+
+                  <div class="col-md-3">
+                    <div class="d-flex justify-content-center">
+                      <button class="btn btn-secondary w-75 mt-3 mr-3" v-on:click="ordenarPorFecha">Agregar</button> 
+                    </div>
+                  </div>
+
+                </div>
                 
               </div>
             </div>
-          </div>
+            
+
         
         </div>
+
+        <div class="">
+          <div class="row">
+            <div class="col">
+              <div class="card position-relative">
+                <canvas id="myChart" height="300"></canvas>
+              </div>
+            </div>
+            <div class="col position-relative">
+              <div class="card">
+                <canvas id="myChartt" height="300"></canvas>
+              </div>
+            </div>
+            <div class="col">
+              <div class="card bg-light mb-3">
+                  <div class="card-header">Header</div>
+                  <div class="card-body">
+                    <div class="row">
+                      <h5>
+                          Ventas en Efectivo: {{ventasEfectivo}} - ${{ventasEfectivoTotal}}
+                      </h5>
+                    </div>
+                    <div class="row">
+                      <h5>
+                          Ventas con Tarjeta: {{ventasTarjeta}} - ${{ventasTarjetaTotal}}
+                      </h5>
+                    </div>
+                    <div class="row">
+                      <h5>
+                          Ventas con Efectivo y Tarjeta : {{ventasEfectivoTarjeta}} - ${{ventasEfectivoTarjetaTotal}}
+                      </h5>
+                    </div>
+                    <br>
+                    <div class="row">
+                      <h5>
+                          Categoria mas Vendida
+                      </h5>
+                    </div>
+                    <div class="row">
+                      <h5>
+                          Ropa de Niño Vendida
+                      </h5>
+                    </div>
+                    <div class="row">
+                      <h5>
+                          Ropa de Niña Vendida
+                      </h5>
+                    </div>
+                    <div class="row">
+                      <h5>
+                          Ropa Unisex Vendida
+                      </h5>
+                    </div>
+                  </div>
+                  
+
+              </div>
+            </div>
+            
+          </div>
+
+          
+        </div>
+
       </div>
     </div>
 </template>
@@ -153,17 +190,154 @@
             totalVentas: [],
             labelsFechas: [],
             labelsColor: [],
-            ordenarPor: '',
+            ordenarPor: 'mes',
             intervaloFecha: '',
             tituloCantidad: '',
             tituloIngresos: '',
+            listaCategorias: [],
+            listaTemporadas: [],
+            listaVentasInformacion: [],
+            ventasEfectivo: 0,
+            ventasEfectivoTotal:0,
+            ventasTarjeta: 0,
+            ventasTarjetaTotal:0,
+            ventasEfectivoTarjeta: 0,
+            ventasEfectivoTarjetaTotal:0
           }
 
               
         },
         mounted() {
+          this.graficoVentas();
+          this.llenarGrafico();
         },
         methods:{
+          llenarGrafico(){
+                var ordenarPorMes = true;
+                var ordenarPorDia = false;
+                var ordenarPorSemana = false;
+                var ordenarPorYear = false;
+
+                let mesHoy = new Date().getMonth() + 1
+
+                let yearHoy = new Date().getFullYear()
+
+                let fechaHoy = yearHoy+"-"+mesHoy;
+                this.intervaloFecha = fechaHoy;
+                console.log(fechaHoy);
+                var input = new Date(fechaHoy)
+                input.setDate(input.getDate() + 1)
+
+
+                var desde = new Date(input);
+                console.log(desde);
+                var hasta = new Date(input.setMonth(input.getMonth() + 1))
+                console.log(hasta)
+
+
+              var opc = {
+                fecha: {
+                  dia:{
+                    enabled: ordenarPorDia
+                  },
+                  semana:{
+                    enabled: ordenarPorSemana,
+                    desde: desde,
+                    hasta: hasta
+                  },
+                  mes: {
+                    enabled: ordenarPorMes,
+                    desde: desde,
+                    hasta: hasta
+                  },
+                  year: {
+                    enabled: ordenarPorYear
+                  }
+                }
+              };
+              console.log(opc);
+              axios.post('/datosventas',opc).then((response)=>{
+                console.log(response.data);
+                this.cantidadVentas = response.data[0];
+                this.totalVentas = response.data[1];
+                this.listaVentasInformacion = response.data[2]
+                this.llenarLavels(opc);
+                this.graficoVentas();
+                this.informacion();
+              })
+
+
+          },
+          informacion(){
+            var cantidadVentasEfectivo= 0;
+            var totalVentasEfectivo= 0;
+
+            var cantidadVentasTarjeta= 0;
+            var totalVentasTarjeta= 0;
+
+            var cantidadVentasEfectivoTarjeta= 0;
+            var totalVentasEfectivoTarjeta= 0;
+
+            this.listaVentasInformacion.forEach(element=>{
+              if(element !== 0){
+                element.forEach(venta=>{
+                  //Ventas Efectivo
+                  if(venta.forma_pago == 'Efectivo'){
+                    totalVentasEfectivo += venta.pagoEfectivo
+                    cantidadVentasEfectivo++
+                  }
+                  //Ventas Tarjeta
+                  if(venta.forma_pago == 'Tarjeta'){
+                    totalVentasTarjeta += venta.pagoTarjeta
+                    cantidadVentasTarjeta++
+                  }
+                  //Ventas Efectivo Tarjeta
+                  if(venta.forma_pago == 'efectivoTarjeta'){
+                    totalVentasEfectivoTarjeta += venta.pagoEfectivo+venta.pagoTarjeta
+                    cantidadVentasEfectivoTarjeta++
+                  }
+                })
+              }
+            })
+            console.log('Informacion');
+            this.ventasEfectivo= cantidadVentasEfectivo
+            this.ventasEfectivoTotal= totalVentasEfectivo
+
+            this.ventasTarjeta= cantidadVentasTarjeta
+            this.ventasTarjetaTotal= totalVentasTarjeta
+
+            this.ventasEfectivoTarjeta= cantidadVentasEfectivoTarjeta
+            this.ventasEfectivoTarjetaTotal= totalVentasEfectivoTarjeta
+            console.log(cantidadVentasEfectivo);
+            console.log(totalVentasEfectivo);
+          },
+          getCategorias(){
+              axios.get('/cantidadcategorias').then((response)=>{
+                this.listaCategorias= response.data;
+                this.listaCategorias.forEach((element)=>{
+                if(this.tipoNiño && element.tipo == 'Niño')
+                {
+                  this.sugerenciasList.push(element);
+                }
+                if(this.tipoNiña && element.tipo == 'Niña')
+                {
+                  this.sugerenciasList.push(element);
+                }
+                if(this.tipoUnisex && element.tipo == 'Unisex')
+                {
+                  this.sugerenciasList.push(element);
+                }
+              })
+              })
+            },
+          getTemporadas(){
+            axios.get('/temporadas').then(response=>{
+              response.data.forEach(element=>{
+                this.listaTemporadas.push(element.nombre)
+              })
+
+            })
+          },
           datosVentas(){
             axios.post('/datosventas').then(response=>{
               this.cantidadVentas = response.data[0];
@@ -257,7 +431,8 @@
               console.log(response.data);
               this.cantidadVentas = response.data[0];
               this.totalVentas = response.data[1];
-              let cantidadDias = response.data[2];
+              this.listaVentasInformacion = response.data[2]
+              console.log(this.listaVentasInformacion);
               this.llenarLavels(opc);
               this.graficoVentas();
             })
@@ -285,8 +460,9 @@
                         backgroundColor: this.labelsColor,
 
                         borderWidth: 1,
-                        maxBarThickness: 50,
+                        maxBarThickness: 5,
                         minBarLength: 10,
+
                     }]
                 },
                 options: {
@@ -300,7 +476,10 @@
                     scales: {
                         yAxes: [{
                             ticks: {
-                                beginAtZero: true
+                                beginAtZero: true,
+                                stepSize: 1,
+                                steps: 10,
+                                stepValue: 5,
                             }
                         }]
                     }
@@ -327,6 +506,7 @@
 
                         ],
                         borderWidth: 1,
+                        scaleSteps : 1
 
                     }]
                 },

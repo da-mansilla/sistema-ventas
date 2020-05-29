@@ -2663,6 +2663,43 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   props: {},
   data: function data() {
@@ -2679,22 +2716,156 @@ __webpack_require__.r(__webpack_exports__);
       totalVentas: [],
       labelsFechas: [],
       labelsColor: [],
-      ordenarPor: '',
+      ordenarPor: 'mes',
       intervaloFecha: '',
       tituloCantidad: '',
-      tituloIngresos: ''
+      tituloIngresos: '',
+      listaCategorias: [],
+      listaTemporadas: [],
+      listaVentasInformacion: [],
+      ventasEfectivo: 0,
+      ventasEfectivoTotal: 0,
+      ventasTarjeta: 0,
+      ventasTarjetaTotal: 0,
+      ventasEfectivoTarjeta: 0,
+      ventasEfectivoTarjetaTotal: 0
     };
   },
-  mounted: function mounted() {},
+  mounted: function mounted() {
+    this.graficoVentas();
+    this.llenarGrafico();
+  },
   methods: {
-    datosVentas: function datosVentas() {
+    llenarGrafico: function llenarGrafico() {
       var _this = this;
 
-      axios.post('/datosventas').then(function (response) {
+      var ordenarPorMes = true;
+      var ordenarPorDia = false;
+      var ordenarPorSemana = false;
+      var ordenarPorYear = false;
+      var mesHoy = new Date().getMonth() + 1;
+      var yearHoy = new Date().getFullYear();
+      var fechaHoy = yearHoy + "-" + mesHoy;
+      this.intervaloFecha = fechaHoy;
+      console.log(fechaHoy);
+      var input = new Date(fechaHoy);
+      input.setDate(input.getDate() + 1);
+      var desde = new Date(input);
+      console.log(desde);
+      var hasta = new Date(input.setMonth(input.getMonth() + 1));
+      console.log(hasta);
+      var opc = {
+        fecha: {
+          dia: {
+            enabled: ordenarPorDia
+          },
+          semana: {
+            enabled: ordenarPorSemana,
+            desde: desde,
+            hasta: hasta
+          },
+          mes: {
+            enabled: ordenarPorMes,
+            desde: desde,
+            hasta: hasta
+          },
+          year: {
+            enabled: ordenarPorYear
+          }
+        }
+      };
+      console.log(opc);
+      axios.post('/datosventas', opc).then(function (response) {
+        console.log(response.data);
         _this.cantidadVentas = response.data[0];
         _this.totalVentas = response.data[1];
+        _this.listaVentasInformacion = response.data[2];
+
+        _this.llenarLavels(opc);
 
         _this.graficoVentas();
+
+        _this.informacion();
+      });
+    },
+    informacion: function informacion() {
+      var cantidadVentasEfectivo = 0;
+      var totalVentasEfectivo = 0;
+      var cantidadVentasTarjeta = 0;
+      var totalVentasTarjeta = 0;
+      var cantidadVentasEfectivoTarjeta = 0;
+      var totalVentasEfectivoTarjeta = 0;
+      this.listaVentasInformacion.forEach(function (element) {
+        if (element !== 0) {
+          element.forEach(function (venta) {
+            //Ventas Efectivo
+            if (venta.forma_pago == 'Efectivo') {
+              totalVentasEfectivo += venta.pagoEfectivo;
+              cantidadVentasEfectivo++;
+            } //Ventas Tarjeta
+
+
+            if (venta.forma_pago == 'Tarjeta') {
+              totalVentasTarjeta += venta.pagoTarjeta;
+              cantidadVentasTarjeta++;
+            } //Ventas Efectivo Tarjeta
+
+
+            if (venta.forma_pago == 'efectivoTarjeta') {
+              totalVentasEfectivoTarjeta += venta.pagoEfectivo + venta.pagoTarjeta;
+              cantidadVentasEfectivoTarjeta++;
+            }
+          });
+        }
+      });
+      console.log('Informacion');
+      this.ventasEfectivo = cantidadVentasEfectivo;
+      this.ventasEfectivoTotal = totalVentasEfectivo;
+      this.ventasTarjeta = cantidadVentasTarjeta;
+      this.ventasTarjetaTotal = totalVentasTarjeta;
+      this.ventasEfectivoTarjeta = cantidadVentasEfectivoTarjeta;
+      this.ventasEfectivoTarjetaTotal = totalVentasEfectivoTarjeta;
+      console.log(cantidadVentasEfectivo);
+      console.log(totalVentasEfectivo);
+    },
+    getCategorias: function getCategorias() {
+      var _this2 = this;
+
+      axios.get('/cantidadcategorias').then(function (response) {
+        _this2.listaCategorias = response.data;
+
+        _this2.listaCategorias.forEach(function (element) {
+          if (_this2.tipoNiño && element.tipo == 'Niño') {
+            _this2.sugerenciasList.push(element);
+          }
+
+          if (_this2.tipoNiña && element.tipo == 'Niña') {
+            _this2.sugerenciasList.push(element);
+          }
+
+          if (_this2.tipoUnisex && element.tipo == 'Unisex') {
+            _this2.sugerenciasList.push(element);
+          }
+        });
+      });
+    },
+    getTemporadas: function getTemporadas() {
+      var _this3 = this;
+
+      axios.get('/temporadas').then(function (response) {
+        response.data.forEach(function (element) {
+          _this3.listaTemporadas.push(element.nombre);
+        });
+      });
+    },
+    datosVentas: function datosVentas() {
+      var _this4 = this;
+
+      axios.post('/datosventas').then(function (response) {
+        _this4.cantidadVentas = response.data[0];
+        _this4.totalVentas = response.data[1];
+
+        _this4.graficoVentas();
       });
     },
     llenarLavels: function llenarLavels(opc) {
@@ -2720,7 +2891,7 @@ __webpack_require__.r(__webpack_exports__);
       } else if (opc.fecha.year.enabled) {}
     },
     ordenarPorFecha: function ordenarPorFecha() {
-      var _this2 = this;
+      var _this5 = this;
 
       var ordenarPorDia = false;
       var ordenarPorSemana = false;
@@ -2772,13 +2943,14 @@ __webpack_require__.r(__webpack_exports__);
       console.log(opc);
       axios.post('/datosventas', opc).then(function (response) {
         console.log(response.data);
-        _this2.cantidadVentas = response.data[0];
-        _this2.totalVentas = response.data[1];
-        var cantidadDias = response.data[2];
+        _this5.cantidadVentas = response.data[0];
+        _this5.totalVentas = response.data[1];
+        _this5.listaVentasInformacion = response.data[2];
+        console.log(_this5.listaVentasInformacion);
 
-        _this2.llenarLavels(opc);
+        _this5.llenarLavels(opc);
 
-        _this2.graficoVentas();
+        _this5.graficoVentas();
       });
     },
     graficoVentas: function graficoVentas() {
@@ -2803,7 +2975,7 @@ __webpack_require__.r(__webpack_exports__);
             data: this.cantidadVentas,
             backgroundColor: this.labelsColor,
             borderWidth: 1,
-            maxBarThickness: 50,
+            maxBarThickness: 5,
             minBarLength: 10
           }]
         },
@@ -2818,7 +2990,10 @@ __webpack_require__.r(__webpack_exports__);
           scales: {
             yAxes: [{
               ticks: {
-                beginAtZero: true
+                beginAtZero: true,
+                stepSize: 1,
+                steps: 10,
+                stepValue: 5
               }
             }]
           }
@@ -2836,7 +3011,8 @@ __webpack_require__.r(__webpack_exports__);
             data: this.totalVentas,
             backgroundColor: this.labelsColor,
             borderColor: ['rgba(255, 99, 132, 1)'],
-            borderWidth: 1
+            borderWidth: 1,
+            scaleSteps: 1
           }]
         },
         options: {
@@ -85246,189 +85422,288 @@ var render = function() {
     _c("div", { staticClass: "card-body" }, [
       _vm._m(1),
       _vm._v(" "),
-      _c("div", { staticClass: "row mt-5" }, [
-        _c("div", { staticClass: "col-md-4" }, [
+      _c("div", { staticClass: "m-3" }, [
+        _c("div", { staticClass: "card" }, [
           _vm._m(2),
           _vm._v(" "),
-          _c("div", { staticClass: "card mt-3" }, [
-            _vm._m(3),
-            _vm._v(" "),
-            _c("div", { staticClass: "card-body" }, [
-              _c("div", { staticClass: "form-group row" }, [
-                _c("label", { staticClass: "col-sm-4 col-form-label" }, [
-                  _vm._v("Ordenar Por")
-                ]),
-                _vm._v(" "),
-                _c("div", { staticClass: "col-sm-8" }, [
-                  _c(
-                    "select",
-                    {
-                      directives: [
-                        {
-                          name: "model",
-                          rawName: "v-model",
-                          value: _vm.ordenarPor,
-                          expression: "ordenarPor"
+          _c("div", { staticClass: "card-body" }, [
+            _c("div", { staticClass: "row" }, [
+              _c("div", { staticClass: "col-md-3" }),
+              _vm._v(" "),
+              _c("div", { staticClass: "col-md-3" }, [
+                _c("div", { staticClass: "form-group" }, [
+                  _c("label", { staticClass: " col-sm-4 colform-label" }, [
+                    _vm._v("Ordenar Por")
+                  ]),
+                  _vm._v(" "),
+                  _c("div", { staticClass: "col-sm-8" }, [
+                    _c(
+                      "select",
+                      {
+                        directives: [
+                          {
+                            name: "model",
+                            rawName: "v-model",
+                            value: _vm.ordenarPor,
+                            expression: "ordenarPor"
+                          }
+                        ],
+                        staticClass: "form-control",
+                        on: {
+                          change: function($event) {
+                            var $$selectedVal = Array.prototype.filter
+                              .call($event.target.options, function(o) {
+                                return o.selected
+                              })
+                              .map(function(o) {
+                                var val = "_value" in o ? o._value : o.value
+                                return val
+                              })
+                            _vm.ordenarPor = $event.target.multiple
+                              ? $$selectedVal
+                              : $$selectedVal[0]
+                          }
                         }
-                      ],
-                      staticClass: "form-control",
-                      on: {
-                        change: function($event) {
-                          var $$selectedVal = Array.prototype.filter
-                            .call($event.target.options, function(o) {
-                              return o.selected
-                            })
-                            .map(function(o) {
-                              var val = "_value" in o ? o._value : o.value
-                              return val
-                            })
-                          _vm.ordenarPor = $event.target.multiple
-                            ? $$selectedVal
-                            : $$selectedVal[0]
-                        }
-                      }
-                    },
-                    [
-                      _c("option", { attrs: { value: "dia" } }, [
-                        _vm._v("Dia")
-                      ]),
-                      _vm._v(" "),
-                      _c("option", { attrs: { value: "semana" } }, [
-                        _vm._v("Semana")
-                      ]),
-                      _vm._v(" "),
-                      _c("option", { attrs: { value: "mes" } }, [
-                        _vm._v("Mes")
-                      ]),
-                      _vm._v(" "),
-                      _c("option", { attrs: { value: "year" } }, [
-                        _vm._v("Año")
-                      ])
-                    ]
-                  )
+                      },
+                      [
+                        _c("option", { attrs: { value: "dia" } }, [
+                          _vm._v("Dia")
+                        ]),
+                        _vm._v(" "),
+                        _c("option", { attrs: { value: "semana" } }, [
+                          _vm._v("Semana")
+                        ]),
+                        _vm._v(" "),
+                        _c("option", { attrs: { value: "mes" } }, [
+                          _vm._v("Mes")
+                        ]),
+                        _vm._v(" "),
+                        _c("option", { attrs: { value: "year" } }, [
+                          _vm._v("Año")
+                        ])
+                      ]
+                    )
+                  ])
                 ])
               ]),
               _vm._v(" "),
-              _vm.ordenarPor == "dia"
-                ? _c("div", { staticClass: "form-group row" }, [
-                    _c("label", { staticClass: "col-sm-4 col-form-label" }, [
-                      _vm._v("Dia")
-                    ]),
-                    _vm._v(" "),
-                    _c("div", { staticClass: "col-sm-8" }, [
-                      _c("input", {
-                        directives: [
-                          {
-                            name: "model",
-                            rawName: "v-model",
-                            value: _vm.intervaloFecha,
-                            expression: "intervaloFecha"
-                          }
-                        ],
-                        attrs: { type: "date", name: "" },
-                        domProps: { value: _vm.intervaloFecha },
-                        on: {
-                          input: function($event) {
-                            if ($event.target.composing) {
-                              return
+              _c("div", { staticClass: "col-md-3" }, [
+                _vm.ordenarPor == "dia"
+                  ? _c("div", {}, [
+                      _c("label", { staticClass: "col-sm-5 col-form-label" }, [
+                        _vm._v("Dia")
+                      ]),
+                      _vm._v(" "),
+                      _c("div", { staticClass: "col-sm-7" }, [
+                        _c("input", {
+                          directives: [
+                            {
+                              name: "model",
+                              rawName: "v-model",
+                              value: _vm.intervaloFecha,
+                              expression: "intervaloFecha"
                             }
-                            _vm.intervaloFecha = $event.target.value
-                          }
-                        }
-                      })
-                    ])
-                  ])
-                : _vm._e(),
-              _vm._v(" "),
-              _vm.ordenarPor == "semana"
-                ? _c("div", { staticClass: "form-group row" }, [
-                    _c("label", { staticClass: "col-sm-4 col-form-label" }, [
-                      _vm._v("Semana")
-                    ]),
-                    _vm._v(" "),
-                    _c("div", { staticClass: "col-sm-8" }, [
-                      _c("input", {
-                        directives: [
-                          {
-                            name: "model",
-                            rawName: "v-model",
-                            value: _vm.intervaloFecha,
-                            expression: "intervaloFecha"
-                          }
-                        ],
-                        attrs: { type: "week", name: "" },
-                        domProps: { value: _vm.intervaloFecha },
-                        on: {
-                          input: function($event) {
-                            if ($event.target.composing) {
-                              return
+                          ],
+                          attrs: { type: "date", name: "" },
+                          domProps: { value: _vm.intervaloFecha },
+                          on: {
+                            input: function($event) {
+                              if ($event.target.composing) {
+                                return
+                              }
+                              _vm.intervaloFecha = $event.target.value
                             }
-                            _vm.intervaloFecha = $event.target.value
                           }
-                        }
-                      })
+                        })
+                      ])
                     ])
-                  ])
-                : _vm._e(),
-              _vm._v(" "),
-              _vm.ordenarPor == "mes"
-                ? _c("div", { staticClass: "form-group row" }, [
-                    _c("label", { staticClass: "col-sm-4 col-form-label" }, [
-                      _vm._v("Mes")
-                    ]),
-                    _vm._v(" "),
-                    _c("div", { staticClass: "col-sm-8" }, [
-                      _c("input", {
-                        directives: [
-                          {
-                            name: "model",
-                            rawName: "v-model",
-                            value: _vm.intervaloFecha,
-                            expression: "intervaloFecha"
-                          }
-                        ],
-                        attrs: {
-                          type: "month",
-                          name: "",
-                          placeholder: new Date().getMonth()
-                        },
-                        domProps: { value: _vm.intervaloFecha },
-                        on: {
-                          input: function($event) {
-                            if ($event.target.composing) {
-                              return
+                  : _vm._e(),
+                _vm._v(" "),
+                _vm.ordenarPor == "semana"
+                  ? _c("div", {}, [
+                      _c("label", { staticClass: "col-sm-5 col-form-label" }, [
+                        _vm._v("Semana")
+                      ]),
+                      _vm._v(" "),
+                      _c("div", { staticClass: "col-sm-7" }, [
+                        _c("input", {
+                          directives: [
+                            {
+                              name: "model",
+                              rawName: "v-model",
+                              value: _vm.intervaloFecha,
+                              expression: "intervaloFecha"
                             }
-                            _vm.intervaloFecha = $event.target.value
+                          ],
+                          attrs: { type: "week", name: "" },
+                          domProps: { value: _vm.intervaloFecha },
+                          on: {
+                            input: function($event) {
+                              if ($event.target.composing) {
+                                return
+                              }
+                              _vm.intervaloFecha = $event.target.value
+                            }
                           }
-                        }
-                      })
+                        })
+                      ])
                     ])
-                  ])
-                : _vm._e(),
+                  : _vm._e(),
+                _vm._v(" "),
+                _vm.ordenarPor == "mes"
+                  ? _c("div", {}, [
+                      _c("label", { staticClass: "col-sm-5 col-form-label" }, [
+                        _vm._v("Mes")
+                      ]),
+                      _vm._v(" "),
+                      _c("div", { staticClass: "col-sm-7" }, [
+                        _c("input", {
+                          directives: [
+                            {
+                              name: "model",
+                              rawName: "v-model",
+                              value: _vm.intervaloFecha,
+                              expression: "intervaloFecha"
+                            }
+                          ],
+                          attrs: {
+                            type: "month",
+                            name: "",
+                            placeholder: new Date().getMonth()
+                          },
+                          domProps: { value: _vm.intervaloFecha },
+                          on: {
+                            input: function($event) {
+                              if ($event.target.composing) {
+                                return
+                              }
+                              _vm.intervaloFecha = $event.target.value
+                            }
+                          }
+                        })
+                      ])
+                    ])
+                  : _vm._e(),
+                _vm._v(" "),
+                _vm.ordenarPor == "year"
+                  ? _c("div", {}, [
+                      _c("label", { staticClass: "col-sm-5 col-form-label" }, [
+                        _vm._v("Año")
+                      ]),
+                      _vm._v(" "),
+                      _c("div", { staticClass: "col-sm-7" }, [
+                        _c(
+                          "select",
+                          {
+                            directives: [
+                              {
+                                name: "model",
+                                rawName: "v-model",
+                                value: _vm.intervaloFecha,
+                                expression: "intervaloFecha"
+                              }
+                            ],
+                            staticClass: "form-control",
+                            on: {
+                              change: function($event) {
+                                var $$selectedVal = Array.prototype.filter
+                                  .call($event.target.options, function(o) {
+                                    return o.selected
+                                  })
+                                  .map(function(o) {
+                                    var val = "_value" in o ? o._value : o.value
+                                    return val
+                                  })
+                                _vm.intervaloFecha = $event.target.multiple
+                                  ? $$selectedVal
+                                  : $$selectedVal[0]
+                              }
+                            }
+                          },
+                          [_c("option", [_vm._v("2020")])]
+                        )
+                      ])
+                    ])
+                  : _vm._e()
+              ]),
               _vm._v(" "),
-              _vm.ordenarPor == "year"
-                ? _c("div", { staticClass: "form-group row" }, [
-                    _c("label", { staticClass: "col-sm-4 col-form-label" }, [
-                      _vm._v("Año")
-                    ]),
-                    _vm._v(" "),
-                    _vm._m(4)
-                  ])
-                : _vm._e(),
-              _vm._v(" "),
-              _c(
-                "button",
-                {
-                  staticClass: "btn btn-secondary float-right",
-                  on: { click: _vm.ordenarPorFecha }
-                },
-                [_vm._v("Agregar")]
-              )
+              _c("div", { staticClass: "col-md-3" }, [
+                _c("div", { staticClass: "d-flex justify-content-center" }, [
+                  _c(
+                    "button",
+                    {
+                      staticClass: "btn btn-secondary w-75 mt-3 mr-3",
+                      on: { click: _vm.ordenarPorFecha }
+                    },
+                    [_vm._v("Agregar")]
+                  )
+                ])
+              ])
             ])
           ])
-        ]),
-        _vm._v(" "),
-        _vm._m(5)
+        ])
+      ]),
+      _vm._v(" "),
+      _c("div", {}, [
+        _c("div", { staticClass: "row" }, [
+          _vm._m(3),
+          _vm._v(" "),
+          _vm._m(4),
+          _vm._v(" "),
+          _c("div", { staticClass: "col" }, [
+            _c("div", { staticClass: "card bg-light mb-3" }, [
+              _c("div", { staticClass: "card-header" }, [_vm._v("Header")]),
+              _vm._v(" "),
+              _c("div", { staticClass: "card-body" }, [
+                _c("div", { staticClass: "row" }, [
+                  _c("h5", [
+                    _vm._v(
+                      "\n                      Ventas en Efectivo: " +
+                        _vm._s(_vm.ventasEfectivo) +
+                        " - $" +
+                        _vm._s(_vm.ventasEfectivoTotal) +
+                        "\n                  "
+                    )
+                  ])
+                ]),
+                _vm._v(" "),
+                _c("div", { staticClass: "row" }, [
+                  _c("h5", [
+                    _vm._v(
+                      "\n                      Ventas con Tarjeta: " +
+                        _vm._s(_vm.ventasTarjeta) +
+                        " - $" +
+                        _vm._s(_vm.ventasTarjetaTotal) +
+                        "\n                  "
+                    )
+                  ])
+                ]),
+                _vm._v(" "),
+                _c("div", { staticClass: "row" }, [
+                  _c("h5", [
+                    _vm._v(
+                      "\n                      Ventas con Efectivo y Tarjeta : " +
+                        _vm._s(_vm.ventasEfectivoTarjeta) +
+                        " - $" +
+                        _vm._s(_vm.ventasEfectivoTarjetaTotal) +
+                        "\n                  "
+                    )
+                  ])
+                ]),
+                _vm._v(" "),
+                _c("br"),
+                _vm._v(" "),
+                _vm._m(5),
+                _vm._v(" "),
+                _vm._m(6),
+                _vm._v(" "),
+                _vm._m(7),
+                _vm._v(" "),
+                _vm._m(8)
+              ])
+            ])
+          ])
+        ])
       ])
     ])
   ])
@@ -85492,84 +85767,17 @@ var staticRenderFns = [
     var _vm = this
     var _h = _vm.$createElement
     var _c = _vm._self._c || _h
-    return _c("div", { staticClass: "card" }, [
-      _c("div", { staticClass: "card-header text-center" }, [
-        _c("h5", [_c("strong", [_vm._v("Ventas")])])
-      ]),
-      _vm._v(" "),
-      _c("div", { staticClass: "card-body" }, [
-        _c("div", { staticClass: "form-group row" }, [
-          _c("label", { staticClass: "col-sm-4 col-form-label" }, [
-            _vm._v("Forma de Pago")
-          ]),
-          _vm._v(" "),
-          _c("div", { staticClass: "col-sm-8" }, [
-            _c("input", {
-              staticClass: "form-control",
-              attrs: { type: "text" }
-            })
-          ])
-        ]),
-        _vm._v(" "),
-        _c("hr"),
-        _vm._v(" "),
-        _c("div", { staticClass: "form-group row" }, [
-          _c("label", { staticClass: "col-sm-4 col-form-label" }, [
-            _vm._v("Tipo")
-          ]),
-          _vm._v(" "),
-          _c("div", { staticClass: "col-sm-8" }, [
-            _c("input", {
-              staticClass: "form-control",
-              attrs: { type: "text" }
-            })
-          ])
-        ]),
-        _vm._v(" "),
-        _c("div", { staticClass: "form-group row" }, [
-          _c("label", { staticClass: "col-sm-4 col-form-label" }, [
-            _vm._v("Categoria")
-          ]),
-          _vm._v(" "),
-          _c("div", { staticClass: "col-sm-8" }, [
-            _c("input", {
-              staticClass: "form-control",
-              attrs: { type: "text" }
-            })
-          ])
-        ]),
-        _vm._v(" "),
-        _c("div", { staticClass: "form-group row" }, [
-          _c("label", { staticClass: "col-sm-4 col-form-label" }, [
-            _vm._v("Talle")
-          ]),
-          _vm._v(" "),
-          _c("div", { staticClass: "col-sm-8" }, [
-            _c("input", {
-              staticClass: "form-control",
-              attrs: { type: "text" }
-            })
-          ])
-        ]),
-        _vm._v(" "),
-        _c("div", { staticClass: "form-group row" }, [
-          _c("label", { staticClass: "col-sm-4 col-form-label" }, [
-            _vm._v("Color")
-          ]),
-          _vm._v(" "),
-          _c("div", { staticClass: "col-sm-8" }, [
-            _c("input", {
-              staticClass: "form-control",
-              attrs: { type: "text" }
-            })
-          ])
-        ]),
-        _vm._v(" "),
-        _c("hr"),
-        _vm._v(" "),
-        _c("button", { staticClass: "btn btn-secondary float-right" }, [
-          _vm._v("Agregar")
-        ])
+    return _c("div", { staticClass: "card-header text-center" }, [
+      _c("h5", [_c("strong", [_vm._v("Ventas")])])
+    ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("div", { staticClass: "col" }, [
+      _c("div", { staticClass: "card position-relative" }, [
+        _c("canvas", { attrs: { id: "myChart", height: "300" } })
       ])
     ])
   },
@@ -85577,31 +85785,57 @@ var staticRenderFns = [
     var _vm = this
     var _h = _vm.$createElement
     var _c = _vm._self._c || _h
-    return _c("div", { staticClass: "card-header text-center" }, [
-      _c("h5", [_c("strong", [_vm._v("Fecha")])])
-    ])
-  },
-  function() {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c("div", { staticClass: "col-sm-8" }, [
-      _c("select", { staticClass: "form-control" }),
-      _vm._v(" "),
-      _c("option", [_vm._v("2020")])
-    ])
-  },
-  function() {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c("div", { staticClass: "col-md-8" }, [
+    return _c("div", { staticClass: "col position-relative" }, [
       _c("div", { staticClass: "card" }, [
-        _c("div", { staticClass: "card-body" }, [
-          _c("canvas", { attrs: { id: "myChart", height: "100" } }),
-          _vm._v(" "),
-          _c("canvas", { attrs: { id: "myChartt", height: "100" } })
-        ])
+        _c("canvas", { attrs: { id: "myChartt", height: "300" } })
+      ])
+    ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("div", { staticClass: "row" }, [
+      _c("h5", [
+        _vm._v(
+          "\n                      Categoria mas Vendida\n                  "
+        )
+      ])
+    ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("div", { staticClass: "row" }, [
+      _c("h5", [
+        _vm._v(
+          "\n                      Ropa de Niño Vendida\n                  "
+        )
+      ])
+    ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("div", { staticClass: "row" }, [
+      _c("h5", [
+        _vm._v(
+          "\n                      Ropa de Niña Vendida\n                  "
+        )
+      ])
+    ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("div", { staticClass: "row" }, [
+      _c("h5", [
+        _vm._v(
+          "\n                      Ropa Unisex Vendida\n                  "
+        )
       ])
     ])
   }
@@ -112691,15 +112925,14 @@ __webpack_require__.r(__webpack_exports__);
 /*!************************************************************************!*\
   !*** ./resources/js/components/Inventario/FiltroProductsComponent.vue ***!
   \************************************************************************/
-/*! no static exports found */
+/*! exports provided: default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _FiltroProductsComponent_vue_vue_type_template_id_4c437584___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./FiltroProductsComponent.vue?vue&type=template&id=4c437584& */ "./resources/js/components/Inventario/FiltroProductsComponent.vue?vue&type=template&id=4c437584&");
 /* harmony import */ var _FiltroProductsComponent_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./FiltroProductsComponent.vue?vue&type=script&lang=js& */ "./resources/js/components/Inventario/FiltroProductsComponent.vue?vue&type=script&lang=js&");
-/* harmony reexport (unknown) */ for(var __WEBPACK_IMPORT_KEY__ in _FiltroProductsComponent_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__) if(__WEBPACK_IMPORT_KEY__ !== 'default') (function(key) { __webpack_require__.d(__webpack_exports__, key, function() { return _FiltroProductsComponent_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__[key]; }) }(__WEBPACK_IMPORT_KEY__));
-/* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
+/* empty/unused harmony star reexport *//* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
 
 
 
@@ -112729,7 +112962,7 @@ component.options.__file = "resources/js/components/Inventario/FiltroProductsCom
 /*!*************************************************************************************************!*\
   !*** ./resources/js/components/Inventario/FiltroProductsComponent.vue?vue&type=script&lang=js& ***!
   \*************************************************************************************************/
-/*! no static exports found */
+/*! exports provided: default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
