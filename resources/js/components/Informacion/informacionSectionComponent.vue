@@ -202,7 +202,9 @@
             ventasTarjeta: 0,
             ventasTarjetaTotal:0,
             ventasEfectivoTarjeta: 0,
-            ventasEfectivoTarjetaTotal:0
+            ventasEfectivoTarjetaTotal:0,
+            click: false,
+            click2: false
           }
 
               
@@ -212,6 +214,7 @@
           this.llenarGrafico();
         },
         methods:{
+
           llenarGrafico(){
                 var ordenarPorMes = true;
                 var ordenarPorDia = false;
@@ -439,7 +442,9 @@
 
           },
           graficoVentas(){
+
             var ctx = document.getElementById('myChart');
+            
 
             if(window.myChart1){
               window.myChart1.clear();
@@ -466,12 +471,15 @@
                     }]
                 },
                 options: {
+                  layout:{},
                   title: {
                         display: true,
-                        text: this.tituloCantidad
+                        text: this.tituloCantidad,
+                        'onClick': this.alertFunction
                     },
                     legend: {
-                        display: false
+                        display: false,
+                        'onClick': this.alertFunction
                     },
                     scales: {
                         yAxes: [{
@@ -485,12 +493,25 @@
                     }
                 }
             });
-          
-          var ctx = document.getElementById('myChartt');
+
+          function alertFunction(evt){
+            var activeElement = window.myChart1.getElementAtEvent(evt);
+            console.log(activeElement);
+
+          }
+          if(this.click){
+            ctx.addEventListener('click', alertFunction, false);  
+            this.click= false;
+          } else {
+            this.click = true;
+          }
+
+
+          var ctx2 = document.getElementById('myChartt');
 
             
 
-            window.myChart2 = new Chart(ctx, {
+            window.myChart2 = new Chart(ctx2, {
                 type: 'line',
 
                 data: {
@@ -531,8 +552,22 @@
                     }
                 }
             });
+            function alertFunction2(evt){
+              var activeElement = window.myChart2.getElementAtEvent(evt);
+              console.log(activeElement);
+
+            }
+            if(this.click2){
+              ctx2.addEventListener('click', alertFunction2, false);  
+              this.click2= false;
+            } else {
+              this.click2 = true;
+            }
           }
             
+        },
+        alertFunction(){
+          console.log('click');
         },
         computed: {
         }

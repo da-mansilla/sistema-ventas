@@ -2728,7 +2728,9 @@ __webpack_require__.r(__webpack_exports__);
       ventasTarjeta: 0,
       ventasTarjetaTotal: 0,
       ventasEfectivoTarjeta: 0,
-      ventasEfectivoTarjetaTotal: 0
+      ventasEfectivoTarjetaTotal: 0,
+      click: false,
+      click2: false
     };
   },
   mounted: function mounted() {
@@ -2980,12 +2982,15 @@ __webpack_require__.r(__webpack_exports__);
           }]
         },
         options: {
+          layout: {},
           title: {
             display: true,
-            text: this.tituloCantidad
+            text: this.tituloCantidad,
+            'onClick': this.alertFunction
           },
           legend: {
-            display: false
+            display: false,
+            'onClick': this.alertFunction
           },
           scales: {
             yAxes: [{
@@ -2999,8 +3004,21 @@ __webpack_require__.r(__webpack_exports__);
           }
         }
       });
-      var ctx = document.getElementById('myChartt');
-      window.myChart2 = new Chart(ctx, {
+
+      function alertFunction(evt) {
+        var activeElement = window.myChart1.getElementAtEvent(evt);
+        console.log(activeElement);
+      }
+
+      if (this.click) {
+        ctx.addEventListener('click', alertFunction, false);
+        this.click = false;
+      } else {
+        this.click = true;
+      }
+
+      var ctx2 = document.getElementById('myChartt');
+      window.myChart2 = new Chart(ctx2, {
         type: 'line',
         data: {
           labels: this.labelsFechas,
@@ -3035,7 +3053,22 @@ __webpack_require__.r(__webpack_exports__);
           }
         }
       });
+
+      function alertFunction2(evt) {
+        var activeElement = window.myChart2.getElementAtEvent(evt);
+        console.log(activeElement);
+      }
+
+      if (this.click2) {
+        ctx2.addEventListener('click', alertFunction2, false);
+        this.click2 = false;
+      } else {
+        this.click2 = true;
+      }
     }
+  },
+  alertFunction: function alertFunction() {
+    console.log('click');
   },
   computed: {}
 });
