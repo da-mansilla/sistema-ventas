@@ -22,43 +22,56 @@ class VentaController extends Controller
         $hasta = '';
         $cantidadDias= 0;
         $contador = '';
+        $DATE_MONTH = '';
         if($request->fecha['semana']['enabled']){
             $desde = date_create($request->fecha['semana']['desde']);
             $hasta = date_create($request->fecha['semana']['hasta']);
             $contador = date_format($desde,'d');
             $cantidadDias = 7;
+            $DATE_MONTH = 'DATE';
         }
         if($request->fecha['mes']['enabled']){
             $desde = date_create($request->fecha['mes']['desde']);
             $hasta = date_create($request->fecha['mes']['hasta']);
             $contador = date_format($desde,'d');
             $cantidadDias = 31;
+            $DATE_MONTH = 'DATE';
         }
-        $ventas = DB::table('ventas')
+        if($request->fecha['year']['enabled']){
+            $desde = date_create($request->fecha['year']['desde']);
+            $hasta = date_create($request->fecha['year']['hasta']);
+            $contador = date_format($desde,'m');
+            $cantidadDias = 12;
+            $DATE_MONTH = 'MONTH';
+
+        }
+        if($request->fecha['year']['enabled']){
+            $ventas = DB::table('ventas')
+                ->select(DB::raw('MONTH(created_at) as month'),DB::raw('count(id) as cantidad'),DB::raw('sum(total) as total'))
+                ->groupBy('month')
+                ->where('enabled',1)
+                ->where('forma_pago','!=','Cuenta' )
+                ->whereBetween('created_at',[$desde,$hasta])
+                ->orderBy('month')
+                ->get();
+        }
+        else {
+            $ventas = DB::table('ventas')
                 ->select(DB::raw('DATE(created_at) as date'),DB::raw('count(id) as cantidad'),DB::raw('sum(total) as total'))
                 ->groupBy('date')
                 ->where('enabled',1)
                 ->where('forma_pago','!=','Cuenta' )
-                ->when($request->fecha['semana']['enabled'], function($query) use($desde,$hasta) {
-                    return $query->whereBetween('created_at',[$desde,$hasta]);
-                })
-                ->when($request->fecha['mes']['enabled'], function($query) use($desde,$hasta) {
-                    return $query->whereBetween('created_at',[$desde,$hasta]);
-                })
+                ->whereBetween('created_at',[$desde,$hasta])
                 ->orderBy('date')
-                ->get();
+                ->get();       
+        }
 
         $ventasCompletas = DB::table('ventas')
                 ->leftJoin('clients', 'ventas.cliente_id', '=', 'clients.id')
-                ->select('ventas.*', DB::raw('clients.nombre as cliente'), 'clients.telefono','clients.email',DB::raw('DATE(ventas.created_at) as fechaComparar'))
+                ->select('ventas.*', DB::raw('clients.nombre as cliente'), 'clients.telefono','clients.email',DB::raw($DATE_MONTH.'(ventas.created_at) as fechaComparar'))
                 ->where('ventas.enabled',1)
                 ->where('ventas.forma_pago','!=','Cuenta' )
-                ->when($request->fecha['semana']['enabled'], function($query) use($desde,$hasta) {
-                    return $query->whereBetween('ventas.created_at',[$desde,$hasta]);
-                })
-                ->when($request->fecha['mes']['enabled'], function($query) use($desde,$hasta) {
-                    return $query->whereBetween('ventas.created_at',[$desde,$hasta]);
-                })
+                ->whereBetween('ventas.created_at',[$desde,$hasta])
                 ->orderBy('ventas.created_at')
                 ->get();
         $listaIdVentas = [];
@@ -90,25 +103,44 @@ class VentaController extends Controller
 
 
         foreach ($ventas as $key => $venta) {
-            $fecha = date_create($venta->date);
-
-            for ($contador; $contador <= date_format($fecha,'d'); $contador++) { 
-                array_push($arrayVacioCantidad,0);
-                array_push($arrayVacioTotal,0);
-                array_push($arrayVacioVentas,0);
-
-            }
-            $contador++;
-            array_push($arrayVacioCantidad,$venta->cantidad);
-            array_push($arrayVacioTotal,$venta->total);
-            $listaVacia = [];
-            foreach ($ventasCompletas as $key => $ventacompleta) {
-                $comparar = date_create($ventacompleta->fechaComparar);
-                if($comparar == $fecha){
-                    array_push($listaVacia,$ventacompleta);
+            
+            if($request->fecha['year']['enabled']){
+                $fecha = $venta->month;
+                for ($contador; $contador < $fecha; $contador++) { 
+                    array_push($arrayVacioCantidad,0);
+                    array_push($arrayVacioTotal,0);
+                    array_push($arrayVacioVentas,0);
                 }
+                $contador++;
+                array_push($arrayVacioCantidad,$venta->cantidad);
+                array_push($arrayVacioTotal,$venta->total);
+                $listaVacia = [];
+                foreach ($ventasCompletas as $key => $ventacompleta) {
+                    $comparar = date_create($ventacompleta->fechaComparar);
+                    if($venta->month == $ventacompleta->fechaComparar){
+                        array_push($listaVacia,$ventacompleta);
+                    }
+                }
+                array_push($arrayVacioVentas,$listaVacia);
+            }else{
+                $fecha = date_create($venta->date);
+                for ($contador; $contador <= date_format($fecha,'d'); $contador++) { 
+                    array_push($arrayVacioCantidad,0);
+                    array_push($arrayVacioTotal,0);
+                    array_push($arrayVacioVentas,0);
+                }
+                $contador++;
+                array_push($arrayVacioCantidad,$venta->cantidad);
+                array_push($arrayVacioTotal,$venta->total);
+                $listaVacia = [];
+                foreach ($ventasCompletas as $key => $ventacompleta) {
+                    $comparar = date_create($ventacompleta->fechaComparar);
+                    if($comparar == $fecha){
+                        array_push($listaVacia,$ventacompleta);
+                    }
+                }
+                array_push($arrayVacioVentas,$listaVacia);
             }
-            array_push($arrayVacioVentas,$listaVacia);
         }
         for ($i=1; count($arrayVacioCantidad) < $cantidadDias ; $i++) { 
             array_push($arrayVacioCantidad,0);

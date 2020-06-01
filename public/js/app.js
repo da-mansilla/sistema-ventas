@@ -2700,6 +2700,117 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   props: {},
   data: function data() {
@@ -2723,14 +2834,19 @@ __webpack_require__.r(__webpack_exports__);
       listaCategorias: [],
       listaTemporadas: [],
       listaVentasInformacion: [],
+      ventasTotal: 0,
+      ventasTotalIngresos: 0,
       ventasEfectivo: 0,
       ventasEfectivoTotal: 0,
       ventasTarjeta: 0,
       ventasTarjetaTotal: 0,
       ventasEfectivoTarjeta: 0,
       ventasEfectivoTarjetaTotal: 0,
+      productosTotalesVendidos: 0,
       click: false,
-      click2: false
+      click2: false,
+      indexVenta: 0,
+      listVentasDetalle: []
     };
   },
   mounted: function mounted() {
@@ -2776,7 +2892,6 @@ __webpack_require__.r(__webpack_exports__);
           }
         }
       };
-      console.log(opc);
       axios.post('/datosventas', opc).then(function (response) {
         console.log(response.data);
         _this.cantidadVentas = response.data[0];
@@ -2791,17 +2906,27 @@ __webpack_require__.r(__webpack_exports__);
       });
     },
     informacion: function informacion() {
+      this.ventasEfectivo = 0;
+      this.ventasEfectivoTotal = 0;
+      this.ventasTarjeta = 0;
+      this.ventasTarjetaTotal = 0;
+      this.ventasEfectivoTarjeta = 0;
+      this.ventasEfectivoTarjetaTotal = 0;
+      this.ventasTotal = 0;
+      this.ventasTotalIngresos = 0;
+      this.productosTotalesVendidos = 0;
       var cantidadVentasEfectivo = 0;
       var totalVentasEfectivo = 0;
       var cantidadVentasTarjeta = 0;
       var totalVentasTarjeta = 0;
       var cantidadVentasEfectivoTarjeta = 0;
       var totalVentasEfectivoTarjeta = 0;
+      var productosTotalesVendidos = 0;
       this.listaVentasInformacion.forEach(function (element) {
         if (element !== 0) {
           element.forEach(function (venta) {
             //Ventas Efectivo
-            if (venta.forma_pago == 'Efectivo') {
+            if (venta.forma_pago == 'Efectivo' || venta.forma_pago == 'Seña') {
               totalVentasEfectivo += venta.pagoEfectivo;
               cantidadVentasEfectivo++;
             } //Ventas Tarjeta
@@ -2817,18 +2942,22 @@ __webpack_require__.r(__webpack_exports__);
               totalVentasEfectivoTarjeta += venta.pagoEfectivo + venta.pagoTarjeta;
               cantidadVentasEfectivoTarjeta++;
             }
+
+            venta.productos.forEach(function (productos) {
+              productosTotalesVendidos++;
+            });
           });
         }
       });
-      console.log('Informacion');
       this.ventasEfectivo = cantidadVentasEfectivo;
       this.ventasEfectivoTotal = totalVentasEfectivo;
       this.ventasTarjeta = cantidadVentasTarjeta;
       this.ventasTarjetaTotal = totalVentasTarjeta;
       this.ventasEfectivoTarjeta = cantidadVentasEfectivoTarjeta;
       this.ventasEfectivoTarjetaTotal = totalVentasEfectivoTarjeta;
-      console.log(cantidadVentasEfectivo);
-      console.log(totalVentasEfectivo);
+      this.ventasTotal = cantidadVentasEfectivo + cantidadVentasTarjeta + cantidadVentasEfectivoTarjeta;
+      this.ventasTotalIngresos = totalVentasEfectivo + totalVentasTarjeta + totalVentasEfectivoTarjeta;
+      this.productosTotalesVendidos = productosTotalesVendidos;
     },
     getCategorias: function getCategorias() {
       var _this2 = this;
@@ -2890,7 +3019,15 @@ __webpack_require__.r(__webpack_exports__);
 
         this.tituloCantidad = 'Ventas del Mes';
         this.tituloIngresos = 'Ingresos del Mes;';
-      } else if (opc.fecha.year.enabled) {}
+      } else if (opc.fecha.year.enabled) {
+        for (var _i2 = 1; _i2 <= 12; _i2++) {
+          this.labelsColor.push('rgba(255, 99, 132, 1)');
+          this.labelsFechas.push(_i2);
+        }
+
+        this.tituloCantidad = 'Ventas del Año';
+        this.tituloIngresos = 'Ingresos del Año;';
+      }
     },
     ordenarPorFecha: function ordenarPorFecha() {
       var _this5 = this;
@@ -2920,7 +3057,18 @@ __webpack_require__.r(__webpack_exports__);
         console.log(desde);
         var hasta = new Date(input.setMonth(input.getMonth() + 1));
         console.log(hasta);
-      } else if (this.ordenarPor == 'year') {}
+      } else if (this.ordenarPor == 'year') {
+        console.log(this.intervaloFecha);
+        ordenarPorYear = true;
+
+        var _year = parseInt(this.intervaloFecha);
+
+        var desde = new Date(_year + "-01-02");
+        console.log(desde);
+        var yearLater = parseInt(this.intervaloFecha) + 1;
+        var hasta = new Date(yearLater + "-01-02");
+        console.log(hasta);
+      }
 
       var opc = {
         fecha: {
@@ -2938,7 +3086,9 @@ __webpack_require__.r(__webpack_exports__);
             hasta: hasta
           },
           year: {
-            enabled: ordenarPorYear
+            enabled: ordenarPorYear,
+            desde: desde,
+            hasta: hasta
           }
         }
       };
@@ -2953,10 +3103,28 @@ __webpack_require__.r(__webpack_exports__);
         _this5.llenarLavels(opc);
 
         _this5.graficoVentas();
+
+        _this5.informacion();
       });
     },
+    detalleVenta: function detalleVenta(evt) {
+      console.log(evt);
+      var canvas = evt.path[0].id;
+
+      if (canvas == 'canvas1') {
+        var param1 = window.myChart1.getElementAtEvent(evt);
+      } else {
+        var param1 = window.myChart2.getElementAtEvent(evt);
+      }
+
+      if (param1.length > 0) {
+        this.indexVenta = param1[0]._index;
+        console.log(this.listaVentasInformacion[this.indexVenta]);
+        this.listVentasDetalle = this.listaVentasInformacion[this.indexVenta];
+      }
+    },
     graficoVentas: function graficoVentas() {
-      var ctx = document.getElementById('myChart');
+      var ctx = document.getElementById('canvas1');
 
       if (window.myChart1) {
         window.myChart1.clear();
@@ -3004,20 +3172,7 @@ __webpack_require__.r(__webpack_exports__);
           }
         }
       });
-
-      function alertFunction(evt) {
-        var activeElement = window.myChart1.getElementAtEvent(evt);
-        console.log(activeElement);
-      }
-
-      if (this.click) {
-        ctx.addEventListener('click', alertFunction, false);
-        this.click = false;
-      } else {
-        this.click = true;
-      }
-
-      var ctx2 = document.getElementById('myChartt');
+      var ctx2 = document.getElementById('canvas2');
       window.myChart2 = new Chart(ctx2, {
         type: 'line',
         data: {
@@ -3053,22 +3208,7 @@ __webpack_require__.r(__webpack_exports__);
           }
         }
       });
-
-      function alertFunction2(evt) {
-        var activeElement = window.myChart2.getElementAtEvent(evt);
-        console.log(activeElement);
-      }
-
-      if (this.click2) {
-        ctx2.addEventListener('click', alertFunction2, false);
-        this.click2 = false;
-      } else {
-        this.click2 = true;
-      }
     }
-  },
-  alertFunction: function alertFunction() {
-    console.log('click');
   },
   computed: {}
 });
@@ -85453,11 +85593,49 @@ var render = function() {
     _vm._m(0),
     _vm._v(" "),
     _c("div", { staticClass: "card-body" }, [
-      _vm._m(1),
+      _c("div", { staticClass: "row tarjetas" }, [
+        _c("div", { staticClass: "col-sm-4" }, [
+          _c("div", { staticClass: "card text-center" }, [
+            _c("div", { staticClass: "card-body" }, [
+              _vm._m(1),
+              _vm._v(" "),
+              _c("p", { staticClass: "card-text" }, [
+                _vm._v(_vm._s(_vm.ventasTotal))
+              ])
+            ])
+          ])
+        ]),
+        _vm._v(" "),
+        _c("div", { staticClass: "col-sm-4" }, [
+          _c("div", { staticClass: "card text-center" }, [
+            _c("div", { staticClass: "card-body" }, [
+              _vm._m(2),
+              _vm._v(" "),
+              _c(
+                "p",
+                { staticClass: "card-text", staticStyle: { color: "green" } },
+                [_vm._v("$" + _vm._s(_vm.ventasTotalIngresos))]
+              )
+            ])
+          ])
+        ]),
+        _vm._v(" "),
+        _c("div", { staticClass: "col-sm-4" }, [
+          _c("div", { staticClass: "card text-center" }, [
+            _c("div", { staticClass: "card-body" }, [
+              _vm._m(3),
+              _vm._v(" "),
+              _c("p", { staticClass: "card-text" }, [
+                _vm._v(_vm._s(_vm.productosTotalesVendidos))
+              ])
+            ])
+          ])
+        ])
+      ]),
       _vm._v(" "),
       _c("div", { staticClass: "m-3" }, [
         _c("div", { staticClass: "card" }, [
-          _vm._m(2),
+          _vm._m(4),
           _vm._v(" "),
           _c("div", { staticClass: "card-body" }, [
             _c("div", { staticClass: "row" }, [
@@ -85499,10 +85677,6 @@ var render = function() {
                         }
                       },
                       [
-                        _c("option", { attrs: { value: "dia" } }, [
-                          _vm._v("Dia")
-                        ]),
-                        _vm._v(" "),
                         _c("option", { attrs: { value: "semana" } }, [
                           _vm._v("Semana")
                         ]),
@@ -85521,37 +85695,6 @@ var render = function() {
               ]),
               _vm._v(" "),
               _c("div", { staticClass: "col-md-3" }, [
-                _vm.ordenarPor == "dia"
-                  ? _c("div", {}, [
-                      _c("label", { staticClass: "col-sm-5 col-form-label" }, [
-                        _vm._v("Dia")
-                      ]),
-                      _vm._v(" "),
-                      _c("div", { staticClass: "col-sm-7" }, [
-                        _c("input", {
-                          directives: [
-                            {
-                              name: "model",
-                              rawName: "v-model",
-                              value: _vm.intervaloFecha,
-                              expression: "intervaloFecha"
-                            }
-                          ],
-                          attrs: { type: "date", name: "" },
-                          domProps: { value: _vm.intervaloFecha },
-                          on: {
-                            input: function($event) {
-                              if ($event.target.composing) {
-                                return
-                              }
-                              _vm.intervaloFecha = $event.target.value
-                            }
-                          }
-                        })
-                      ])
-                    ])
-                  : _vm._e(),
-                _vm._v(" "),
                 _vm.ordenarPor == "semana"
                   ? _c("div", {}, [
                       _c("label", { staticClass: "col-sm-5 col-form-label" }, [
@@ -85679,15 +85822,41 @@ var render = function() {
       _vm._v(" "),
       _c("div", {}, [
         _c("div", { staticClass: "row" }, [
-          _vm._m(3),
+          _c("div", { staticClass: "col" }, [
+            _c("div", { staticClass: "card position-relative" }, [
+              _c("canvas", {
+                attrs: { id: "canvas1", height: "300" },
+                on: { click: _vm.detalleVenta }
+              })
+            ])
+          ]),
           _vm._v(" "),
-          _vm._m(4),
+          _c("div", { staticClass: "col position-relative" }, [
+            _c("div", { staticClass: "card" }, [
+              _c("canvas", {
+                attrs: { id: "canvas2", height: "300" },
+                on: { click: _vm.detalleVenta }
+              })
+            ])
+          ]),
           _vm._v(" "),
           _c("div", { staticClass: "col" }, [
             _c("div", { staticClass: "card bg-light mb-3" }, [
               _c("div", { staticClass: "card-header" }, [_vm._v("Header")]),
               _vm._v(" "),
               _c("div", { staticClass: "card-body" }, [
+                _c("div", { staticClass: "row" }, [
+                  _c("h5", [
+                    _vm._v(
+                      "\n                      Ventas: " +
+                        _vm._s(_vm.ventasTotal) +
+                        " - $" +
+                        _vm._s(_vm.ventasTotalIngresos) +
+                        "\n                  "
+                    )
+                  ])
+                ]),
+                _vm._v(" "),
                 _c("div", { staticClass: "row" }, [
                   _c("h5", [
                     _vm._v(
@@ -85726,6 +85895,16 @@ var render = function() {
                 _vm._v(" "),
                 _c("br"),
                 _vm._v(" "),
+                _c("div", { staticClass: "row" }, [
+                  _c("h5", [
+                    _vm._v(
+                      "\n                      Productos Vendidos: " +
+                        _vm._s(_vm.productosTotalesVendidos) +
+                        "\n                  "
+                    )
+                  ])
+                ]),
+                _vm._v(" "),
                 _vm._m(5),
                 _vm._v(" "),
                 _vm._m(6),
@@ -85735,6 +85914,156 @@ var render = function() {
                 _vm._m(8)
               ])
             ])
+          ])
+        ])
+      ]),
+      _vm._v(" "),
+      _c("div", { staticClass: "card mt-3" }, [
+        _vm._m(9),
+        _vm._v(" "),
+        _c("div", { staticClass: "card-body" }, [
+          _c("div", {}, [
+            _c(
+              "div",
+              { staticClass: "accordion", attrs: { id: "accordionExample" } },
+              _vm._l(_vm.listVentasDetalle, function(venta, index) {
+                return _c("div", { key: venta.id, staticClass: "card" }, [
+                  _c(
+                    "div",
+                    { staticClass: "card-header", attrs: { id: "headingOne" } },
+                    [
+                      _c("h2", { staticClass: "mb-0" }, [
+                        _c(
+                          "button",
+                          {
+                            staticClass: "btn btn-link btn-block text-left",
+                            staticStyle: { "text-decoration": "none" },
+                            attrs: {
+                              type: "button",
+                              "data-toggle": "collapse",
+                              "data-target": "#collapseOne" + index,
+                              "aria-expanded": "true",
+                              "aria-controls": "collapseOne"
+                            }
+                          },
+                          [_c("h3", [_vm._v("Venta 10/8/2020")])]
+                        )
+                      ])
+                    ]
+                  ),
+                  _vm._v(" "),
+                  _c(
+                    "div",
+                    {
+                      staticClass: "collapse",
+                      attrs: {
+                        id: "collapseOne" + index,
+                        "aria-labelledby": "headingOne",
+                        "data-parent": "#accordionExample"
+                      }
+                    },
+                    [
+                      _c("div", { staticClass: "card-body" }, [
+                        _c(
+                          "table",
+                          {
+                            staticClass:
+                              "table table-bordered table-products mt-0"
+                          },
+                          [
+                            _vm._m(10, true),
+                            _vm._v(" "),
+                            _c("tbody", [
+                              _c("tr", [
+                                _c("th", [
+                                  _c("span", [
+                                    _vm._v(_vm._s(venta.cliente) + "  ")
+                                  ])
+                                ]),
+                                _vm._v(" "),
+                                _vm._m(11, true),
+                                _vm._v(" "),
+                                _vm._m(12, true),
+                                _vm._v(" "),
+                                _c("th", [
+                                  _c("span", [
+                                    _vm._v(_vm._s(venta.pagoEfectivo) + "  ")
+                                  ])
+                                ]),
+                                _vm._v(" "),
+                                _c("th", [
+                                  _c("span", [
+                                    _vm._v(_vm._s(venta.pagoTarjeta) + " ")
+                                  ])
+                                ]),
+                                _vm._v(" "),
+                                _c("th", [
+                                  _c("span", [
+                                    _vm._v(_vm._s(venta.total) + " ")
+                                  ])
+                                ])
+                              ])
+                            ])
+                          ]
+                        ),
+                        _vm._v(" "),
+                        _c("h4", [_vm._v("Productos")]),
+                        _vm._v(" "),
+                        _c(
+                          "table",
+                          {
+                            staticClass:
+                              "table table-bordered table-products mt-0"
+                          },
+                          [
+                            _vm._m(13, true),
+                            _vm._v(" "),
+                            _c(
+                              "tbody",
+                              _vm._l(venta.productos, function(producto) {
+                                return _c("tr", [
+                                  _c("th", [
+                                    _c("span", [
+                                      _vm._v(_vm._s(producto.n_serie) + "  ")
+                                    ])
+                                  ]),
+                                  _vm._v(" "),
+                                  _c("th", [
+                                    _c("span", [
+                                      _vm._v(_vm._s(producto.nombre) + "  ")
+                                    ])
+                                  ]),
+                                  _vm._v(" "),
+                                  _c("th", [
+                                    _c("span", [
+                                      _vm._v(_vm._s(producto.precio) + "  ")
+                                    ])
+                                  ]),
+                                  _vm._v(" "),
+                                  _c("th", [
+                                    _c("span", [
+                                      _vm._v(_vm._s(producto.talle) + " ")
+                                    ])
+                                  ]),
+                                  _vm._v(" "),
+                                  _c("th", [
+                                    _c("span", [
+                                      _vm._v(_vm._s(producto.color) + " ")
+                                    ])
+                                  ])
+                                ])
+                              }),
+                              0
+                            )
+                          ]
+                        )
+                      ])
+                    ]
+                  )
+                ])
+              }),
+              0
+            )
           ])
         ])
       ])
@@ -85754,46 +86083,24 @@ var staticRenderFns = [
     var _vm = this
     var _h = _vm.$createElement
     var _c = _vm._self._c || _h
-    return _c("div", { staticClass: "row tarjetas" }, [
-      _c("div", { staticClass: "col-sm-4" }, [
-        _c("div", { staticClass: "card text-center" }, [
-          _c("div", { staticClass: "card-body" }, [
-            _c("h5", { staticClass: "card-title" }, [
-              _c("h3", [_vm._v("Ventas")])
-            ]),
-            _vm._v(" "),
-            _c("p", { staticClass: "card-text" }, [_vm._v("10")])
-          ])
-        ])
-      ]),
-      _vm._v(" "),
-      _c("div", { staticClass: "col-sm-4" }, [
-        _c("div", { staticClass: "card text-center" }, [
-          _c("div", { staticClass: "card-body" }, [
-            _c("h5", { staticClass: "card-title" }, [
-              _c("h3", [_vm._v("Ingresos")])
-            ]),
-            _vm._v(" "),
-            _c(
-              "p",
-              { staticClass: "card-text", staticStyle: { color: "green" } },
-              [_vm._v("$6500")]
-            )
-          ])
-        ])
-      ]),
-      _vm._v(" "),
-      _c("div", { staticClass: "col-sm-4" }, [
-        _c("div", { staticClass: "card text-center" }, [
-          _c("div", { staticClass: "card-body" }, [
-            _c("h5", { staticClass: "card-title" }, [
-              _c("h3", [_vm._v("Productos Vendidos")])
-            ]),
-            _vm._v(" "),
-            _c("p", { staticClass: "card-text" }, [_vm._v("35")])
-          ])
-        ])
-      ])
+    return _c("h5", { staticClass: "card-title" }, [
+      _c("h3", [_vm._v("Ventas")])
+    ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("h5", { staticClass: "card-title" }, [
+      _c("h3", [_vm._v("Ingresos")])
+    ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("h5", { staticClass: "card-title" }, [
+      _c("h3", [_vm._v("Productos Vendidos")])
     ])
   },
   function() {
@@ -85802,26 +86109,6 @@ var staticRenderFns = [
     var _c = _vm._self._c || _h
     return _c("div", { staticClass: "card-header text-center" }, [
       _c("h5", [_c("strong", [_vm._v("Ventas")])])
-    ])
-  },
-  function() {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c("div", { staticClass: "col" }, [
-      _c("div", { staticClass: "card position-relative" }, [
-        _c("canvas", { attrs: { id: "myChart", height: "300" } })
-      ])
-    ])
-  },
-  function() {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c("div", { staticClass: "col position-relative" }, [
-      _c("div", { staticClass: "card" }, [
-        _c("canvas", { attrs: { id: "myChartt", height: "300" } })
-      ])
     ])
   },
   function() {
@@ -85869,6 +86156,64 @@ var staticRenderFns = [
         _vm._v(
           "\n                      Ropa Unisex Vendida\n                  "
         )
+      ])
+    ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("div", { staticClass: "card-header text-center" }, [
+      _c("h5", [_c("strong", [_vm._v("Ventas")])])
+    ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("thead", [
+      _c("tr", { staticClass: " table-primary " }, [
+        _c("th", { attrs: { scope: "col" } }, [_vm._v("Cliente")]),
+        _vm._v(" "),
+        _c("th", { attrs: { scope: "col" } }, [_vm._v("Promocion")]),
+        _vm._v(" "),
+        _c("th", { attrs: { scope: "col" } }, [_vm._v("Cuenta Corriente")]),
+        _vm._v(" "),
+        _c("th", { attrs: { scope: "col" } }, [_vm._v("Pago Efectivo")]),
+        _vm._v(" "),
+        _c("th", { attrs: { scope: "col" } }, [_vm._v("Pago en Tarjeta")]),
+        _vm._v(" "),
+        _c("th", { attrs: { scope: "col" } }, [_vm._v("Total")])
+      ])
+    ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("th", [_c("span", [_vm._v("No")])])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("th", [_c("span", [_vm._v("No")])])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("thead", [
+      _c("tr", { staticClass: " table-primary " }, [
+        _c("th", { attrs: { scope: "col" } }, [_vm._v("N° Serie")]),
+        _vm._v(" "),
+        _c("th", { attrs: { scope: "col" } }, [_vm._v("Categoria")]),
+        _vm._v(" "),
+        _c("th", { attrs: { scope: "col" } }, [_vm._v("Precio")]),
+        _vm._v(" "),
+        _c("th", { attrs: { scope: "col" } }, [_vm._v("Talle")]),
+        _vm._v(" "),
+        _c("th", { attrs: { scope: "col" } }, [_vm._v("Color")])
       ])
     ])
   }

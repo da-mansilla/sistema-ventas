@@ -9,7 +9,7 @@
             <div class="card text-center">
               <div class="card-body">
                 <h5 class="card-title"><h3>Ventas</h3></h5>
-                <p class="card-text">10</p>
+                <p class="card-text">{{ventasTotal}}</p>
               </div>
             </div>
           </div>
@@ -17,7 +17,7 @@
             <div class="card text-center">
               <div class="card-body">
                 <h5 class="card-title"><h3>Ingresos</h3></h5>
-                <p class="card-text" style="color: green;" >$6500</p>
+                <p class="card-text" style="color: green;" >${{ventasTotalIngresos}}</p>
               </div>
             </div>
           </div>
@@ -25,7 +25,7 @@
             <div class="card text-center">
               <div class="card-body">
                 <h5 class="card-title"><h3>Productos Vendidos</h3></h5>
-                <p class="card-text">35</p>
+                <p class="card-text">{{productosTotalesVendidos}}</p>
               </div>
             </div>
           </div>
@@ -49,7 +49,6 @@
                       <label class=" col-sm-4 colform-label">Ordenar Por</label>
                       <div class="col-sm-8">
                         <select class="form-control" v-model="ordenarPor">
-                          <option value="dia">Dia</option>
                           <option value="semana">Semana</option>
                           <option value="mes">Mes</option>
                           <option value="year">Año</option>
@@ -61,13 +60,7 @@
 
                   <div class="col-md-3">
                     
-                  
-                    <div class="" v-if="ordenarPor == 'dia'">
-                      <label class="col-sm-5 col-form-label">Dia</label>
-                      <div class="col-sm-7">
-                        <input type="date" name="" v-model="intervaloFecha">
-                      </div>
-                    </div>
+
                     <div class="" v-if="ordenarPor == 'semana'">
                       <label class="col-sm-5 col-form-label">Semana</label>
                       <div class="col-sm-7">
@@ -111,18 +104,23 @@
           <div class="row">
             <div class="col">
               <div class="card position-relative">
-                <canvas id="myChart" height="300"></canvas>
+                <canvas id="canvas1" height="300" v-on:click="detalleVenta"></canvas>
               </div>
             </div>
             <div class="col position-relative">
               <div class="card">
-                <canvas id="myChartt" height="300"></canvas>
+                <canvas id="canvas2" height="300" v-on:click="detalleVenta"></canvas>
               </div>
             </div>
             <div class="col">
               <div class="card bg-light mb-3">
                   <div class="card-header">Header</div>
                   <div class="card-body">
+                    <div class="row">
+                      <h5>
+                          Ventas: {{ventasTotal}} - ${{ventasTotalIngresos}}
+                      </h5>
+                    </div>
                     <div class="row">
                       <h5>
                           Ventas en Efectivo: {{ventasEfectivo}} - ${{ventasEfectivoTotal}}
@@ -139,6 +137,11 @@
                       </h5>
                     </div>
                     <br>
+                    <div class="row">
+                      <h5>
+                          Productos Vendidos: {{productosTotalesVendidos}}
+                      </h5>
+                    </div>
                     <div class="row">
                       <h5>
                           Categoria mas Vendida
@@ -170,6 +173,114 @@
           
         </div>
 
+        <div class="card mt-3">
+          <div class="card-header text-center">
+            <h5><strong>Ventas</strong></h5>
+          </div>
+          <div class="card-body">
+
+            
+            <div class="">
+                <div class="accordion" id="accordionExample">
+                  <div v-for="(venta,index) in listVentasDetalle" :key="venta.id" class="card">
+                    <div class="card-header" id="headingOne">
+                      <h2 class="mb-0">
+                        <button class="btn btn-link btn-block text-left" style="text-decoration: none" type="button" data-toggle="collapse" :data-target="`#collapseOne${index}`" aria-expanded="true" aria-controls="collapseOne">
+                          <h3 >Venta 10/8/2020</h3>
+                        </button>
+                      </h2>
+                    </div>
+
+                    <div :id="`collapseOne${index}`" class="collapse" aria-labelledby="headingOne" data-parent="#accordionExample">
+                      <div class="card-body">
+                        <table class="table table-bordered table-products mt-0">
+                          <thead>
+                            <tr class=" table-primary ">
+                              <th scope="col">Cliente</th>
+                              <th scope="col">Promocion</th>
+                              <th scope="col">Cuenta Corriente</th>
+                              <th scope="col">Pago Efectivo</th>
+                              <th scope="col">Pago en Tarjeta</th>
+                              <th scope="col">Total</th>
+                              
+
+                            </tr>
+                          </thead>
+                          
+                          <tbody >
+                            <tr >
+                              <th>
+                                <span>{{venta.cliente}}  </span>
+                              </th>
+                              <th>
+                                <span>No</span>
+                              </th>
+                              <th>
+                                <span>No</span>
+                              </th>
+                              <th>
+                                <span>{{venta.pagoEfectivo}}  </span>
+                              </th>
+                              <th>
+                                <span>{{venta.pagoTarjeta}} </span>
+                              </th>
+                              <th>
+                                <span>{{venta.total}} </span>
+                              </th>
+
+
+                              
+                            </tr>
+                          </tbody>
+
+                        </table>
+                        <h4>Productos</h4>
+                        <table class="table table-bordered table-products mt-0">
+                          <thead>
+                            <tr class=" table-primary ">
+                              <th scope="col">N° Serie</th>
+                              <th scope="col">Categoria</th>
+                              <th scope="col">Precio</th>
+                              <th scope="col">Talle</th>
+                              <th scope="col">Color</th>
+                              
+
+                            </tr>
+                          </thead>
+                          
+                          <tbody >
+                            <tr v-for="producto in venta.productos" >
+                              <th>
+                                <span>{{producto.n_serie}}  </span>
+                              </th>
+                              <th>
+                                <span>{{producto.nombre}}  </span>
+                              </th>
+                              <th>
+                                <span>{{producto.precio}}  </span>
+                              </th>
+                              <th>
+                                <span>{{producto.talle}} </span>
+                              </th>
+                              <th>
+                                <span>{{producto.color}} </span>
+                              </th>
+            
+                            </tr>
+                          </tbody>
+
+                        </table>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+            </div>
+            
+          </div>
+        </div>
+
+
       </div>
     </div>
 </template>
@@ -197,14 +308,19 @@
             listaCategorias: [],
             listaTemporadas: [],
             listaVentasInformacion: [],
+            ventasTotal:0,
+            ventasTotalIngresos:0,
             ventasEfectivo: 0,
             ventasEfectivoTotal:0,
             ventasTarjeta: 0,
             ventasTarjetaTotal:0,
             ventasEfectivoTarjeta: 0,
             ventasEfectivoTarjetaTotal:0,
+            productosTotalesVendidos:0,
             click: false,
-            click2: false
+            click2: false,
+            indexVenta: 0,
+            listVentasDetalle: []
           }
 
               
@@ -258,7 +374,6 @@
                   }
                 }
               };
-              console.log(opc);
               axios.post('/datosventas',opc).then((response)=>{
                 console.log(response.data);
                 this.cantidadVentas = response.data[0];
@@ -272,6 +387,19 @@
 
           },
           informacion(){
+            this.ventasEfectivo= 0;
+            this.ventasEfectivoTotal= 0;
+
+            this.ventasTarjeta= 0;
+            this.ventasTarjetaTotal= 0;
+
+            this.ventasEfectivoTarjeta= 0;
+            this.ventasEfectivoTarjetaTotal= 0;
+
+            this.ventasTotal= 0;
+            this.ventasTotalIngresos= 0;
+
+            this.productosTotalesVendidos = 0;
             var cantidadVentasEfectivo= 0;
             var totalVentasEfectivo= 0;
 
@@ -281,11 +409,13 @@
             var cantidadVentasEfectivoTarjeta= 0;
             var totalVentasEfectivoTarjeta= 0;
 
+            var productosTotalesVendidos = 0;
+
             this.listaVentasInformacion.forEach(element=>{
               if(element !== 0){
                 element.forEach(venta=>{
                   //Ventas Efectivo
-                  if(venta.forma_pago == 'Efectivo'){
+                  if(venta.forma_pago == 'Efectivo' || venta.forma_pago == 'Seña'){
                     totalVentasEfectivo += venta.pagoEfectivo
                     cantidadVentasEfectivo++
                   }
@@ -299,10 +429,13 @@
                     totalVentasEfectivoTarjeta += venta.pagoEfectivo+venta.pagoTarjeta
                     cantidadVentasEfectivoTarjeta++
                   }
+                  venta.productos.forEach(productos=>{
+                    productosTotalesVendidos++
+                  })
                 })
               }
             })
-            console.log('Informacion');
+
             this.ventasEfectivo= cantidadVentasEfectivo
             this.ventasEfectivoTotal= totalVentasEfectivo
 
@@ -311,8 +444,12 @@
 
             this.ventasEfectivoTarjeta= cantidadVentasEfectivoTarjeta
             this.ventasEfectivoTarjetaTotal= totalVentasEfectivoTarjeta
-            console.log(cantidadVentasEfectivo);
-            console.log(totalVentasEfectivo);
+
+            this.ventasTotal= cantidadVentasEfectivo+cantidadVentasTarjeta+cantidadVentasEfectivoTarjeta
+            this.ventasTotalIngresos= totalVentasEfectivo+totalVentasTarjeta+totalVentasEfectivoTarjeta
+
+            this.productosTotalesVendidos = productosTotalesVendidos;
+
           },
           getCategorias(){
               axios.get('/cantidadcategorias').then((response)=>{
@@ -369,7 +506,12 @@
               this.tituloCantidad = 'Ventas del Mes';
               this.tituloIngresos = 'Ingresos del Mes;'
             } else if(opc.fecha.year.enabled){
-
+              for(let i= 1; i <= 12; i++){
+                this.labelsColor.push('rgba(255, 99, 132, 1)');
+                this.labelsFechas.push(i);
+              }
+              this.tituloCantidad = 'Ventas del Año';
+              this.tituloIngresos = 'Ingresos del Año;'
             }
           },
           ordenarPorFecha(){
@@ -406,6 +548,15 @@
               var hasta = new Date(input.setMonth(input.getMonth() + 1))
               console.log(hasta)
             } else if(this.ordenarPor == 'year'){
+              console.log(this.intervaloFecha);
+              ordenarPorYear = true;
+              let year = parseInt(this.intervaloFecha)
+              var desde = new Date(year+"-01-02")
+              console.log(desde)
+              
+              let yearLater = parseInt(this.intervaloFecha)+1
+              var hasta = new Date(yearLater+"-01-02")
+              console.log(hasta)
 
             }
 
@@ -425,7 +576,9 @@
                   hasta: hasta
                 },
                 year: {
-                  enabled: ordenarPorYear
+                  enabled: ordenarPorYear,
+                  desde: desde,
+                  hasta: hasta
                 }
               }
             };
@@ -438,12 +591,28 @@
               console.log(this.listaVentasInformacion);
               this.llenarLavels(opc);
               this.graficoVentas();
+              this.informacion();
             })
+
+          },
+          detalleVenta(evt){
+              console.log(evt);
+              let canvas = evt.path[0].id
+              if(canvas == 'canvas1'){
+                var param1 = window.myChart1.getElementAtEvent(evt);
+              }else {
+                var param1 = window.myChart2.getElementAtEvent(evt);
+              }
+              if(param1.length > 0){
+                this.indexVenta = param1[0]._index
+                console.log(this.listaVentasInformacion[this.indexVenta])
+                this.listVentasDetalle = this.listaVentasInformacion[this.indexVenta];
+              }
 
           },
           graficoVentas(){
 
-            var ctx = document.getElementById('myChart');
+            var ctx = document.getElementById('canvas1');
             
 
             if(window.myChart1){
@@ -494,20 +663,8 @@
                 }
             });
 
-          function alertFunction(evt){
-            var activeElement = window.myChart1.getElementAtEvent(evt);
-            console.log(activeElement);
 
-          }
-          if(this.click){
-            ctx.addEventListener('click', alertFunction, false);  
-            this.click= false;
-          } else {
-            this.click = true;
-          }
-
-
-          var ctx2 = document.getElementById('myChartt');
+          var ctx2 = document.getElementById('canvas2');
 
             
 
@@ -552,25 +709,14 @@
                     }
                 }
             });
-            function alertFunction2(evt){
-              var activeElement = window.myChart2.getElementAtEvent(evt);
-              console.log(activeElement);
-
-            }
-            if(this.click2){
-              ctx2.addEventListener('click', alertFunction2, false);  
-              this.click2= false;
-            } else {
-              this.click2 = true;
-            }
-          }
             
-        },
-        alertFunction(){
-          console.log('click');
+          }
+          
+            
         },
         computed: {
         }
+          
         
     }
 </script>
