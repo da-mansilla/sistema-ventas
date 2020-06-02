@@ -118,22 +118,22 @@
                   <div class="card-body">
                     <div class="row">
                       <h5>
-                          Ventas: {{ventasTotal}} - ${{ventasTotalIngresos}}
+                          Ventas: {{ventasTotal}} - <span style="color:green;">${{ventasTotalIngresos}}</span>
                       </h5>
                     </div>
                     <div class="row">
                       <h5>
-                          Ventas en Efectivo: {{ventasEfectivo}} - ${{ventasEfectivoTotal}}
+                          Ventas en Efectivo: {{ventasEfectivo}} - <span style="color:green;">${{ventasEfectivoTotal}}</span>
                       </h5>
                     </div>
                     <div class="row">
                       <h5>
-                          Ventas con Tarjeta: {{ventasTarjeta}} - ${{ventasTarjetaTotal}}
+                          Ventas con Tarjeta: {{ventasTarjeta}} - <span style="color:green;">${{ventasTarjetaTotal}}</span>
                       </h5>
                     </div>
                     <div class="row">
                       <h5>
-                          Ventas con Efectivo y Tarjeta : {{ventasEfectivoTarjeta}} - ${{ventasEfectivoTarjetaTotal}}
+                          Ventas con Efectivo y Tarjeta : {{ventasEfectivoTarjeta}} - <span style="color:green;">${{ventasEfectivoTarjetaTotal}}</span>
                       </h5>
                     </div>
                     <br>
@@ -142,26 +142,7 @@
                           Productos Vendidos: {{productosTotalesVendidos}}
                       </h5>
                     </div>
-                    <div class="row">
-                      <h5>
-                          Categoria mas Vendida
-                      </h5>
-                    </div>
-                    <div class="row">
-                      <h5>
-                          Ropa de Niño Vendida
-                      </h5>
-                    </div>
-                    <div class="row">
-                      <h5>
-                          Ropa de Niña Vendida
-                      </h5>
-                    </div>
-                    <div class="row">
-                      <h5>
-                          Ropa Unisex Vendida
-                      </h5>
-                    </div>
+                    
                   </div>
                   
 
@@ -186,7 +167,7 @@
                     <div class="card-header" id="headingOne">
                       <h2 class="mb-0">
                         <button class="btn btn-link btn-block text-left" style="text-decoration: none" type="button" data-toggle="collapse" :data-target="`#collapseOne${index}`" aria-expanded="true" aria-controls="collapseOne">
-                          <h3 >Venta 10/8/2020</h3>
+                          <h3 >{{$moment(venta.created_at).format("DD MMMM YYYY HH:mm:ss")}}</h3>
                         </button>
                       </h2>
                     </div>
@@ -354,6 +335,7 @@
                 console.log(hasta)
 
 
+
               var opc = {
                 fecha: {
                   dia:{
@@ -374,6 +356,7 @@
                   }
                 }
               };
+              console.log(opc)
               axios.post('/datosventas',opc).then((response)=>{
                 console.log(response.data);
                 this.cantidadVentas = response.data[0];

@@ -23,6 +23,7 @@ class VentaController extends Controller
         $cantidadDias= 0;
         $contador = '';
         $DATE_MONTH = '';
+        $groupByMonth= false;
         if($request->fecha['semana']['enabled']){
             $desde = date_create($request->fecha['semana']['desde']);
             $hasta = date_create($request->fecha['semana']['hasta']);
@@ -43,14 +44,14 @@ class VentaController extends Controller
             $contador = date_format($desde,'m');
             $cantidadDias = 12;
             $DATE_MONTH = 'MONTH';
-
+            $groupByMonth= true;
         }
-        if($request->fecha['year']['enabled']){
+        if($groupByMonth){
             $ventas = DB::table('ventas')
                 ->select(DB::raw('MONTH(created_at) as month'),DB::raw('count(id) as cantidad'),DB::raw('sum(total) as total'))
                 ->groupBy('month')
                 ->where('enabled',1)
-                ->where('forma_pago','!=','Cuenta' )
+                ->where('forma_pago','!=','Cuenta')
                 ->whereBetween('created_at',[$desde,$hasta])
                 ->orderBy('month')
                 ->get();
@@ -60,8 +61,10 @@ class VentaController extends Controller
                 ->select(DB::raw('DATE(created_at) as date'),DB::raw('count(id) as cantidad'),DB::raw('sum(total) as total'))
                 ->groupBy('date')
                 ->where('enabled',1)
-                ->where('forma_pago','!=','Cuenta' )
-                ->whereBetween('created_at',[$desde,$hasta])
+                ->where('forma_pago','!=','Cuenta')
+                ->when($request->fecha['mes']['enabled'], function($query) use($desde,$hasta) {
+                    return $query->whereBetween('created_at',[$desde,$hasta]);
+                })
                 ->orderBy('date')
                 ->get();       
         }
@@ -152,10 +155,10 @@ class VentaController extends Controller
             array_push($arrayVacioVentas,0);
         }
         $resultado = [];
-       array_push($resultado,$arrayVacioCantidad);
-       array_push($resultado,$arrayVacioTotal);
-       array_push($resultado,$arrayVacioVentas);
-       array_push($resultado,$cantidadDias);
+        array_push($resultado,$arrayVacioCantidad);
+        array_push($resultado,$arrayVacioTotal);
+        array_push($resultado,$arrayVacioVentas);
+        array_push($resultado,$cantidadDias);
 
 
 

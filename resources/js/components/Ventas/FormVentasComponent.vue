@@ -140,6 +140,7 @@
                   <select class="form-control" v-on:click="elegirPromocion" v-model="promocion">
                     <option></option>
                     <option value="2x1">2 x 1</option>
+                    <option value="descuento">Descuento</option>
                   </select>
                 </div>
                 

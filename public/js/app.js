@@ -2792,25 +2792,6 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
 /* harmony default export */ __webpack_exports__["default"] = ({
   props: {},
   data: function data() {
@@ -2892,6 +2873,7 @@ __webpack_require__.r(__webpack_exports__);
           }
         }
       };
+      console.log(opc);
       axios.post('/datosventas', opc).then(function (response) {
         console.log(response.data);
         _this.cantidadVentas = response.data[0];
@@ -7324,6 +7306,7 @@ __webpack_require__.r(__webpack_exports__);
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
+//
 //
 //
 //
@@ -85850,10 +85833,11 @@ var render = function() {
                     _vm._v(
                       "\n                      Ventas: " +
                         _vm._s(_vm.ventasTotal) +
-                        " - $" +
-                        _vm._s(_vm.ventasTotalIngresos) +
-                        "\n                  "
-                    )
+                        " - "
+                    ),
+                    _c("span", { staticStyle: { color: "green" } }, [
+                      _vm._v("$" + _vm._s(_vm.ventasTotalIngresos))
+                    ])
                   ])
                 ]),
                 _vm._v(" "),
@@ -85862,10 +85846,11 @@ var render = function() {
                     _vm._v(
                       "\n                      Ventas en Efectivo: " +
                         _vm._s(_vm.ventasEfectivo) +
-                        " - $" +
-                        _vm._s(_vm.ventasEfectivoTotal) +
-                        "\n                  "
-                    )
+                        " - "
+                    ),
+                    _c("span", { staticStyle: { color: "green" } }, [
+                      _vm._v("$" + _vm._s(_vm.ventasEfectivoTotal))
+                    ])
                   ])
                 ]),
                 _vm._v(" "),
@@ -85874,10 +85859,11 @@ var render = function() {
                     _vm._v(
                       "\n                      Ventas con Tarjeta: " +
                         _vm._s(_vm.ventasTarjeta) +
-                        " - $" +
-                        _vm._s(_vm.ventasTarjetaTotal) +
-                        "\n                  "
-                    )
+                        " - "
+                    ),
+                    _c("span", { staticStyle: { color: "green" } }, [
+                      _vm._v("$" + _vm._s(_vm.ventasTarjetaTotal))
+                    ])
                   ])
                 ]),
                 _vm._v(" "),
@@ -85886,10 +85872,11 @@ var render = function() {
                     _vm._v(
                       "\n                      Ventas con Efectivo y Tarjeta : " +
                         _vm._s(_vm.ventasEfectivoTarjeta) +
-                        " - $" +
-                        _vm._s(_vm.ventasEfectivoTarjetaTotal) +
-                        "\n                  "
-                    )
+                        " - "
+                    ),
+                    _c("span", { staticStyle: { color: "green" } }, [
+                      _vm._v("$" + _vm._s(_vm.ventasEfectivoTarjetaTotal))
+                    ])
                   ])
                 ]),
                 _vm._v(" "),
@@ -85903,15 +85890,7 @@ var render = function() {
                         "\n                  "
                     )
                   ])
-                ]),
-                _vm._v(" "),
-                _vm._m(5),
-                _vm._v(" "),
-                _vm._m(6),
-                _vm._v(" "),
-                _vm._m(7),
-                _vm._v(" "),
-                _vm._m(8)
+                ])
               ])
             ])
           ])
@@ -85919,7 +85898,7 @@ var render = function() {
       ]),
       _vm._v(" "),
       _c("div", { staticClass: "card mt-3" }, [
-        _vm._m(9),
+        _vm._m(5),
         _vm._v(" "),
         _c("div", { staticClass: "card-body" }, [
           _c("div", {}, [
@@ -85946,7 +85925,17 @@ var render = function() {
                               "aria-controls": "collapseOne"
                             }
                           },
-                          [_c("h3", [_vm._v("Venta 10/8/2020")])]
+                          [
+                            _c("h3", [
+                              _vm._v(
+                                _vm._s(
+                                  _vm
+                                    .$moment(venta.created_at)
+                                    .format("DD MMMM YYYY HH:mm:ss")
+                                )
+                              )
+                            ])
+                          ]
                         )
                       ])
                     ]
@@ -85971,7 +85960,7 @@ var render = function() {
                               "table table-bordered table-products mt-0"
                           },
                           [
-                            _vm._m(10, true),
+                            _vm._m(6, true),
                             _vm._v(" "),
                             _c("tbody", [
                               _c("tr", [
@@ -85981,9 +85970,9 @@ var render = function() {
                                   ])
                                 ]),
                                 _vm._v(" "),
-                                _vm._m(11, true),
+                                _vm._m(7, true),
                                 _vm._v(" "),
-                                _vm._m(12, true),
+                                _vm._m(8, true),
                                 _vm._v(" "),
                                 _c("th", [
                                   _c("span", [
@@ -86016,7 +86005,7 @@ var render = function() {
                               "table table-bordered table-products mt-0"
                           },
                           [
-                            _vm._m(13, true),
+                            _vm._m(9, true),
                             _vm._v(" "),
                             _c(
                               "tbody",
@@ -86109,54 +86098,6 @@ var staticRenderFns = [
     var _c = _vm._self._c || _h
     return _c("div", { staticClass: "card-header text-center" }, [
       _c("h5", [_c("strong", [_vm._v("Ventas")])])
-    ])
-  },
-  function() {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c("div", { staticClass: "row" }, [
-      _c("h5", [
-        _vm._v(
-          "\n                      Categoria mas Vendida\n                  "
-        )
-      ])
-    ])
-  },
-  function() {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c("div", { staticClass: "row" }, [
-      _c("h5", [
-        _vm._v(
-          "\n                      Ropa de Niño Vendida\n                  "
-        )
-      ])
-    ])
-  },
-  function() {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c("div", { staticClass: "row" }, [
-      _c("h5", [
-        _vm._v(
-          "\n                      Ropa de Niña Vendida\n                  "
-        )
-      ])
-    ])
-  },
-  function() {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c("div", { staticClass: "row" }, [
-      _c("h5", [
-        _vm._v(
-          "\n                      Ropa Unisex Vendida\n                  "
-        )
-      ])
     ])
   },
   function() {
@@ -93085,6 +93026,10 @@ var render = function() {
                             _vm._v(" "),
                             _c("option", { attrs: { value: "2x1" } }, [
                               _vm._v("2 x 1")
+                            ]),
+                            _vm._v(" "),
+                            _c("option", { attrs: { value: "descuento" } }, [
+                              _vm._v("Descuento")
                             ])
                           ]
                         )
