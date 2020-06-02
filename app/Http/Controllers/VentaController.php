@@ -65,6 +65,9 @@ class VentaController extends Controller
                 ->when($request->fecha['mes']['enabled'], function($query) use($desde,$hasta) {
                     return $query->whereBetween('created_at',[$desde,$hasta]);
                 })
+                ->when($request->fecha['semana']['enabled'], function($query) use($desde,$hasta) {
+                    return $query->whereBetween('created_at',[$desde,$hasta]);
+                })
                 ->orderBy('date')
                 ->get();       
         }
