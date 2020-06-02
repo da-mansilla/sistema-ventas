@@ -114,7 +114,7 @@
             </div>
             <div class="col">
               <div class="card bg-light mb-3">
-                  <div class="card-header">Header</div>
+                  <div class="card-header">Info</div>
                   <div class="card-body">
                     <div class="row">
                       <h5>
@@ -194,10 +194,12 @@
                                 <span>{{venta.cliente}}  </span>
                               </th>
                               <th>
-                                <span>No</span>
+                                <span v-if="venta.promocion">{{obtenerPromocionVenta(venta.estado)}}</span>
+                                <span v-else>No</span>
                               </th>
                               <th>
-                                <span>No</span>
+                                <span v-if="venta.estado == 'Cuenta Corriente'">Si</span>
+                                <span v-else>No</span>
                               </th>
                               <th>
                                 <span>{{venta.pagoEfectivo}}  </span>
@@ -398,7 +400,7 @@
               if(element !== 0){
                 element.forEach(venta=>{
                   //Ventas Efectivo
-                  if(venta.forma_pago == 'Efectivo' || venta.forma_pago == 'Seña'){
+                  if(venta.forma_pago == 'Efectivo' || venta.forma_pago == 'Seña' || venta.forma_pago == 'Cuenta'){
                     totalVentasEfectivo += venta.pagoEfectivo
                     cantidadVentasEfectivo++
                   }
@@ -692,7 +694,15 @@
                     }
                 }
             });
+
             
+          },
+          obtenerPromocionVenta(estado){
+            let indexInicio = estado.indexOf('(');
+            let indexFinal = estado.indexOf(')');
+            let promocion = estado.slice(indexInicio+1,indexFinal)
+            console.log(promocion);
+            return promocion
           }
           
             

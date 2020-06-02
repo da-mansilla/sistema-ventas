@@ -2792,6 +2792,8 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   props: {},
   data: function data() {
@@ -2908,7 +2910,7 @@ __webpack_require__.r(__webpack_exports__);
         if (element !== 0) {
           element.forEach(function (venta) {
             //Ventas Efectivo
-            if (venta.forma_pago == 'Efectivo' || venta.forma_pago == 'Seña') {
+            if (venta.forma_pago == 'Efectivo' || venta.forma_pago == 'Seña' || venta.forma_pago == 'Cuenta') {
               totalVentasEfectivo += venta.pagoEfectivo;
               cantidadVentasEfectivo++;
             } //Ventas Tarjeta
@@ -3190,6 +3192,13 @@ __webpack_require__.r(__webpack_exports__);
           }
         }
       });
+    },
+    obtenerPromocionVenta: function obtenerPromocionVenta(estado) {
+      var indexInicio = estado.indexOf('(');
+      var indexFinal = estado.indexOf(')');
+      var promocion = estado.slice(indexInicio + 1, indexFinal);
+      console.log(promocion);
+      return promocion;
     }
   },
   computed: {}
@@ -85883,7 +85892,7 @@ var render = function() {
           _vm._v(" "),
           _c("div", { staticClass: "col" }, [
             _c("div", { staticClass: "card bg-light mb-3" }, [
-              _c("div", { staticClass: "card-header" }, [_vm._v("Header")]),
+              _c("div", { staticClass: "card-header" }, [_vm._v("Info")]),
               _vm._v(" "),
               _c("div", { staticClass: "card-body" }, [
                 _c("div", { staticClass: "row" }, [
@@ -86028,9 +86037,25 @@ var render = function() {
                                   ])
                                 ]),
                                 _vm._v(" "),
-                                _vm._m(7, true),
+                                _c("th", [
+                                  venta.promocion
+                                    ? _c("span", [
+                                        _vm._v(
+                                          _vm._s(
+                                            _vm.obtenerPromocionVenta(
+                                              venta.estado
+                                            )
+                                          )
+                                        )
+                                      ])
+                                    : _c("span", [_vm._v("No")])
+                                ]),
                                 _vm._v(" "),
-                                _vm._m(8, true),
+                                _c("th", [
+                                  venta.estado == "Cuenta Corriente"
+                                    ? _c("span", [_vm._v("Si")])
+                                    : _c("span", [_vm._v("No")])
+                                ]),
                                 _vm._v(" "),
                                 _c("th", [
                                   _c("span", [
@@ -86063,7 +86088,7 @@ var render = function() {
                               "table table-bordered table-products mt-0"
                           },
                           [
-                            _vm._m(9, true),
+                            _vm._m(7, true),
                             _vm._v(" "),
                             _c(
                               "tbody",
@@ -86185,18 +86210,6 @@ var staticRenderFns = [
         _c("th", { attrs: { scope: "col" } }, [_vm._v("Total")])
       ])
     ])
-  },
-  function() {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c("th", [_c("span", [_vm._v("No")])])
-  },
-  function() {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c("th", [_c("span", [_vm._v("No")])])
   },
   function() {
     var _vm = this

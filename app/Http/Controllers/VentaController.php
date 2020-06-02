@@ -51,7 +51,7 @@ class VentaController extends Controller
                 ->select(DB::raw('MONTH(created_at) as month'),DB::raw('count(id) as cantidad'),DB::raw('sum(total) as total'))
                 ->groupBy('month')
                 ->where('enabled',1)
-                ->where('forma_pago','!=','Cuenta')
+
                 ->whereBetween('created_at',[$desde,$hasta])
                 ->orderBy('month')
                 ->get();
@@ -61,7 +61,7 @@ class VentaController extends Controller
                 ->select(DB::raw('DATE(created_at) as date'),DB::raw('count(id) as cantidad'),DB::raw('sum(total) as total'))
                 ->groupBy('date')
                 ->where('enabled',1)
-                ->where('forma_pago','!=','Cuenta')
+
                 ->when($request->fecha['mes']['enabled'], function($query) use($desde,$hasta) {
                     return $query->whereBetween('created_at',[$desde,$hasta]);
                 })
@@ -73,7 +73,7 @@ class VentaController extends Controller
                 ->leftJoin('clients', 'ventas.cliente_id', '=', 'clients.id')
                 ->select('ventas.*', DB::raw('clients.nombre as cliente'), 'clients.telefono','clients.email',DB::raw($DATE_MONTH.'(ventas.created_at) as fechaComparar'))
                 ->where('ventas.enabled',1)
-                ->where('ventas.forma_pago','!=','Cuenta' )
+
                 ->whereBetween('ventas.created_at',[$desde,$hasta])
                 ->orderBy('ventas.created_at')
                 ->get();
@@ -85,7 +85,6 @@ class VentaController extends Controller
         $productosVendidos = DB::table('product_vendidos')
                             ->leftJoin('categorias','product_vendidos.categoria_id','=','categorias.id')
                             ->select('product_vendidos.*','categorias.nombre')
-                            ->where('product_vendidos.estado','=','Vendido')
                             ->whereIn('product_vendidos.venta_id',$listaIdVentas)
                             ->get();
 
