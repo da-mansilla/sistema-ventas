@@ -7743,6 +7743,23 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   props: {
     editMode: {},
@@ -7785,7 +7802,10 @@ __webpack_require__.r(__webpack_exports__);
       activateAgregar: true,
       recargoActivate: false,
       totalRecargo: '',
-      recargo: ''
+      recargo: '',
+      descuentoActivate: false,
+      valorDescuento: 0,
+      totalDescuento: 0
     };
   },
   mounted: function mounted() {},
@@ -8121,7 +8141,12 @@ __webpack_require__.r(__webpack_exports__);
           ventaEstado = 'Finalizado';
 
           if (_this3.promocion2x1Activate) {
-            ventaEstado += ' (Promocion)';
+            ventaEstado += ' (Promocion 2x1)';
+            promocion = _this3.promocion;
+          }
+
+          if (_this3.descuentoActivate) {
+            ventaEstado += ' (Descuento ' + _this3.valorDescuento + '%)';
             promocion = _this3.promocion;
           }
         }
@@ -8670,6 +8695,39 @@ __webpack_require__.r(__webpack_exports__);
       } else {
         return true;
       }
+    },
+    agregarDescuento: function agregarDescuento() {
+      console.log(this.valorDescuento);
+      this.descuentoActivate = true;
+      var totalNetoFinal = 0;
+      var precioFinal = Math.ceil(this.valorDescuento / 100 * this.totalNeto);
+      var numeroString = String(precioFinal);
+      var ultimoDigito = numeroString.slice(-1);
+
+      if (ultimoDigito == 1) {
+        totalNetoFinal = precioFinal - 1;
+      } else if (ultimoDigito == 2) {
+        totalNetoFinal = precioFinal - 2;
+      } else if (ultimoDigito == 3) {
+        totalNetoFinal = precioFinal - 3;
+      } else if (ultimoDigito == 4) {
+        totalNetoFinal = precioFinal - 4;
+      } else if (ultimoDigito == 5) {
+        totalNetoFinal = precioFinal + 5;
+      } else if (ultimoDigito == 6) {
+        totalNetoFinal = precioFinal + 4;
+      } else if (ultimoDigito == 7) {
+        totalNetoFinal = precioFinal + 3;
+      } else if (ultimoDigito == 8) {
+        totalNetoFinal = precioFinal + 2;
+      } else if (ultimoDigito == 9) {
+        totalNetoFinal = precioFinal + 1;
+      } else {
+        totalNetoFinal = precioFinal;
+      }
+
+      this.totalDescuento = totalNetoFinal;
+      this.totalNeto -= totalNetoFinal;
     }
   },
   computed: {}
@@ -93034,6 +93092,47 @@ var render = function() {
                           ]
                         )
                       ])
+                    : _vm._e(),
+                  _vm._v(" "),
+                  _vm.promocion == "descuento"
+                    ? _c("div", { staticClass: "form-group col-md-3" }, [
+                        _c("label", [_vm._v("Descuento")]),
+                        _vm._v(" "),
+                        _c("div", { staticClass: "input-group" }, [
+                          _c("input", {
+                            directives: [
+                              {
+                                name: "model",
+                                rawName: "v-model",
+                                value: _vm.valorDescuento,
+                                expression: "valorDescuento"
+                              }
+                            ],
+                            staticClass: "d-block form-control",
+                            domProps: { value: _vm.valorDescuento },
+                            on: {
+                              input: function($event) {
+                                if ($event.target.composing) {
+                                  return
+                                }
+                                _vm.valorDescuento = $event.target.value
+                              }
+                            }
+                          }),
+                          _vm._v(" "),
+                          _c("div", { staticClass: "input-group-append" }, [
+                            _c(
+                              "button",
+                              {
+                                staticClass: "btn btn-outline-secondary",
+                                attrs: { type: "button", id: "button-addon2" },
+                                on: { click: _vm.agregarDescuento }
+                              },
+                              [_c("i", { staticClass: "fas fa-plus" })]
+                            )
+                          ])
+                        ])
+                      ])
                     : _vm._e()
                 ]),
                 _vm._v(" "),
@@ -93370,6 +93469,31 @@ var render = function() {
                           _vm._v(" "),
                           _c("td", { staticClass: "td-venta" }, [
                             _vm._v(_vm._s(_vm.totalRecargo))
+                          ])
+                        ])
+                      : _vm._e(),
+                    _vm._v(" "),
+                    _vm.descuentoActivate
+                      ? _c("tr", [
+                          _c(
+                            "td",
+                            {
+                              staticClass: "text-right table-light td-venta",
+                              attrs: { colspan: "7" }
+                            },
+                            [
+                              _c("strong", [
+                                _vm._v(
+                                  "Descuento " +
+                                    _vm._s(_vm.valorDescuento) +
+                                    "%"
+                                )
+                              ])
+                            ]
+                          ),
+                          _vm._v(" "),
+                          _c("td", { staticClass: "td-venta" }, [
+                            _vm._v(_vm._s(_vm.totalDescuento))
                           ])
                         ])
                       : _vm._e(),

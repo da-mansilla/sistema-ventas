@@ -143,6 +143,18 @@
                     <option value="descuento">Descuento</option>
                   </select>
                 </div>
+                <div v-if="promocion =='descuento'"class="form-group col-md-3">
+                  <label>Descuento</label>
+                  <div class="input-group">
+                      <input class="d-block form-control" v-model="valorDescuento">
+                      <div class="input-group-append">
+                        <button class="btn btn-outline-secondary" v-on:click="agregarDescuento" type="button" id="button-addon2" ><i class="fas fa-plus"></i></button>
+                      </div>
+                  </div>
+                  
+                </div>
+                
+                
                 
               </div>
               
@@ -319,6 +331,10 @@
                     <td colspan="7" class="text-right table-light td-venta"><strong>Recargo {{recargo}}%</strong></td>
                     <td class="td-venta">{{totalRecargo}}</td>
                 </tr>
+                <tr v-if="descuentoActivate">
+                    <td colspan="7" class="text-right table-light td-venta"><strong>Descuento {{valorDescuento}}%</strong></td>
+                    <td class="td-venta">{{totalDescuento}}</td>
+                </tr>
                 <tr v-if="forma_pago=='Efectivo'">
                     <td colspan="7" class="text-right table-light td-venta"><strong>Efectivo</strong></td>
                     <td class="td-venta">{{totalNeto}}</td> 
@@ -343,6 +359,7 @@
                     <td colspan="7" class="text-right table-light td-venta"><strong>{{tarjeta.nombre}}</strong></td>
                     <td class="td-venta"><input type="number" :id="tarjeta.nombre" class="input-venta" v-on:keyup="FormaEyT"></td> 
                 </tr>
+                
 
                 
 
@@ -485,6 +502,9 @@
             recargoActivate: false,
             totalRecargo: '',
             recargo: '',
+            descuentoActivate: false,
+            valorDescuento: 0,
+            totalDescuento: 0
 
 
         };
@@ -781,7 +801,11 @@
                 else {
                   ventaEstado = 'Finalizado'
                   if(this.promocion2x1Activate){
-                    ventaEstado += ' (Promocion)'
+                    ventaEstado += ' (Promocion 2x1)'
+                    promocion = this.promocion
+                  }
+                  if(this.descuentoActivate){
+                    ventaEstado += ' (Descuento '+this.valorDescuento+'%)'
                     promocion = this.promocion
                   }
                 }
@@ -1191,6 +1215,7 @@
               this.promocion2x1Activate = false;
               this.hechoDesactivado = false;
             }
+
           },
           promocion2x1(){
             if(this.promocion2x1Activate){
@@ -1231,6 +1256,46 @@
               return true
             }
 
+          },
+          agregarDescuento(){
+            console.log(this.valorDescuento);
+            this.descuentoActivate = true;
+            var totalNetoFinal = 0;
+            var precioFinal = Math.ceil((((this.valorDescuento/100)* this.totalNeto ) ))
+            var numeroString = String(precioFinal);
+            var ultimoDigito = numeroString.slice(-1);
+            if(ultimoDigito == 1 ){
+                totalNetoFinal= precioFinal-1
+
+            } else if(ultimoDigito == 2 ){
+                totalNetoFinal= precioFinal-2
+
+            } else if(ultimoDigito == 3){
+                totalNetoFinal= precioFinal-3
+
+            } else if(ultimoDigito == 4){
+                totalNetoFinal= precioFinal-4
+
+            } else if(ultimoDigito == 5){
+                totalNetoFinal= precioFinal+5
+
+            } else if(ultimoDigito == 6){
+                totalNetoFinal= precioFinal+4
+
+            } else if(ultimoDigito == 7){
+                totalNetoFinal= precioFinal+3
+
+            } else if(ultimoDigito == 8){
+                totalNetoFinal= precioFinal+2
+
+            } else if(ultimoDigito == 9){
+                totalNetoFinal= precioFinal+1
+
+            } else {
+                totalNetoFinal= precioFinal
+           }
+           this.totalDescuento = totalNetoFinal
+           this.totalNeto -= totalNetoFinal
           }
 
       },
