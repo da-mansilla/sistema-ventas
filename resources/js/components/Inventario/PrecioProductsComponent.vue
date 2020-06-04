@@ -75,7 +75,7 @@
                                 <label for="cantidad">Cantidad</label>
                             </div>
                             <div class="input-group">
-                              <input type="number" class="form-control " aria-label="Recipient's username" required id="cantidad" placeholder="10%" v-model="cantidad">
+                              <input type="number" class="form-control " required id="cantidad" placeholder="10%" v-model="cantidad"v-on:keyup="agregarPrecios">
                               <div class="input-group-append">
                                 <button class="btn btn-outline-secondary" style="cursor: default;" type="button"><i class="fas fa-percentage"></i></button>
                               </div>
@@ -91,7 +91,8 @@
                           <th scope="col"></th>
                           <th scope="col">N° Serie</th>
                           <th scope="col">Categoria</th>
-                          <th scope="col">Costo</th>
+                          <th scope="col">Talle</th>
+                          <th scope="col">Color</th>
                           <th scope="col">Precio</th>
                           <th scope="col">Nuevo Precio</th>
                         </tr>
@@ -101,10 +102,11 @@
                             <td><button  type="button" class="btn btn-danger btn-sm" v-on:click="onClickDelete(index)"><i class="fas fa-times-circle"></i></button></td>
                             <td>{{product.n_serie}}</td>
                             <td>{{product.categoria}}</td>
-                            <td>{{product.costo}}</td>
+                            <td>{{product.talle}}</td>
+                            <td>{{product.color}}</td>
                             <td>{{product.precio}}</td>
-                            <td v-if="accion == 'aumentar'"><strong>{{ redondeoAumentar(product.precio) }}</strong></td>
-                            <td v-if="accion == 'disminuir'"><strong>{{ redondeoDisminuir(product.precio) }}</strong></td>
+                            <td v-if="accion == 'aumentar'"><input :id="product.id" v-on:keyup="cambiarPrecioIndividual(product.id)" type="number" :value="product.nuevoPrecio"></td>
+                            <td v-if="accion == 'disminuir'"><input :id="product.id" v-on:keyup="cambiarPrecioIndividual(product.id)" type="number" :value="product.nuevoPrecio"></td>
                         </tr>
                       </paginate>
                       
@@ -155,6 +157,8 @@
                 productsModificar: [],
                 paginate: ['productsModificar'],
                 nuevoPrecio: 0,
+                preciosModificar: [],
+                precioIndividual: 0
 
     		}
     	},
@@ -185,6 +189,7 @@
                         this.seleccionado = 3;
                         axios.get('todosproductos').then(response=>{
                             response.data.forEach(element=>{
+                                element.nuevoPrecio = element.precio
                                 this.productsModificar.push(element);
                                 this.$refs.paginator.goToPage(1)
                             })
@@ -212,7 +217,6 @@
                         axios.get('tipos/Niño').then(response=>{
                             response.data.forEach(element=>{
                                 this.listaElegida.push(element);
-                                console.log(this.listaElegida);
                             })
                         })
                     } else if(tipo =='Niña'){
@@ -220,7 +224,6 @@
                         axios.get('tipos/Niña').then(response=>{
                             response.data.forEach(element=>{
                                 this.listaElegida.push(element);
-                                console.log(this.listaElegida);
                             })
                         })
                     } else if(tipo == 'Unisex'){
@@ -228,14 +231,12 @@
                         axios.get('tipos/Unisex').then(response=>{
                             response.data.forEach(element=>{
                                 this.listaElegida.push(element);
-                                console.log(this.listaElegida);
                             })
                         })
                     } else if(tipo == 'Todos'){
                         console.log('Todas Categorias');
                         this.categorias.forEach((elemento)=>{
                                 this.listaElegida.push(elemento);
-                                console.log(this.listaElegida);
                         })
                     }
                 } else {
@@ -259,6 +260,7 @@
                 axios.get('productosPorSerie/'+numSerie).then(response=>{
 
                     response.data.forEach(element=>{
+                        element.nuevoPrecio = element.precio
                         this.productsModificar.push(element);
                         this.productoSerie = '';
                     })
@@ -270,10 +272,15 @@
                     this.productsModificar = [];
                     axios.get('productsporcategoria/'+this.categoriaElegida).then(response=>{
                         response.data.forEach(element=>{
+                            element.nuevoPrecio = element.precio
                             this.productsModificar.push(element);
                         })
                         console.log('Productos a modificar');
                         console.log(this.productsModificar);
+                        this.productsModificar.forEach(producto=>{
+                            this.preciosModificar.push(producto.precio);
+                        })
+                        this.agregarPrecios();
                         this.$refs.paginator.goToPage(1)
                     })
 
@@ -302,11 +309,11 @@
                 this.productsModificar.forEach((elemento)=>{
                     var precioFinal
                     if(this.accion == 'aumentar'){
-                        precioFinal = this.redondeoAumentar(elemento.precio);
-                        console.log('El producto ' + elemento.id + ' de precio ' + elemento.precio+ ' se aumentara a '+ this.redondeoAumentar(elemento.precio));
+                        precioFinal = elemento.nuevoPrecio
+                        console.log('El producto ' + elemento.id + ' de precio ' + elemento.precio+ ' se aumentara a '+ precioFinal);
                     } else if(this.accion == 'disminuir'){
-                        precioFinal = this.redondeoDisminuir(elemento.precio);
-                        console.log('El producto ' + elemento.id + ' de precio ' + elemento.precio+ ' se disminuira a '+ this.redondeoAumentar(elemento.precio));
+                        precioFinal = elemento.nuevoPrecio
+                        console.log('El producto ' + elemento.id + ' de precio ' + elemento.precio+ ' se disminuira a '+ precioFinal);
                     }
                     let productoCambiar = [elemento.id,precioFinal];
                     listaParam.push(productoCambiar);
@@ -340,6 +347,33 @@
                 })
                 
                 
+            },
+            agregarPrecios(){
+                this.preciosModificar = [];
+                this.productsModificar.forEach(product=>{
+                    if(this.accion == 'aumentar'){
+                        var precioFinal = this.redondeoAumentar(product.precio)
+
+                    }
+                    if(this.accion == 'disminuir'){
+                        var precioFinal = this.redondeoDisminuir(product.precio)
+                    }
+                    product.nuevoPrecio = precioFinal
+                })
+                console.log(this.productsModificar);
+            },
+            cambiarPrecioIndividual(id){
+                var precioingresado = $('#'+id).val()
+                console.log(precioingresado)
+                this.productsModificar.forEach((element,index)=>{
+                    if(element.id == id){
+                        console.log("El precio de este producto se va a modificar de "+ element.nuevoPrecio+" a "+precioingresado)
+                        this.productsModificar[index].nuevoPrecio = parseInt(precioingresado)
+                    }
+                })
+                console.log(this.preciosModificar);
+                console.log(this.productsModificar);
+
             },
             redondeoAumentar(costo){
                 var precioFinal = Math.ceil( ((this.cantidad/100)* costo )+costo );

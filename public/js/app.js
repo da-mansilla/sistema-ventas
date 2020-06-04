@@ -4441,6 +4441,8 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
 //
 //
 //
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   props: {
     categorias: {},
@@ -4461,7 +4463,9 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       categoriaElegida: '',
       productsModificar: [],
       paginate: ['productsModificar'],
-      nuevoPrecio: 0
+      nuevoPrecio: 0,
+      preciosModificar: [],
+      precioIndividual: 0
     };
   },
   mounted: function mounted() {
@@ -4489,6 +4493,8 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
           this.seleccionado = 3;
           axios.get('todosproductos').then(function (response) {
             response.data.forEach(function (element) {
+              element.nuevoPrecio = element.precio;
+
               _this.productsModificar.push(element);
 
               _this.$refs.paginator.goToPage(1);
@@ -4520,8 +4526,6 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
           axios.get('tipos/Niño').then(function (response) {
             response.data.forEach(function (element) {
               _this2.listaElegida.push(element);
-
-              console.log(_this2.listaElegida);
             });
           });
         } else if (tipo == 'Niña') {
@@ -4529,8 +4533,6 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
           axios.get('tipos/Niña').then(function (response) {
             response.data.forEach(function (element) {
               _this2.listaElegida.push(element);
-
-              console.log(_this2.listaElegida);
             });
           });
         } else if (tipo == 'Unisex') {
@@ -4538,16 +4540,12 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
           axios.get('tipos/Unisex').then(function (response) {
             response.data.forEach(function (element) {
               _this2.listaElegida.push(element);
-
-              console.log(_this2.listaElegida);
             });
           });
         } else if (tipo == 'Todos') {
           console.log('Todas Categorias');
           this.categorias.forEach(function (elemento) {
             _this2.listaElegida.push(elemento);
-
-            console.log(_this2.listaElegida);
           });
         }
       } else {
@@ -4570,6 +4568,8 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
 
       axios.get('productosPorSerie/' + numSerie).then(function (response) {
         response.data.forEach(function (element) {
+          element.nuevoPrecio = element.precio;
+
           _this3.productsModificar.push(element);
 
           _this3.productoSerie = '';
@@ -4585,10 +4585,18 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       this.productsModificar = [];
       axios.get('productsporcategoria/' + this.categoriaElegida).then(function (response) {
         response.data.forEach(function (element) {
+          element.nuevoPrecio = element.precio;
+
           _this4.productsModificar.push(element);
         });
         console.log('Productos a modificar');
         console.log(_this4.productsModificar);
+
+        _this4.productsModificar.forEach(function (producto) {
+          _this4.preciosModificar.push(producto.precio);
+        });
+
+        _this4.agregarPrecios();
 
         _this4.$refs.paginator.goToPage(1);
       });
@@ -4627,11 +4635,11 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
                   var precioFinal;
 
                   if (_this5.accion == 'aumentar') {
-                    precioFinal = _this5.redondeoAumentar(elemento.precio);
-                    console.log('El producto ' + elemento.id + ' de precio ' + elemento.precio + ' se aumentara a ' + _this5.redondeoAumentar(elemento.precio));
+                    precioFinal = elemento.nuevoPrecio;
+                    console.log('El producto ' + elemento.id + ' de precio ' + elemento.precio + ' se aumentara a ' + precioFinal);
                   } else if (_this5.accion == 'disminuir') {
-                    precioFinal = _this5.redondeoDisminuir(elemento.precio);
-                    console.log('El producto ' + elemento.id + ' de precio ' + elemento.precio + ' se disminuira a ' + _this5.redondeoAumentar(elemento.precio));
+                    precioFinal = elemento.nuevoPrecio;
+                    console.log('El producto ' + elemento.id + ' de precio ' + elemento.precio + ' se disminuira a ' + precioFinal);
                   }
 
                   var productoCambiar = [elemento.id, precioFinal];
@@ -4679,6 +4687,37 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
 
       return modificarPrecio;
     }(),
+    agregarPrecios: function agregarPrecios() {
+      var _this6 = this;
+
+      this.preciosModificar = [];
+      this.productsModificar.forEach(function (product) {
+        if (_this6.accion == 'aumentar') {
+          var precioFinal = _this6.redondeoAumentar(product.precio);
+        }
+
+        if (_this6.accion == 'disminuir') {
+          var precioFinal = _this6.redondeoDisminuir(product.precio);
+        }
+
+        product.nuevoPrecio = precioFinal;
+      });
+      console.log(this.productsModificar);
+    },
+    cambiarPrecioIndividual: function cambiarPrecioIndividual(id) {
+      var _this7 = this;
+
+      var precioingresado = $('#' + id).val();
+      console.log(precioingresado);
+      this.productsModificar.forEach(function (element, index) {
+        if (element.id == id) {
+          console.log("El precio de este producto se va a modificar de " + element.nuevoPrecio + " a " + precioingresado);
+          _this7.productsModificar[index].nuevoPrecio = parseInt(precioingresado);
+        }
+      });
+      console.log(this.preciosModificar);
+      console.log(this.productsModificar);
+    },
     redondeoAumentar: function redondeoAumentar(costo) {
       var precioFinal = Math.ceil(this.cantidad / 100 * costo + costo);
       var numeroString = String(precioFinal);
@@ -88301,13 +88340,13 @@ var render = function() {
                             staticClass: "form-control ",
                             attrs: {
                               type: "number",
-                              "aria-label": "Recipient's username",
                               required: "",
                               id: "cantidad",
                               placeholder: "10%"
                             },
                             domProps: { value: _vm.cantidad },
                             on: {
+                              keyup: _vm.agregarPrecios,
                               input: function($event) {
                                 if ($event.target.composing) {
                                   return
@@ -88370,31 +88409,41 @@ var render = function() {
                               _vm._v(" "),
                               _c("td", [_vm._v(_vm._s(product.categoria))]),
                               _vm._v(" "),
-                              _c("td", [_vm._v(_vm._s(product.costo))]),
+                              _c("td", [_vm._v(_vm._s(product.talle))]),
+                              _vm._v(" "),
+                              _c("td", [_vm._v(_vm._s(product.color))]),
                               _vm._v(" "),
                               _c("td", [_vm._v(_vm._s(product.precio))]),
                               _vm._v(" "),
                               _vm.accion == "aumentar"
                                 ? _c("td", [
-                                    _c("strong", [
-                                      _vm._v(
-                                        _vm._s(
-                                          _vm.redondeoAumentar(product.precio)
-                                        )
-                                      )
-                                    ])
+                                    _c("input", {
+                                      attrs: { id: product.id, type: "number" },
+                                      domProps: { value: product.nuevoPrecio },
+                                      on: {
+                                        keyup: function($event) {
+                                          return _vm.cambiarPrecioIndividual(
+                                            product.id
+                                          )
+                                        }
+                                      }
+                                    })
                                   ])
                                 : _vm._e(),
                               _vm._v(" "),
                               _vm.accion == "disminuir"
                                 ? _c("td", [
-                                    _c("strong", [
-                                      _vm._v(
-                                        _vm._s(
-                                          _vm.redondeoDisminuir(product.precio)
-                                        )
-                                      )
-                                    ])
+                                    _c("input", {
+                                      attrs: { id: product.id, type: "number" },
+                                      domProps: { value: product.nuevoPrecio },
+                                      on: {
+                                        keyup: function($event) {
+                                          return _vm.cambiarPrecioIndividual(
+                                            product.id
+                                          )
+                                        }
+                                      }
+                                    })
                                   ])
                                 : _vm._e()
                             ])
@@ -88539,7 +88588,9 @@ var staticRenderFns = [
         _vm._v(" "),
         _c("th", { attrs: { scope: "col" } }, [_vm._v("Categoria")]),
         _vm._v(" "),
-        _c("th", { attrs: { scope: "col" } }, [_vm._v("Costo")]),
+        _c("th", { attrs: { scope: "col" } }, [_vm._v("Talle")]),
+        _vm._v(" "),
+        _c("th", { attrs: { scope: "col" } }, [_vm._v("Color")]),
         _vm._v(" "),
         _c("th", { attrs: { scope: "col" } }, [_vm._v("Precio")]),
         _vm._v(" "),
