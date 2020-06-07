@@ -7853,7 +7853,8 @@ __webpack_require__.r(__webpack_exports__);
       recargo: '',
       descuentoActivate: false,
       valorDescuento: 0,
-      totalDescuento: 0
+      totalDescuento: 0,
+      totalNetoAnterior: 0
     };
   },
   mounted: function mounted() {},
@@ -8420,6 +8421,9 @@ __webpack_require__.r(__webpack_exports__);
       });
     },
     deleteProductVenta: function deleteProductVenta(index) {
+      this.totalNeto -= this.productsVenta[index].precio;
+      console.log(this.totalNeto);
+      console.log(this.productsVenta[index].precio);
       this.productsVenta.splice(index, 1);
 
       if (this.productsVenta.length >= 2) {
@@ -8698,18 +8702,27 @@ __webpack_require__.r(__webpack_exports__);
       console.log('emitiendo una devolucion');
     },
     elegirPromocion: function elegirPromocion() {
+      var _this7 = this;
+
       if (this.promocion == '2x1') {
         this.promocion2x1Activate = true;
-        this.promocion2x1();
+        console.log('2x1');
       } else {
+        this.productsVenta.forEach(function (product) {
+          _this7.totalNeto = product.precio;
+        });
+        console.log('2x1 desactivado');
         this.promocion2x1Activate = false;
         this.hechoDesactivado = false;
       }
+
+      this.promocion2x1();
     },
     promocion2x1: function promocion2x1() {
       if (this.promocion2x1Activate) {
         if (this.productsVenta.length % 2 == 0 && this.productsVenta.length > 0) {
           this.hechoDesactivado = false;
+          this.totalNetoAnterior = this.totalNeto;
           this.totalNeto = 0;
           var precios = [];
           this.productsVenta.forEach(function (element) {

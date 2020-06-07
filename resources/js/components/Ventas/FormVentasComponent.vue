@@ -504,7 +504,8 @@
             recargo: '',
             descuentoActivate: false,
             valorDescuento: 0,
-            totalDescuento: 0
+            totalDescuento: 0,
+            totalNetoAnterior: 0
 
 
         };
@@ -978,6 +979,9 @@
             })
           },
           deleteProductVenta(index){
+            this.totalNeto -= this.productsVenta[index].precio
+            console.log(this.totalNeto);
+            console.log(this.productsVenta[index].precio)
             this.productsVenta.splice(index,1);
             if(this.productsVenta.length >= 2){
                 this.activateAgregar = false;
@@ -1210,17 +1214,26 @@
           elegirPromocion(){
             if(this.promocion == '2x1'){
               this.promocion2x1Activate = true;
-              this.promocion2x1()
+              console.log('2x1')
             } else {
+
+              this.productsVenta.forEach(product=>{
+                this.totalNeto = product.precio
+              })
+              console.log('2x1 desactivado')
+
               this.promocion2x1Activate = false;
               this.hechoDesactivado = false;
+              
             }
+            this.promocion2x1()
 
           },
           promocion2x1(){
             if(this.promocion2x1Activate){
               if((this.productsVenta.length%2) == 0 && this.productsVenta.length > 0){
                 this.hechoDesactivado = false;
+                this.totalNetoAnterior = this.totalNeto
                 this.totalNeto = 0;
                 var precios = [];
                 this.productsVenta.forEach(element=>{
