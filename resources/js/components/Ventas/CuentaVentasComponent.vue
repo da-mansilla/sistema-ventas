@@ -72,7 +72,7 @@
           </tr>
           <tr>
               <td colspan="5" class="text-right table-light td-venta" ><strong>Total Neto</strong></td>
-              <td class="td-venta">{{totalNeto}}</td> 
+              <td class="td-venta">${{totalNeto}}</td> 
           </tr> 
 
           <tr v-if="Cuenta_formaPago == 'Efectivo'">
@@ -102,7 +102,7 @@
 
           <tr>
               <td colspan="5" class="text-right table-light td-venta"><strong>Total a Pagar</strong></td>
-              <td class="td-venta">{{totalNeto - (pagadoEfectivo) - pagadoTarjeta }}</td>  
+              <td class="td-venta">${{totalNeto - (pagadoEfectivo) - pagadoTarjeta }}</td>  
           </tr> 
 
 

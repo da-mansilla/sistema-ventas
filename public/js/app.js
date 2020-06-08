@@ -6948,6 +6948,29 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   props: {
     cuentaMode: {},
@@ -6965,7 +6988,10 @@ __webpack_require__.r(__webpack_exports__);
       descripcionPago: '',
       listPagosMostrar: [],
       batchCargado: '',
-      enBatchAnterior: false
+      enBatchAnterior: false,
+      formaPago: '',
+      pagandoEfectivo: 0,
+      pagandoTarjeta: 0
     };
   },
   mounted: function mounted() {
@@ -7035,6 +7061,8 @@ __webpack_require__.r(__webpack_exports__);
       this.modalPagina = 1;
     },
     saldarDeuda: function saldarDeuda() {
+      if (this.formaPago == 'Efectivo') {}
+
       this.valorPago = this.cuentaMode.cuenta[0].deuda;
     },
     verPagos: function verPagos() {
@@ -7081,8 +7109,8 @@ __webpack_require__.r(__webpack_exports__);
       var paramVenta = {
         cliente_id: this.cuentaMode.id,
         forma_pago: 'Cuenta',
-        pagoEfectivo: parseInt(this.valorPago),
-        pagoTarjeta: 0,
+        pagoEfectivo: parseInt(this.pagandoEfectivo),
+        pagoTarjeta: parseInt(this.pagandoTarjeta),
         total: parseInt(this.valorPago),
         deuda: parseInt(this.cuentaMode.cuenta[0].deuda) - parseInt(this.valorPago),
         estado: 'Cuenta Corriente',
@@ -7099,6 +7127,8 @@ __webpack_require__.r(__webpack_exports__);
         var paramsPago = {
           cuenta_id: _this3.cuentaMode.cuenta[0].id,
           venta_id: response.data.id,
+          tarjeta: _this3.pagandoTarjeta,
+          efectivo: _this3.pagandoEfectivo,
           pagado: _this3.valorPago,
           descripcion: desc,
           batch: _this3.cuentaMode.cuenta[0].batch
@@ -7147,6 +7177,29 @@ __webpack_require__.r(__webpack_exports__);
           console.log(err);
         });
       });
+    },
+    ingresarValorPago: function ingresarValorPago() {
+      if (isNaN(this.pagandoEfectivo)) {
+        this.pagandoEfectivo = 0;
+      }
+
+      if (isNaN(this.pagandoTarjeta)) {
+        this.pagandoTarjeta = 0;
+      }
+
+      if (this.formaPago == 'Efectivo') {
+        this.valorPago = parseInt(this.pagandoEfectivo);
+        this.pagandoTarjeta = 0;
+      }
+
+      if (this.formaPago == 'Tarjeta') {
+        this.valorPago = parseInt(this.pagandoTarjeta);
+        this.pagandoEfectivo = 0;
+      }
+
+      if (this.formaPago == 'efectivoTarjeta') {
+        this.valorPago = parseInt(this.pagandoEfectivo) + parseInt(this.pagandoTarjeta);
+      }
     }
   },
   computed: {
@@ -90872,7 +90925,7 @@ var render = function() {
             _vm._m(5),
             _vm._v(" "),
             _c("td", { staticClass: "td-venta" }, [
-              _vm._v(_vm._s(_vm.totalNeto))
+              _vm._v("$" + _vm._s(_vm.totalNeto))
             ])
           ]),
           _vm._v(" "),
@@ -91021,7 +91074,8 @@ var render = function() {
             _vm._v(" "),
             _c("td", { staticClass: "td-venta" }, [
               _vm._v(
-                _vm._s(_vm.totalNeto - _vm.pagadoEfectivo - _vm.pagadoTarjeta)
+                "$" +
+                  _vm._s(_vm.totalNeto - _vm.pagadoEfectivo - _vm.pagadoTarjeta)
               )
             ])
           ])
@@ -92306,55 +92360,132 @@ var render = function() {
                           ]),
                           _vm._v(" "),
                           _c("div", { staticClass: "form-group row" }, [
-                            _c(
-                              "label",
-                              {
-                                staticClass: "col-sm-3 col-form-label",
-                                attrs: { for: "inputPago" }
-                              },
-                              [_vm._v("Pago")]
-                            ),
-                            _vm._v(" "),
-                            _c("div", { staticClass: "input-group col-sm-5" }, [
-                              _c("input", {
-                                directives: [
-                                  {
-                                    name: "model",
-                                    rawName: "v-model",
-                                    value: _vm.valorPago,
-                                    expression: "valorPago"
-                                  }
-                                ],
-                                staticClass: "form-control",
-                                attrs: {
-                                  type: "number",
-                                  "aria-describedby": "button-addon2",
-                                  required: ""
-                                },
-                                domProps: { value: _vm.valorPago },
-                                on: {
-                                  input: function($event) {
-                                    if ($event.target.composing) {
-                                      return
-                                    }
-                                    _vm.valorPago = $event.target.value
-                                  }
-                                }
-                              }),
+                            _c("div", { staticClass: "col-sm-6" }, [
+                              _c("label", [_vm._v("Forma de Pago")]),
                               _vm._v(" "),
-                              _vm._m(11)
+                              _c(
+                                "select",
+                                {
+                                  directives: [
+                                    {
+                                      name: "model",
+                                      rawName: "v-model",
+                                      value: _vm.formaPago,
+                                      expression: "formaPago"
+                                    }
+                                  ],
+                                  staticClass: "form-control",
+                                  attrs: { value: "Efectivo", required: "" },
+                                  on: {
+                                    change: function($event) {
+                                      var $$selectedVal = Array.prototype.filter
+                                        .call($event.target.options, function(
+                                          o
+                                        ) {
+                                          return o.selected
+                                        })
+                                        .map(function(o) {
+                                          var val =
+                                            "_value" in o ? o._value : o.value
+                                          return val
+                                        })
+                                      _vm.formaPago = $event.target.multiple
+                                        ? $$selectedVal
+                                        : $$selectedVal[0]
+                                    }
+                                  }
+                                },
+                                [
+                                  _c("option", { attrs: { selected: "" } }, [
+                                    _vm._v("Efectivo")
+                                  ]),
+                                  _vm._v(" "),
+                                  _c("option", [_vm._v("Tarjeta")]),
+                                  _vm._v(" "),
+                                  _c(
+                                    "option",
+                                    { attrs: { value: "efectivoTarjeta" } },
+                                    [_vm._v("Efectivo y Tarjeta")]
+                                  )
+                                ]
+                              )
                             ]),
                             _vm._v(" "),
-                            _c("div", { staticClass: "col-sm-4" }, [
-                              _c(
-                                "button",
-                                {
-                                  staticClass: "btn btn-success",
-                                  on: { click: _vm.saldarDeuda }
-                                },
-                                [_vm._v("Saldar Deuda")]
-                              )
-                            ])
+                            _vm.formaPago == "Tarjeta" ||
+                            _vm.formaPago == "efectivoTarjeta"
+                              ? _c("div", { staticClass: "col-sm-6" }, [
+                                  _c("label", [_vm._v("Tarjeta")]),
+                                  _vm._v(" "),
+                                  _vm._m(11)
+                                ])
+                              : _vm._e()
+                          ]),
+                          _vm._v(" "),
+                          _c("div", { staticClass: "form-group row" }, [
+                            _vm.formaPago == "Efectivo" ||
+                            _vm.formaPago == "efectivoTarjeta"
+                              ? _c("div", { staticClass: "col-sm-4" }, [
+                                  _c("label", { attrs: { for: "inputPago" } }, [
+                                    _vm._v("Efectivo")
+                                  ]),
+                                  _vm._v(" "),
+                                  _c("input", {
+                                    directives: [
+                                      {
+                                        name: "model",
+                                        rawName: "v-model",
+                                        value: _vm.pagandoEfectivo,
+                                        expression: "pagandoEfectivo"
+                                      }
+                                    ],
+                                    staticClass: "form-control",
+                                    attrs: { type: "number" },
+                                    domProps: { value: _vm.pagandoEfectivo },
+                                    on: {
+                                      keyup: _vm.ingresarValorPago,
+                                      input: function($event) {
+                                        if ($event.target.composing) {
+                                          return
+                                        }
+                                        _vm.pagandoEfectivo =
+                                          $event.target.value
+                                      }
+                                    }
+                                  })
+                                ])
+                              : _vm._e(),
+                            _vm._v(" "),
+                            _vm.formaPago == "Tarjeta" ||
+                            _vm.formaPago == "efectivoTarjeta"
+                              ? _c("div", { staticClass: "col-sm-4" }, [
+                                  _c("label", { attrs: { for: "inputPago" } }, [
+                                    _vm._v("Tarjeta")
+                                  ]),
+                                  _vm._v(" "),
+                                  _c("input", {
+                                    directives: [
+                                      {
+                                        name: "model",
+                                        rawName: "v-model",
+                                        value: _vm.pagandoTarjeta,
+                                        expression: "pagandoTarjeta"
+                                      }
+                                    ],
+                                    staticClass: "form-control",
+                                    attrs: { type: "number" },
+                                    domProps: { value: _vm.pagandoTarjeta },
+                                    on: {
+                                      keyup: _vm.ingresarValorPago,
+                                      input: function($event) {
+                                        if ($event.target.composing) {
+                                          return
+                                        }
+                                        _vm.pagandoTarjeta = $event.target.value
+                                      }
+                                    }
+                                  })
+                                ])
+                              : _vm._e()
                           ]),
                           _vm._v(" "),
                           _c("div", { staticClass: "form-group row" }, [
@@ -92580,16 +92711,16 @@ var staticRenderFns = [
     var _vm = this
     var _h = _vm.$createElement
     var _c = _vm._self._c || _h
-    return _c("div", { staticClass: "input-group-append" }, [
-      _c(
-        "button",
-        {
-          staticClass: "btn btn-outline-secondary",
-          staticStyle: { cursor: "default" },
-          attrs: { type: "button", id: "button-addon2" }
-        },
-        [_c("i", { staticClass: "fas fa-dollar-sign" })]
-      )
+    return _c("select", { staticClass: "d-block form-control" }, [
+      _c("option", [_vm._v("Debito")]),
+      _vm._v(" "),
+      _c("option", [_vm._v("Visa")]),
+      _vm._v(" "),
+      _c("option", [_vm._v("MasterCard")]),
+      _vm._v(" "),
+      _c("option", { attrs: { value: "TarjetaNaranja" } }, [
+        _vm._v("Tarjeta Naranja")
+      ])
     ])
   },
   function() {
@@ -93797,7 +93928,7 @@ var render = function() {
                     _vm._v(" "),
                     _c("th", [_vm._v("Nuevo")]),
                     _vm._v(" "),
-                    _c("th", [_vm._v(_vm._s(product.precio))])
+                    _c("th", [_vm._v("$" + _vm._s(product.precio))])
                   ])
                 }),
                 _vm._v(" "),
@@ -93805,7 +93936,7 @@ var render = function() {
                   _vm._m(2),
                   _vm._v(" "),
                   _c("td", { staticClass: "td-venta" }, [
-                    _vm._v(_vm._s(_vm.totalNeto))
+                    _vm._v("$" + _vm._s(_vm.totalNeto))
                   ])
                 ]),
                 _vm._v(" "),
@@ -93844,7 +93975,7 @@ var render = function() {
                   _vm._m(4),
                   _vm._v(" "),
                   _c("td", { staticClass: "td-venta" }, [
-                    _vm._v(_vm._s(_vm.totalNeto - _vm.señaPagado))
+                    _vm._v("$" + _vm._s(_vm.totalNeto - _vm.señaPagado))
                   ])
                 ])
               ],
@@ -93893,10 +94024,12 @@ var render = function() {
                         _c("td", [
                           _c("span", [
                             _vm._v(
-                              _vm._s(
-                                productVenta.precio * productVenta.cantidad -
-                                  productVenta.descuento
-                              ) + "$"
+                              "$" +
+                                _vm._s(
+                                  productVenta.precio * productVenta.cantidad -
+                                    productVenta.descuento
+                                ) +
+                                "$"
                             )
                           ])
                         ])

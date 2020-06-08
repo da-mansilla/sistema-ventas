@@ -191,18 +191,41 @@
                         <input class="form-control" disabled :value="cuentaMode.cuenta[0].deuda - valorPago">
                       </div>
                     </div>
+
                     <div class="form-group row" >
-                      <label for="inputPago" class="col-sm-3 col-form-label">Pago</label>
-                      <div class="input-group col-sm-5">
-                        <input type="number" class="form-control"aria-describedby="button-addon2" required v-model="valorPago">
-                        <div class="input-group-append">
-                          <button class="btn btn-outline-secondary" style="cursor: default;" type="button" id="button-addon2"><i class="fas fa-dollar-sign"></i></button>
-                        </div>
+                      <div class="col-sm-6">
+                        <label>Forma de Pago</label>
+                        <select class="form-control"  value="Efectivo" required v-model="formaPago">
+                          <option selected>Efectivo</option>
+                          <option>Tarjeta</option>
+                          <option value="efectivoTarjeta">Efectivo y Tarjeta</option>
+                        </select>
                       </div>
-                      <div class="col-sm-4">
-                        <button class="btn btn-success" v-on:click="saldarDeuda">Saldar Deuda</button>
+                      <div class="col-sm-6" v-if="formaPago == 'Tarjeta' || formaPago == 'efectivoTarjeta'">
+                        <label>Tarjeta</label>
+                        <select class="d-block form-control" >
+                          <option>Debito</option>
+                          <option>Visa</option>
+                          <option>MasterCard</option>
+                          <option value="TarjetaNaranja">Tarjeta Naranja</option>
+                        </select>
                       </div>
                     </div>
+
+                    <div class="form-group row" >
+                      
+                      <div class="col-sm-4" v-if="formaPago == 'Efectivo' || formaPago == 'efectivoTarjeta'">
+                        <label for="inputPago">Efectivo</label>
+                        <input type="number" class="form-control" v-model="pagandoEfectivo" v-on:keyup="ingresarValorPago">
+                      </div>
+
+                      <div class="col-sm-4" v-if="formaPago == 'Tarjeta' || formaPago == 'efectivoTarjeta'">
+                        <label for="inputPago">Tarjeta</label>
+                        <input type="number" class="form-control" v-model="pagandoTarjeta" v-on:keyup="ingresarValorPago">
+                      </div>
+
+                    </div>
+
                     <div class="form-group row">
                       <label for="inputPago" class="col-sm-4 col-form-label">Descripcion</label>
                       <div class="input-group col-sm-6">
@@ -256,7 +279,10 @@
             descripcionPago: '',
             listPagosMostrar: [],
             batchCargado: '',
-            enBatchAnterior: false
+            enBatchAnterior: false,
+            formaPago:'',
+            pagandoEfectivo: 0,
+            pagandoTarjeta: 0
 
         };
       },
@@ -332,6 +358,8 @@
             this.modalPagina = 1;
           },
           saldarDeuda(){
+            if(this.formaPago == 'Efectivo'){
+            }
             this.valorPago = this.cuentaMode.cuenta[0].deuda;
           },
           verPagos(){
@@ -372,8 +400,8 @@
             var paramVenta= {
                 cliente_id: this.cuentaMode.id,
                 forma_pago: 'Cuenta',
-                pagoEfectivo: parseInt(this.valorPago),
-                pagoTarjeta: 0,
+                pagoEfectivo: parseInt(this.pagandoEfectivo),
+                pagoTarjeta: parseInt(this.pagandoTarjeta),
                 total: parseInt(this.valorPago),
                 deuda: (parseInt(this.cuentaMode.cuenta[0].deuda) - parseInt(this.valorPago)),
                 estado: 'Cuenta Corriente',
@@ -388,6 +416,8 @@
                 var paramsPago = {
                   cuenta_id: this.cuentaMode.cuenta[0].id,
                   venta_id: response.data.id,
+                  tarjeta:this.pagandoTarjeta,
+                  efectivo: this.pagandoEfectivo,
                   pagado: this.valorPago,
                   descripcion: desc,
                   batch: this.cuentaMode.cuenta[0].batch
@@ -434,6 +464,27 @@
                     console.log(err);
                   })
               })
+          },
+          ingresarValorPago(){
+            if(isNaN(this.pagandoEfectivo)){
+              this.pagandoEfectivo = 0
+            }
+            if(isNaN(this.pagandoTarjeta)){
+              this.pagandoTarjeta = 0
+            }
+
+
+            if(this.formaPago == 'Efectivo'){
+              this.valorPago = parseInt(this.pagandoEfectivo)
+              this.pagandoTarjeta = 0
+            }
+            if(this.formaPago == 'Tarjeta'){
+              this.valorPago = parseInt(this.pagandoTarjeta)
+              this.pagandoEfectivo = 0
+            }
+            if(this.formaPago == 'efectivoTarjeta'){
+              this.valorPago = parseInt(this.pagandoEfectivo)+parseInt(this.pagandoTarjeta)
+            }
           }
         },
 
