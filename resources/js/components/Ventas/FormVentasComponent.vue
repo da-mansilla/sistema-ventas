@@ -65,17 +65,31 @@
             
               <div class="form-group col-md-3">
                 <span v-if="editMode && disabled">
-              
+                  
                 </span>
 
                 <span v-else>
-                  <label>Recargo</label>
-                  <div class="input-group">
-                    <input type="number" class="form-control" v-model="recargo">
-                    <div class="input-group-append">
-                      <button :disabled="activarBoton(recargo)" class="btn btn-outline-secondary" type="button" v-on:click="cargarRecargo"><i class="fas fa-plus"></i></button>
+                  <span v-if="forma_pago=='Cuenta'">
+
+                    <label for="exampleFormControlSelect1">Efectivo o Tarjeta</label>
+                    <select class="form-control"  value="Efectivo" v-model="Cuenta_formaPago"required>
+                      <option selected>Efectivo</option>
+                      <option>Tarjeta</option>
+                      <option value="efectivoTarjeta">Efectivo y Tarjeta</option>
+                    </select>
+
+                  </span>
+                  <span v-else>
+
+                    <label>Recargo</label>
+                    <div class="input-group">
+                      <input type="number" class="form-control" v-model="recargo">
+                      <div class="input-group-append">
+                        <button :disabled="activarBoton(recargo)" class="btn btn-outline-secondary" type="button" v-on:click="cargarRecargo"><i class="fas fa-plus"></i></button>
+                      </div>
                     </div>
-                  </div>
+
+                  </span>
                 </span>
 
               </div>
@@ -87,7 +101,7 @@
                 <input type="text" class="form-control" v-bind:placeholder="editMode.tarjeta" v-model="tarjeta" disabled>
               </div>
 
-              <div v-else-if="forma_pago=='Tarjeta' || forma_pago=='efectivoTarjeta'">
+              <div v-else-if="forma_pago=='Tarjeta' || forma_pago=='efectivoTarjeta' || (forma_pago=='Cuenta' && (Cuenta_formaPago =='Tarjeta' || Cuenta_formaPago =='efectivoTarjeta'))">
                 
                 <label for="exampleFormControlSelect1">Tarjeta</label>
                 <div class="input-group">
@@ -171,7 +185,9 @@
               :totalNeto='totalNeto'
               :cuentaActivada="cuentaActivada"
               :cuentaCliente="cuentaCliente"
-              @dejaPagando = 'dejaPagando'>
+              :Cuenta_formaPago="Cuenta_formaPago"
+              @dejaPagando = 'dejaPagando'
+              @Cuenta_deleteProductVenta="deleteProductVenta">
               
             </cuenta-component>
           </div>
@@ -511,7 +527,8 @@
             descuentoActivate: false,
             valorDescuento: 0,
             totalDescuento: 0,
-            totalNetoAnterior: 0
+            totalNetoAnterior: 0,
+            Cuenta_formaPago:''
 
 
         };
@@ -988,6 +1005,7 @@
             })
           },
           deleteProductVenta(index){
+            console.log('eliminando producto ' + index)
             this.totalNeto -= this.productsVenta[index].precio
             console.log(this.totalNeto);
             console.log(this.productsVenta[index].precio)
@@ -1484,6 +1502,9 @@
              totalNetoRetornar -= totalNetoFinal
             }
             return totalNetoRetornar
+          },
+          Cuenta_deleteProductVenta(){
+
           }
 
       },

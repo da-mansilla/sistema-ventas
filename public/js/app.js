@@ -6140,8 +6140,6 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
-//
-//
 /* harmony default export */ __webpack_exports__["default"] = ({
   props: {
     productsVenta: {
@@ -6161,14 +6159,17 @@ __webpack_require__.r(__webpack_exports__);
     insertPagado: function insertPagado(e) {
       var valorPagado = e.target.value;
       this.$emit('dejaPagando', valorPagado);
+    },
+    deleteProductVenta: function deleteProductVenta(index) {
+      console.log('index: ');
+      console.log(index);
+      this.$emit('Cuenta_deleteProductVenta', index);
+      console.log('eliminar producto');
     }
   },
   computed: {
     totalaPagar: function totalaPagar() {
       return this.totalNeto - this.pagado;
-    },
-    deleteProductVenta: function deleteProductVenta(index) {
-      this.productsVenta.splice(index, 1);
     }
   }
 });
@@ -7811,6 +7812,22 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   props: {
     editMode: {},
@@ -7859,7 +7876,8 @@ __webpack_require__.r(__webpack_exports__);
       descuentoActivate: false,
       valorDescuento: 0,
       totalDescuento: 0,
-      totalNetoAnterior: 0
+      totalNetoAnterior: 0,
+      Cuenta_formaPago: ''
     };
   },
   mounted: function mounted() {},
@@ -8430,6 +8448,7 @@ __webpack_require__.r(__webpack_exports__);
       });
     },
     deleteProductVenta: function deleteProductVenta(index) {
+      console.log('eliminando producto ' + index);
       this.totalNeto -= this.productsVenta[index].precio;
       console.log(this.totalNeto);
       console.log(this.productsVenta[index].precio);
@@ -8952,7 +8971,8 @@ __webpack_require__.r(__webpack_exports__);
       }
 
       return totalNetoRetornar;
-    }
+    },
+    Cuenta_deleteProductVenta: function Cuenta_deleteProductVenta() {}
   },
   computed: {}
 });
@@ -90684,7 +90704,7 @@ var render = function() {
       _c(
         "tbody",
         [
-          _vm._l(_vm.productsVenta, function(product) {
+          _vm._l(_vm.productsVenta, function(product, index) {
             return _c("tr", { key: product.id }, [
               _c("th", [
                 _c(
@@ -90694,7 +90714,7 @@ var render = function() {
                     attrs: { type: "button" },
                     on: {
                       click: function($event) {
-                        return _vm.deleteProductVenta(_vm.index)
+                        return _vm.deleteProductVenta(index)
                       }
                     }
                   },
@@ -90709,8 +90729,6 @@ var render = function() {
               _c("th", [_vm._v(_vm._s(product.color))]),
               _vm._v(" "),
               _c("th", [_vm._v(_vm._s(product.talle))]),
-              _vm._v(" "),
-              _c("th", [_vm._v("Nuevo")]),
               _vm._v(" "),
               _c("th", [_vm._v(_vm._s(product.precio))])
             ])
@@ -90842,8 +90860,6 @@ var staticRenderFns = [
         _vm._v(" "),
         _c("th", { attrs: { scope: "col" } }, [_vm._v("Talle")]),
         _vm._v(" "),
-        _c("th", { attrs: { scope: "col" } }, [_vm._v("Fecha")]),
-        _vm._v(" "),
         _c("th", { attrs: { scope: "col" } }, [_vm._v("Precio")])
       ])
     ])
@@ -90856,7 +90872,7 @@ var staticRenderFns = [
       "td",
       {
         staticClass: "text-right table-light td-venta",
-        attrs: { colspan: "6" }
+        attrs: { colspan: "5" }
       },
       [_c("strong", [_vm._v("Total Neto")])]
     )
@@ -90869,7 +90885,7 @@ var staticRenderFns = [
       "td",
       {
         staticClass: "text-right table-light td-venta",
-        attrs: { colspan: "6" }
+        attrs: { colspan: "5" }
       },
       [_c("strong", [_vm._v("Deja Pagando")])]
     )
@@ -90882,7 +90898,7 @@ var staticRenderFns = [
       "td",
       {
         staticClass: "text-right table-light td-venta",
-        attrs: { colspan: "6" }
+        attrs: { colspan: "5" }
       },
       [_c("strong", [_vm._v("Total a Pagar")])]
     )
@@ -93042,46 +93058,100 @@ var render = function() {
             _vm.editMode && _vm.disabled
               ? _c("span")
               : _c("span", [
-                  _c("label", [_vm._v("Recargo")]),
-                  _vm._v(" "),
-                  _c("div", { staticClass: "input-group" }, [
-                    _c("input", {
-                      directives: [
-                        {
-                          name: "model",
-                          rawName: "v-model",
-                          value: _vm.recargo,
-                          expression: "recargo"
-                        }
-                      ],
-                      staticClass: "form-control",
-                      attrs: { type: "number" },
-                      domProps: { value: _vm.recargo },
-                      on: {
-                        input: function($event) {
-                          if ($event.target.composing) {
-                            return
-                          }
-                          _vm.recargo = $event.target.value
-                        }
-                      }
-                    }),
-                    _vm._v(" "),
-                    _c("div", { staticClass: "input-group-append" }, [
-                      _c(
-                        "button",
-                        {
-                          staticClass: "btn btn-outline-secondary",
-                          attrs: {
-                            disabled: _vm.activarBoton(_vm.recargo),
-                            type: "button"
+                  _vm.forma_pago == "Cuenta"
+                    ? _c("span", [
+                        _c(
+                          "label",
+                          { attrs: { for: "exampleFormControlSelect1" } },
+                          [_vm._v("Efectivo o Tarjeta")]
+                        ),
+                        _vm._v(" "),
+                        _c(
+                          "select",
+                          {
+                            directives: [
+                              {
+                                name: "model",
+                                rawName: "v-model",
+                                value: _vm.Cuenta_formaPago,
+                                expression: "Cuenta_formaPago"
+                              }
+                            ],
+                            staticClass: "form-control",
+                            attrs: { value: "Efectivo", required: "" },
+                            on: {
+                              change: function($event) {
+                                var $$selectedVal = Array.prototype.filter
+                                  .call($event.target.options, function(o) {
+                                    return o.selected
+                                  })
+                                  .map(function(o) {
+                                    var val = "_value" in o ? o._value : o.value
+                                    return val
+                                  })
+                                _vm.Cuenta_formaPago = $event.target.multiple
+                                  ? $$selectedVal
+                                  : $$selectedVal[0]
+                              }
+                            }
                           },
-                          on: { click: _vm.cargarRecargo }
-                        },
-                        [_c("i", { staticClass: "fas fa-plus" })]
-                      )
-                    ])
-                  ])
+                          [
+                            _c("option", { attrs: { selected: "" } }, [
+                              _vm._v("Efectivo")
+                            ]),
+                            _vm._v(" "),
+                            _c("option", [_vm._v("Tarjeta")]),
+                            _vm._v(" "),
+                            _c(
+                              "option",
+                              { attrs: { value: "efectivoTarjeta" } },
+                              [_vm._v("Efectivo y Tarjeta")]
+                            )
+                          ]
+                        )
+                      ])
+                    : _c("span", [
+                        _c("label", [_vm._v("Recargo")]),
+                        _vm._v(" "),
+                        _c("div", { staticClass: "input-group" }, [
+                          _c("input", {
+                            directives: [
+                              {
+                                name: "model",
+                                rawName: "v-model",
+                                value: _vm.recargo,
+                                expression: "recargo"
+                              }
+                            ],
+                            staticClass: "form-control",
+                            attrs: { type: "number" },
+                            domProps: { value: _vm.recargo },
+                            on: {
+                              input: function($event) {
+                                if ($event.target.composing) {
+                                  return
+                                }
+                                _vm.recargo = $event.target.value
+                              }
+                            }
+                          }),
+                          _vm._v(" "),
+                          _c("div", { staticClass: "input-group-append" }, [
+                            _c(
+                              "button",
+                              {
+                                staticClass: "btn btn-outline-secondary",
+                                attrs: {
+                                  disabled: _vm.activarBoton(_vm.recargo),
+                                  type: "button"
+                                },
+                                on: { click: _vm.cargarRecargo }
+                              },
+                              [_c("i", { staticClass: "fas fa-plus" })]
+                            )
+                          ])
+                        ])
+                      ])
                 ])
           ]),
           _vm._v(" "),
@@ -93119,7 +93189,10 @@ var render = function() {
                   })
                 ])
               : _vm.forma_pago == "Tarjeta" ||
-                _vm.forma_pago == "efectivoTarjeta"
+                _vm.forma_pago == "efectivoTarjeta" ||
+                (_vm.forma_pago == "Cuenta" &&
+                  (_vm.Cuenta_formaPago == "Tarjeta" ||
+                    _vm.Cuenta_formaPago == "efectivoTarjeta"))
               ? _c("div", [
                   _c("label", { attrs: { for: "exampleFormControlSelect1" } }, [
                     _vm._v("Tarjeta")
@@ -93366,9 +93439,13 @@ var render = function() {
                 productsVenta: _vm.productsVenta,
                 totalNeto: _vm.totalNeto,
                 cuentaActivada: _vm.cuentaActivada,
-                cuentaCliente: _vm.cuentaCliente
+                cuentaCliente: _vm.cuentaCliente,
+                Cuenta_formaPago: _vm.Cuenta_formaPago
               },
-              on: { dejaPagando: _vm.dejaPagando }
+              on: {
+                dejaPagando: _vm.dejaPagando,
+                Cuenta_deleteProductVenta: _vm.deleteProductVenta
+              }
             })
           ],
           1

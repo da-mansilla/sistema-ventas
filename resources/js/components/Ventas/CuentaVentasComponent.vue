@@ -51,7 +51,6 @@
             <th scope="col">Categoria</th>
             <th scope="col">Color</th>
             <th scope="col">Talle</th>
-            <th scope="col">Fecha</th>
             <th scope="col">Precio</th>
 
           </tr>
@@ -60,7 +59,7 @@
         <tbody>
 
 
-          <tr v-for="product in productsVenta" :key="product.id">
+          <tr v-for="(product,index) in productsVenta" :key="product.id">
             <th>
               <button type="button" class="btn btn-danger btn-sm" v-on:click="deleteProductVenta(index)">X</button>
             </th>
@@ -68,21 +67,20 @@
             <th>{{product.categoria}}</th>
             <th>{{product.color}}</th>
             <th>{{product.talle}}</th>
-            <th>Nuevo</th>
             <th>{{product.precio}}</th>
 
           </tr>
           <tr>
-              <td colspan="6" class="text-right table-light td-venta" ><strong>Total Neto</strong></td>
+              <td colspan="5" class="text-right table-light td-venta" ><strong>Total Neto</strong></td>
               <td class="td-venta">{{totalNeto}}</td> 
           </tr> 
           <tr>
-              <td colspan="6" class="text-right table-light td-venta"><strong>Deja Pagando</strong></td>
+              <td colspan="5" class="text-right table-light td-venta"><strong>Deja Pagando</strong></td>
               <td class="td-venta"><input type="number" class="input-venta" v-model="pagado" v-on:keyup="insertPagado"></td> 
           </tr> 
 
           <tr>
-              <td colspan="6" class="text-right table-light td-venta"><strong>Total a Pagar</strong></td>
+              <td colspan="5" class="text-right table-light td-venta"><strong>Total a Pagar</strong></td>
               <td class="td-venta">{{totalNeto - pagado}}</td>  
           </tr> 
 
@@ -124,17 +122,21 @@
         insertPagado(e){
           var valorPagado = e.target.value
           this.$emit('dejaPagando', valorPagado);
+        },
+        deleteProductVenta(index){
+          console.log('index: ')
+          console.log(index);
+            this.$emit('Cuenta_deleteProductVenta', index);
+            console.log('eliminar producto');
         }
 
       },
       computed: {
         totalaPagar(){
           return this.totalNeto - this.pagado
-        },
-        deleteProductVenta(index){
-            this.productsVenta.splice(index,1);
-          },
         }
+
+      }
     }
 </script>
 <style>
