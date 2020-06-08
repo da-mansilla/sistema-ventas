@@ -103,10 +103,7 @@
                 </div>
               </div>
 
-              <div v-if="forma_pago=='Cuenta'">
-                <label>Descripcion</label>
-                <textarea v-model="descripcion" class="form-control"></textarea>
-              </div>
+              
             </div>
 
             
@@ -270,11 +267,11 @@
                 </tr>
                 <tr v-if="editMode.recargo > 0">
                     <td colspan="7" class="text-right table-light td-venta"><strong>Recargo</strong></td>
-                    <td class="td-venta" v-bind:value="editMode.pagoEfectivo">{{editMode.recargo}}</td> 
+                    <td class="td-venta" v-bind:value="editMode.pagoEfectivo">${{editMode.recargo}}</td> 
                 </tr>
                 <tr v-if="editMode.forma_pago=='Efectivo'">
                     <td colspan="7" class="text-right table-light td-venta"><strong>Efectivo</strong></td>
-                    <td class="td-venta" v-bind:value="editMode.pagoEfectivo">{{editMode.pagoEfectivo}}</td> 
+                    <td class="td-venta" v-bind:value="editMode.pagoEfectivo">${{editMode.pagoEfectivo}}</td> 
                 </tr> 
 
                 <tr v-if="editMode.forma_pago=='Tarjeta'" v-for="tarjeta in editMode.tarjetas">
@@ -283,7 +280,7 @@
                     <td class="td-venta" v-bind:value="editMode.pagoTarjeta" disabled>{{editMode.pagoTarjeta}}</td> 
                     -->
                     <td colspan="7" class="text-right table-light td-venta"><strong>{{tarjeta.nombre}}</strong></td>
-                    <td class="td-venta" disabled>{{tarjeta.total}}</td>
+                    <td class="td-venta" disabled>${{tarjeta.total}}</td>
                 </tr>
 
                 <tr v-if="editMode.forma_pago=='efectivoTarjeta'">
@@ -296,7 +293,7 @@
                 </tr>
                 <tr>
                     <td colspan="7" class="text-right table-light"><strong>Total Neto</strong></td>
-                    <td>{{editMode.total}}$</td> 
+                    <td>${{editMode.total}}$</td> 
                 </tr>  
               </tbody>
 
@@ -324,20 +321,26 @@
                     <span>{{productVenta.color}}</span>
                   </td>
                   <td>
-                    <span>{{(productVenta.precio * productVenta.cantidad) - productVenta.descuento}}</span>
+                    <span>${{(productVenta.precio * productVenta.cantidad) - productVenta.descuento}}</span>
                   </td>
                 </tr>
                 <tr v-if="recargoActivate">
-                    <td colspan="7" class="text-right table-light td-venta"><strong>Recargo {{recargo}}%</strong></td>
-                    <td class="td-venta">{{totalRecargo}}</td>
+                    <td colspan="7" class="text-right table-light td-venta">
+                      <button type="button" class="btn btn-danger btn-sm" v-on:click="eliminarRecargo()">X</button>
+                      <strong>{{TitulovalorRecargo}}</strong>
+                    </td>
+                    <td class="td-venta" style="color:green;">+${{totalRecargo}}</td>
                 </tr>
                 <tr v-if="descuentoActivate">
-                    <td colspan="7" class="text-right table-light td-venta"><strong>Descuento {{valorDescuento}}%</strong></td>
-                    <td class="td-venta">{{totalDescuento}}</td>
+                    <td colspan="7" class="text-right table-light td-venta">
+                      <button type="button" class="btn btn-danger btn-sm" v-on:click="eliminarDescuento()">X</button>
+                      <strong>{{TitulovalorDescuento}}</strong>
+                    </td>
+                    <td class="td-venta" style="color:red;">-${{totalDescuento}}</td>
                 </tr>
                 <tr v-if="forma_pago=='Efectivo'">
                     <td colspan="7" class="text-right table-light td-venta"><strong>Efectivo</strong></td>
-                    <td class="td-venta">{{totalNeto}}</td> 
+                    <td class="td-venta">${{totalNeto}}</td> 
                 </tr> 
 
                 <tr v-if="forma_pago=='Tarjeta'" v-for='(tarjeta,index) in listTarjetas'>
@@ -365,8 +368,8 @@
 
 
                 <tr>
-                    <td colspan="7" class="text-right table-light"><strong>Total Neto</strong></td>
-                    <td>{{totalNeto}}</td> 
+                    <td colspan="7" class="text-right table-light"><strong style="font-size: 19px;">Total Neto</strong></td>
+                    <td><strong style="color:green;font-size: 19px;">${{totalNeto}}</strong></td> 
                 </tr>  
               </tbody>
             </table>
@@ -467,6 +470,9 @@
       },
       data(){
         return {
+            TitulovalorDescuento: '',
+            TitulovalorRecargo: '',
+
             productsVenta: [],
             id: '',
             cliente: '',
@@ -550,8 +556,10 @@
               this.productsVenta.push(productVenta);
               this.totalNeto += (this.precio * this.cantidad) - this.descuento;
               if(this.recargoActivate){
-                this.totalRecargo = (this.recargo/100)*this.totalNeto;
-                this.totalNeto += this.totalRecargo;
+                this.cargarRecargo()
+              }
+              if(this.descuentoActivate){
+                this.agregarDescuento()
               }
               if(this.promocion2x1Activate){
                 this.promocion2x1() 
@@ -983,11 +991,24 @@
             console.log(this.totalNeto);
             console.log(this.productsVenta[index].precio)
             this.productsVenta.splice(index,1);
+            if(this.productsVenta.length == 0){
+              this.descuentoActivate= false;
+              this.recargoActivate=false;
+              this.totalNeto = 0;
+            }
             if(this.productsVenta.length >= 2){
                 this.activateAgregar = false;
             }else{
               this.activateAgregar = true;
             }
+
+            if(this.recargoActivate){
+              this.cargarRecargo()
+            }
+            if(this.descuentoActivate){
+              this.agregarDescuento()
+            }
+
           },
           onClickEdit(){
             this.disabled= false;
@@ -1257,9 +1278,54 @@
             }
           },
           cargarRecargo(){
+            this.totalNeto = this.obtenerTotal()
+
             this.recargoActivate = true;
-            this.totalRecargo = (this.recargo/100)*this.totalNeto;
-            this.totalNeto += this.totalRecargo;
+            this.TitulovalorRecargo= 'Recargo '+this.recargo+"%"
+            var totalNetoFinal = 0;
+            var precioFinal = Math.ceil((((this.recargo/100)* this.totalNeto ) ))
+            var numeroString = String(precioFinal);
+            var ultimoDigito = numeroString.slice(-1);
+            if(ultimoDigito == 1 ){
+                totalNetoFinal= precioFinal-1
+
+            } else if(ultimoDigito == 2 ){
+                totalNetoFinal= precioFinal-2
+
+            } else if(ultimoDigito == 3){
+                totalNetoFinal= precioFinal-3
+
+            } else if(ultimoDigito == 4){
+                totalNetoFinal= precioFinal-4
+
+            } else if(ultimoDigito == 5){
+                totalNetoFinal= precioFinal+5
+
+            } else if(ultimoDigito == 6){
+                totalNetoFinal= precioFinal+4
+
+            } else if(ultimoDigito == 7){
+                totalNetoFinal= precioFinal+3
+
+            } else if(ultimoDigito == 8){
+                totalNetoFinal= precioFinal+2
+
+            } else if(ultimoDigito == 9){
+                totalNetoFinal= precioFinal+1
+
+            } else {
+                totalNetoFinal= precioFinal
+           }
+           this.totalRecargo = totalNetoFinal;
+           this.totalNeto = this.obtenerTotal('general') + totalNetoFinal - this.totalDescuento;
+          },
+          eliminarRecargo(){
+            this.recargoActivate = false;
+            this.totalNeto = 0
+            this.totalNeto = this.obtenerTotal()
+            if(this.descuentoActivate){
+              this.agregarDescuento();
+            }
           },
           //
           activarBoton(variable){
@@ -1271,8 +1337,11 @@
 
           },
           agregarDescuento(){
+            this.totalNeto = this.obtenerTotal()
+
             console.log(this.valorDescuento);
             this.descuentoActivate = true;
+            this.TitulovalorDescuento = 'Descuento '+ this.valorDescuento+'%'
             var totalNetoFinal = 0;
             var precioFinal = Math.ceil((((this.valorDescuento/100)* this.totalNeto ) ))
             var numeroString = String(precioFinal);
@@ -1308,7 +1377,112 @@
                 totalNetoFinal= precioFinal
            }
            this.totalDescuento = totalNetoFinal
-           this.totalNeto -= totalNetoFinal
+           this.totalNeto = this.obtenerTotal('general') - totalNetoFinal + this.totalRecargo;
+          },
+          eliminarDescuento(){
+            this.descuentoActivate = false;
+            this.totalNeto = 0
+            this.productsVenta.forEach(product=>{
+              this.totalNeto+=product.precio
+            })
+            if(this.recargoActivate){
+              this.cargarRecargo();
+            }
+          },
+          obtenerTotal(destino=''){
+            var calcularConDescuento= false
+            var calcularConRecargo= false
+            if(destino=='descuento'){
+              calcularConDescuento= false
+            }
+            if(destino=='recargo'){
+              calcularConRecargo= false
+            }
+            if(destino=='general'){
+              calcularConRecargo= false
+              calcularConDescuento= false
+            }
+
+
+            let totalNetoRetornar= 0
+            this.productsVenta.forEach(product=>{
+              totalNetoRetornar+=product.precio
+            })
+            if(this.recargoActivate && calcularConRecargo){
+              var totalNetoFinal = 0;
+              var precioFinal = Math.ceil((((this.recargo/100)* this.totalNeto ) ))
+              var numeroString = String(precioFinal);
+              var ultimoDigito = numeroString.slice(-1);
+              if(ultimoDigito == 1 ){
+                  totalNetoFinal= precioFinal-1
+
+              } else if(ultimoDigito == 2 ){
+                  totalNetoFinal= precioFinal-2
+
+              } else if(ultimoDigito == 3){
+                  totalNetoFinal= precioFinal-3
+
+              } else if(ultimoDigito == 4){
+                  totalNetoFinal= precioFinal-4
+
+              } else if(ultimoDigito == 5){
+                  totalNetoFinal= precioFinal+5
+
+              } else if(ultimoDigito == 6){
+                  totalNetoFinal= precioFinal+4
+
+              } else if(ultimoDigito == 7){
+                  totalNetoFinal= precioFinal+3
+
+              } else if(ultimoDigito == 8){
+                  totalNetoFinal= precioFinal+2
+
+              } else if(ultimoDigito == 9){
+                  totalNetoFinal= precioFinal+1
+
+              } else {
+                  totalNetoFinal= precioFinal
+             }
+             totalNetoRetornar += totalNetoFinal;
+            }
+            if(this.descuentoActivate && calcularConDescuento){
+              var totalNetoFinal = 0;
+              var precioFinal = Math.ceil((((this.valorDescuento/100)* this.totalNeto ) ))
+              var numeroString = String(precioFinal);
+              var ultimoDigito = numeroString.slice(-1);
+              if(ultimoDigito == 1 ){
+                  totalNetoFinal= precioFinal-1
+
+              } else if(ultimoDigito == 2 ){
+                  totalNetoFinal= precioFinal-2
+
+              } else if(ultimoDigito == 3){
+                  totalNetoFinal= precioFinal-3
+
+              } else if(ultimoDigito == 4){
+                  totalNetoFinal= precioFinal-4
+
+              } else if(ultimoDigito == 5){
+                  totalNetoFinal= precioFinal+5
+
+              } else if(ultimoDigito == 6){
+                  totalNetoFinal= precioFinal+4
+
+              } else if(ultimoDigito == 7){
+                  totalNetoFinal= precioFinal+3
+
+              } else if(ultimoDigito == 8){
+                  totalNetoFinal= precioFinal+2
+
+              } else if(ultimoDigito == 9){
+                  totalNetoFinal= precioFinal+1
+
+              } else {
+                  totalNetoFinal= precioFinal
+             }
+             totalNetoRetornar -= totalNetoFinal
+            }
+            return totalNetoRetornar
           }
 
       },

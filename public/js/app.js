@@ -7808,6 +7808,9 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   props: {
     editMode: {},
@@ -7816,6 +7819,8 @@ __webpack_require__.r(__webpack_exports__);
   },
   data: function data() {
     return {
+      TitulovalorDescuento: '',
+      TitulovalorRecargo: '',
       productsVenta: [],
       id: '',
       cliente: '',
@@ -7918,8 +7923,11 @@ __webpack_require__.r(__webpack_exports__);
         this.totalNeto += this.precio * this.cantidad - this.descuento;
 
         if (this.recargoActivate) {
-          this.totalRecargo = this.recargo / 100 * this.totalNeto;
-          this.totalNeto += this.totalRecargo;
+          this.cargarRecargo();
+        }
+
+        if (this.descuentoActivate) {
+          this.agregarDescuento();
         }
 
         if (this.promocion2x1Activate) {
@@ -8426,10 +8434,24 @@ __webpack_require__.r(__webpack_exports__);
       console.log(this.productsVenta[index].precio);
       this.productsVenta.splice(index, 1);
 
+      if (this.productsVenta.length == 0) {
+        this.descuentoActivate = false;
+        this.recargoActivate = false;
+        this.totalNeto = 0;
+      }
+
       if (this.productsVenta.length >= 2) {
         this.activateAgregar = false;
       } else {
         this.activateAgregar = true;
+      }
+
+      if (this.recargoActivate) {
+        this.cargarRecargo();
+      }
+
+      if (this.descuentoActivate) {
+        this.agregarDescuento();
       }
     },
     onClickEdit: function onClickEdit() {
@@ -8745,9 +8767,47 @@ __webpack_require__.r(__webpack_exports__);
       }
     },
     cargarRecargo: function cargarRecargo() {
+      this.totalNeto = this.obtenerTotal();
       this.recargoActivate = true;
-      this.totalRecargo = this.recargo / 100 * this.totalNeto;
-      this.totalNeto += this.totalRecargo;
+      this.TitulovalorRecargo = 'Recargo ' + this.recargo + "%";
+      var totalNetoFinal = 0;
+      var precioFinal = Math.ceil(this.recargo / 100 * this.totalNeto);
+      var numeroString = String(precioFinal);
+      var ultimoDigito = numeroString.slice(-1);
+
+      if (ultimoDigito == 1) {
+        totalNetoFinal = precioFinal - 1;
+      } else if (ultimoDigito == 2) {
+        totalNetoFinal = precioFinal - 2;
+      } else if (ultimoDigito == 3) {
+        totalNetoFinal = precioFinal - 3;
+      } else if (ultimoDigito == 4) {
+        totalNetoFinal = precioFinal - 4;
+      } else if (ultimoDigito == 5) {
+        totalNetoFinal = precioFinal + 5;
+      } else if (ultimoDigito == 6) {
+        totalNetoFinal = precioFinal + 4;
+      } else if (ultimoDigito == 7) {
+        totalNetoFinal = precioFinal + 3;
+      } else if (ultimoDigito == 8) {
+        totalNetoFinal = precioFinal + 2;
+      } else if (ultimoDigito == 9) {
+        totalNetoFinal = precioFinal + 1;
+      } else {
+        totalNetoFinal = precioFinal;
+      }
+
+      this.totalRecargo = totalNetoFinal;
+      this.totalNeto = this.obtenerTotal('general') + totalNetoFinal - this.totalDescuento;
+    },
+    eliminarRecargo: function eliminarRecargo() {
+      this.recargoActivate = false;
+      this.totalNeto = 0;
+      this.totalNeto = this.obtenerTotal();
+
+      if (this.descuentoActivate) {
+        this.agregarDescuento();
+      }
     },
     //
     activarBoton: function activarBoton(variable) {
@@ -8758,8 +8818,10 @@ __webpack_require__.r(__webpack_exports__);
       }
     },
     agregarDescuento: function agregarDescuento() {
+      this.totalNeto = this.obtenerTotal();
       console.log(this.valorDescuento);
       this.descuentoActivate = true;
+      this.TitulovalorDescuento = 'Descuento ' + this.valorDescuento + '%';
       var totalNetoFinal = 0;
       var precioFinal = Math.ceil(this.valorDescuento / 100 * this.totalNeto);
       var numeroString = String(precioFinal);
@@ -8788,7 +8850,107 @@ __webpack_require__.r(__webpack_exports__);
       }
 
       this.totalDescuento = totalNetoFinal;
-      this.totalNeto -= totalNetoFinal;
+      this.totalNeto = this.obtenerTotal('general') - totalNetoFinal + this.totalRecargo;
+    },
+    eliminarDescuento: function eliminarDescuento() {
+      var _this8 = this;
+
+      this.descuentoActivate = false;
+      this.totalNeto = 0;
+      this.productsVenta.forEach(function (product) {
+        _this8.totalNeto += product.precio;
+      });
+
+      if (this.recargoActivate) {
+        this.cargarRecargo();
+      }
+    },
+    obtenerTotal: function obtenerTotal() {
+      var destino = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : '';
+      var calcularConDescuento = false;
+      var calcularConRecargo = false;
+
+      if (destino == 'descuento') {
+        calcularConDescuento = false;
+      }
+
+      if (destino == 'recargo') {
+        calcularConRecargo = false;
+      }
+
+      if (destino == 'general') {
+        calcularConRecargo = false;
+        calcularConDescuento = false;
+      }
+
+      var totalNetoRetornar = 0;
+      this.productsVenta.forEach(function (product) {
+        totalNetoRetornar += product.precio;
+      });
+
+      if (this.recargoActivate && calcularConRecargo) {
+        var totalNetoFinal = 0;
+        var precioFinal = Math.ceil(this.recargo / 100 * this.totalNeto);
+        var numeroString = String(precioFinal);
+        var ultimoDigito = numeroString.slice(-1);
+
+        if (ultimoDigito == 1) {
+          totalNetoFinal = precioFinal - 1;
+        } else if (ultimoDigito == 2) {
+          totalNetoFinal = precioFinal - 2;
+        } else if (ultimoDigito == 3) {
+          totalNetoFinal = precioFinal - 3;
+        } else if (ultimoDigito == 4) {
+          totalNetoFinal = precioFinal - 4;
+        } else if (ultimoDigito == 5) {
+          totalNetoFinal = precioFinal + 5;
+        } else if (ultimoDigito == 6) {
+          totalNetoFinal = precioFinal + 4;
+        } else if (ultimoDigito == 7) {
+          totalNetoFinal = precioFinal + 3;
+        } else if (ultimoDigito == 8) {
+          totalNetoFinal = precioFinal + 2;
+        } else if (ultimoDigito == 9) {
+          totalNetoFinal = precioFinal + 1;
+        } else {
+          totalNetoFinal = precioFinal;
+        }
+
+        totalNetoRetornar += totalNetoFinal;
+      }
+
+      if (this.descuentoActivate && calcularConDescuento) {
+        var totalNetoFinal = 0;
+        var precioFinal = Math.ceil(this.valorDescuento / 100 * this.totalNeto);
+        var numeroString = String(precioFinal);
+        var ultimoDigito = numeroString.slice(-1);
+
+        if (ultimoDigito == 1) {
+          totalNetoFinal = precioFinal - 1;
+        } else if (ultimoDigito == 2) {
+          totalNetoFinal = precioFinal - 2;
+        } else if (ultimoDigito == 3) {
+          totalNetoFinal = precioFinal - 3;
+        } else if (ultimoDigito == 4) {
+          totalNetoFinal = precioFinal - 4;
+        } else if (ultimoDigito == 5) {
+          totalNetoFinal = precioFinal + 5;
+        } else if (ultimoDigito == 6) {
+          totalNetoFinal = precioFinal + 4;
+        } else if (ultimoDigito == 7) {
+          totalNetoFinal = precioFinal + 3;
+        } else if (ultimoDigito == 8) {
+          totalNetoFinal = precioFinal + 2;
+        } else if (ultimoDigito == 9) {
+          totalNetoFinal = precioFinal + 1;
+        } else {
+          totalNetoFinal = precioFinal;
+        }
+
+        totalNetoRetornar -= totalNetoFinal;
+      }
+
+      return totalNetoRetornar;
     }
   },
   computed: {}
@@ -93022,33 +93184,6 @@ var render = function() {
                     ])
                   ])
                 ])
-              : _vm._e(),
-            _vm._v(" "),
-            _vm.forma_pago == "Cuenta"
-              ? _c("div", [
-                  _c("label", [_vm._v("Descripcion")]),
-                  _vm._v(" "),
-                  _c("textarea", {
-                    directives: [
-                      {
-                        name: "model",
-                        rawName: "v-model",
-                        value: _vm.descripcion,
-                        expression: "descripcion"
-                      }
-                    ],
-                    staticClass: "form-control",
-                    domProps: { value: _vm.descripcion },
-                    on: {
-                      input: function($event) {
-                        if ($event.target.composing) {
-                          return
-                        }
-                        _vm.descripcion = $event.target.value
-                      }
-                    }
-                  })
-                ])
               : _vm._e()
           ])
         ]),
@@ -93389,7 +93524,7 @@ var render = function() {
                               staticClass: "td-venta",
                               attrs: { value: _vm.editMode.pagoEfectivo }
                             },
-                            [_vm._v(_vm._s(_vm.editMode.recargo))]
+                            [_vm._v("$" + _vm._s(_vm.editMode.recargo))]
                           )
                         ])
                       : _vm._e(),
@@ -93404,7 +93539,7 @@ var render = function() {
                               staticClass: "td-venta",
                               attrs: { value: _vm.editMode.pagoEfectivo }
                             },
-                            [_vm._v(_vm._s(_vm.editMode.pagoEfectivo))]
+                            [_vm._v("$" + _vm._s(_vm.editMode.pagoEfectivo))]
                           )
                         ])
                       : _vm._e(),
@@ -93427,7 +93562,7 @@ var render = function() {
                                 staticClass: "td-venta",
                                 attrs: { disabled: "" }
                               },
-                              [_vm._v(_vm._s(tarjeta.total))]
+                              [_vm._v("$" + _vm._s(tarjeta.total))]
                             )
                           ])
                         : _vm._e()
@@ -93464,7 +93599,7 @@ var render = function() {
                     _c("tr", [
                       _vm._m(10),
                       _vm._v(" "),
-                      _c("td", [_vm._v(_vm._s(_vm.editMode.total) + "$")])
+                      _c("td", [_vm._v("$" + _vm._s(_vm.editMode.total) + "$")])
                     ])
                   ],
                   2
@@ -93519,10 +93654,11 @@ var render = function() {
                         _c("td", [
                           _c("span", [
                             _vm._v(
-                              _vm._s(
-                                productVenta.precio * productVenta.cantidad -
-                                  productVenta.descuento
-                              )
+                              "$" +
+                                _vm._s(
+                                  productVenta.precio * productVenta.cantidad -
+                                    productVenta.descuento
+                                )
                             )
                           ])
                         ])
@@ -93538,15 +93674,34 @@ var render = function() {
                               attrs: { colspan: "7" }
                             },
                             [
+                              _c(
+                                "button",
+                                {
+                                  staticClass: "btn btn-danger btn-sm",
+                                  attrs: { type: "button" },
+                                  on: {
+                                    click: function($event) {
+                                      return _vm.eliminarRecargo()
+                                    }
+                                  }
+                                },
+                                [_vm._v("X")]
+                              ),
+                              _vm._v(" "),
                               _c("strong", [
-                                _vm._v("Recargo " + _vm._s(_vm.recargo) + "%")
+                                _vm._v(_vm._s(_vm.TitulovalorRecargo))
                               ])
                             ]
                           ),
                           _vm._v(" "),
-                          _c("td", { staticClass: "td-venta" }, [
-                            _vm._v(_vm._s(_vm.totalRecargo))
-                          ])
+                          _c(
+                            "td",
+                            {
+                              staticClass: "td-venta",
+                              staticStyle: { color: "green" }
+                            },
+                            [_vm._v("+$" + _vm._s(_vm.totalRecargo))]
+                          )
                         ])
                       : _vm._e(),
                     _vm._v(" "),
@@ -93559,19 +93714,34 @@ var render = function() {
                               attrs: { colspan: "7" }
                             },
                             [
+                              _c(
+                                "button",
+                                {
+                                  staticClass: "btn btn-danger btn-sm",
+                                  attrs: { type: "button" },
+                                  on: {
+                                    click: function($event) {
+                                      return _vm.eliminarDescuento()
+                                    }
+                                  }
+                                },
+                                [_vm._v("X")]
+                              ),
+                              _vm._v(" "),
                               _c("strong", [
-                                _vm._v(
-                                  "Descuento " +
-                                    _vm._s(_vm.valorDescuento) +
-                                    "%"
-                                )
+                                _vm._v(_vm._s(_vm.TitulovalorDescuento))
                               ])
                             ]
                           ),
                           _vm._v(" "),
-                          _c("td", { staticClass: "td-venta" }, [
-                            _vm._v(_vm._s(_vm.totalDescuento))
-                          ])
+                          _c(
+                            "td",
+                            {
+                              staticClass: "td-venta",
+                              staticStyle: { color: "red" }
+                            },
+                            [_vm._v("-$" + _vm._s(_vm.totalDescuento))]
+                          )
                         ])
                       : _vm._e(),
                     _vm._v(" "),
@@ -93580,7 +93750,7 @@ var render = function() {
                           _vm._m(11),
                           _vm._v(" "),
                           _c("td", { staticClass: "td-venta" }, [
-                            _vm._v(_vm._s(_vm.totalNeto))
+                            _vm._v("$" + _vm._s(_vm.totalNeto))
                           ])
                         ])
                       : _vm._e(),
@@ -93686,7 +93856,15 @@ var render = function() {
                     _c("tr", [
                       _vm._m(13),
                       _vm._v(" "),
-                      _c("td", [_vm._v(_vm._s(_vm.totalNeto))])
+                      _c("td", [
+                        _c(
+                          "strong",
+                          {
+                            staticStyle: { color: "green", "font-size": "19px" }
+                          },
+                          [_vm._v("$" + _vm._s(_vm.totalNeto))]
+                        )
+                      ])
                     ])
                   ],
                   2
@@ -94097,7 +94275,11 @@ var staticRenderFns = [
     return _c(
       "td",
       { staticClass: "text-right table-light", attrs: { colspan: "7" } },
-      [_c("strong", [_vm._v("Total Neto")])]
+      [
+        _c("strong", { staticStyle: { "font-size": "19px" } }, [
+          _vm._v("Total Neto")
+        ])
+      ]
     )
   },
   function() {
