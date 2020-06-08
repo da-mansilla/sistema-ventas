@@ -74,14 +74,35 @@
               <td colspan="5" class="text-right table-light td-venta" ><strong>Total Neto</strong></td>
               <td class="td-venta">{{totalNeto}}</td> 
           </tr> 
-          <tr>
-              <td colspan="5" class="text-right table-light td-venta"><strong>Deja Pagando</strong></td>
-              <td class="td-venta"><input type="number" class="input-venta" v-model="pagado" v-on:keyup="insertPagado"></td> 
+
+          <tr v-if="Cuenta_formaPago == 'Efectivo'">
+              <td colspan="5" class="text-right table-light td-venta"><strong>Efectivo</strong></td>
+              <td class="td-venta"><input type="number" class="input-venta" v-model="pagadoEfectivo" v-on:keyup="insertPagado"></td> 
+          </tr>
+
+          <tr v-if="Cuenta_formaPago == 'Tarjeta'" v-for='(tarjeta,index) in listTarjetas'>
+              <td colspan="5" class="text-right table-light td-venta">
+                <button type="button" class="btn btn-danger btn-sm" v-on:click="eliminarTarjeta(index)">X</button>
+                <strong>{{tarjeta.nombre}}</strong>
+              </td>
+              <td class="td-venta"><input :id="tarjeta.nombre" type="number" class="input-venta" v-on:keyup="FormaTarjeta"></td> 
           </tr> 
+
+          <tr v-if="Cuenta_formaPago == 'efectivoTarjeta'">
+              <td colspan="5" class="text-right table-light td-venta"><strong>Efectivo</strong></td>
+              <td class="td-venta"><input type="number" class="input-venta" v-model="pagadoEfectivo" v-on:keyup="insertPagado"></td> 
+          </tr>
+          <tr v-if="Cuenta_formaPago == 'efectivoTarjeta'" v-for='(tarjeta,index) in listTarjetas'>
+              <td colspan="5" class="text-right table-light td-venta">
+                <button type="button" class="btn btn-danger btn-sm" v-on:click="eliminarTarjeta(index)">X</button>
+                <strong>{{tarjeta.nombre}}</strong>
+              </td>
+              <td class="td-venta"><input :id="tarjeta.nombre" type="number" class="input-venta" v-on:keyup="FormaTarjeta"></td> 
+          </tr>  
 
           <tr>
               <td colspan="5" class="text-right table-light td-venta"><strong>Total a Pagar</strong></td>
-              <td class="td-venta">{{totalNeto - pagado}}</td>  
+              <td class="td-venta">{{totalNeto - (pagadoEfectivo) - pagadoTarjeta }}</td>  
           </tr> 
 
 
@@ -107,11 +128,18 @@
         },
         cuentaCliente:{
 
+        },
+        Cuenta_formaPago:{
+
+        },
+        listTarjetas:{
+
         }
       },
       data(){
         return {
-          pagado: 0
+          pagadoEfectivo: 0,
+          pagadoTarjeta: 0
 
         };
       },
@@ -120,21 +148,65 @@
       },
       methods:{
         insertPagado(e){
-          var valorPagado = e.target.value
-          this.$emit('dejaPagando', valorPagado);
+          var valorPagadoEfectivo=0
+          var valorPagadoTarjeta=0
+          if(this.Cuenta_formaPago == 'Efectivo'){
+            valorPagadoEfectivo=this.pagadoEfectivo
+            valorPagadoTarjeta=0
+          }
+          if(this.Cuenta_formaPago == 'Tarjeta'){
+            valorPagadoEfectivo=0
+            valorPagadoTarjeta=this.pagadoTarjeta
+          }
+          if(this.Cuenta_formaPago == 'efectivoTarjeta'){
+            valorPagadoEfectivo= this.pagadoEfectivo
+            valorPagadoTarjeta= this.pagadoTarjeta
+          }
+
+          if(isNaN(this.pagadoEfectivo)){
+            this.pagadoEfectivo = 0
+          }
+          if(isNaN(this.pagadoTarjeta)){
+            this.pagadoTarjeta = 0
+          }
+          console.log(this.pagadoEfectivo)
+          console.log(this.pagadoTarjeta)
+          this.$emit('dejaPagando', valorPagadoEfectivo,valorPagadoTarjeta);
         },
         deleteProductVenta(index){
           console.log('index: ')
           console.log(index);
             this.$emit('Cuenta_deleteProductVenta', index);
             console.log('eliminar producto');
-        }
+        },
+        eliminarTarjeta(index){
+          this.$emit('Cuenta_eliminarTarjeta',index);
+        },
+        FormaTarjeta(){
+          this.pagadoTarjeta= 0;
+          var total = 0;
+          var Cuenta_listaTarjetas = []
+          this.listTarjetas.forEach(t=>{
+            let valorTarjeta = parseInt($('#'+t.nombre).val());
+            if(isNaN(valorTarjeta)){
+              valorTarjeta = 0;
+            }
+            console.log("El total de la tarjeta"+t.nombre+" es"+valorTarjeta);
+            let tarjeta = {
+              nombre:t.nombre,
+              total:valorTarjeta
+            }
+            this.pagadoTarjeta+=valorTarjeta
+            Cuenta_listaTarjetas.push(tarjeta);
+          })
+          console.log(Cuenta_listaTarjetas);
+          this.$emit('Cuenta_FormaTarjeta',Cuenta_listaTarjetas);
+          this.insertPagado();
+        },
 
       },
       computed: {
-        totalaPagar(){
-          return this.totalNeto - this.pagado
-        }
+
 
       }
     }

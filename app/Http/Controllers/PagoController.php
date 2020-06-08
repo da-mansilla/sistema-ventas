@@ -18,6 +18,8 @@ class PagoController extends Controller
 
         $pago->cuenta_id = $request->input('cuenta_id');
         $pago->venta_id = $request->input('venta_id');
+        $pago->efectivo = $request->input('efectivo');
+        $pago->tarjeta = $request->input('tarjeta');
         $pago->pagado = $request->input('pagado');
         $pago->descripcion = $request->input('descripcion');
         $pago->batch = $request->input('batch');

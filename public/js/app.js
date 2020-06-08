@@ -6140,6 +6140,27 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   props: {
     productsVenta: {
@@ -6147,31 +6168,85 @@ __webpack_require__.r(__webpack_exports__);
     },
     totalNeto: {},
     cuentaActivada: {},
-    cuentaCliente: {}
+    cuentaCliente: {},
+    Cuenta_formaPago: {},
+    listTarjetas: {}
   },
   data: function data() {
     return {
-      pagado: 0
+      pagadoEfectivo: 0,
+      pagadoTarjeta: 0
     };
   },
   mounted: function mounted() {},
   methods: {
     insertPagado: function insertPagado(e) {
-      var valorPagado = e.target.value;
-      this.$emit('dejaPagando', valorPagado);
+      var valorPagadoEfectivo = 0;
+      var valorPagadoTarjeta = 0;
+
+      if (this.Cuenta_formaPago == 'Efectivo') {
+        valorPagadoEfectivo = this.pagadoEfectivo;
+        valorPagadoTarjeta = 0;
+      }
+
+      if (this.Cuenta_formaPago == 'Tarjeta') {
+        valorPagadoEfectivo = 0;
+        valorPagadoTarjeta = this.pagadoTarjeta;
+      }
+
+      if (this.Cuenta_formaPago == 'efectivoTarjeta') {
+        valorPagadoEfectivo = this.pagadoEfectivo;
+        valorPagadoTarjeta = this.pagadoTarjeta;
+      }
+
+      if (isNaN(this.pagadoEfectivo)) {
+        this.pagadoEfectivo = 0;
+      }
+
+      if (isNaN(this.pagadoTarjeta)) {
+        this.pagadoTarjeta = 0;
+      }
+
+      console.log(this.pagadoEfectivo);
+      console.log(this.pagadoTarjeta);
+      this.$emit('dejaPagando', valorPagadoEfectivo, valorPagadoTarjeta);
     },
     deleteProductVenta: function deleteProductVenta(index) {
       console.log('index: ');
       console.log(index);
       this.$emit('Cuenta_deleteProductVenta', index);
       console.log('eliminar producto');
+    },
+    eliminarTarjeta: function eliminarTarjeta(index) {
+      this.$emit('Cuenta_eliminarTarjeta', index);
+    },
+    FormaTarjeta: function FormaTarjeta() {
+      var _this = this;
+
+      this.pagadoTarjeta = 0;
+      var total = 0;
+      var Cuenta_listaTarjetas = [];
+      this.listTarjetas.forEach(function (t) {
+        var valorTarjeta = parseInt($('#' + t.nombre).val());
+
+        if (isNaN(valorTarjeta)) {
+          valorTarjeta = 0;
+        }
+
+        console.log("El total de la tarjeta" + t.nombre + " es" + valorTarjeta);
+        var tarjeta = {
+          nombre: t.nombre,
+          total: valorTarjeta
+        };
+        _this.pagadoTarjeta += valorTarjeta;
+        Cuenta_listaTarjetas.push(tarjeta);
+      });
+      console.log(Cuenta_listaTarjetas);
+      this.$emit('Cuenta_FormaTarjeta', Cuenta_listaTarjetas);
+      this.insertPagado();
     }
   },
-  computed: {
-    totalaPagar: function totalaPagar() {
-      return this.totalNeto - this.pagado;
-    }
-  }
+  computed: {}
 });
 
 /***/ }),
@@ -6641,6 +6716,15 @@ __webpack_require__.r(__webpack_exports__);
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
+//
+//
+//
+//
+//
+//
+//
+//
+//
 //
 //
 //
@@ -7828,6 +7912,9 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   props: {
     editMode: {},
@@ -7862,7 +7949,8 @@ __webpack_require__.r(__webpack_exports__);
       habilitarCuenta: false,
       habilitarSeña: false,
       cuentaActivada: false,
-      pagando: '',
+      pagandoEfectivo: '',
+      pagandoTarjeta: '',
       cuentaCliente: '',
       hechoDesactivado: true,
       descripcion: '',
@@ -8075,9 +8163,9 @@ __webpack_require__.r(__webpack_exports__);
       var params = {
         cliente_id: this.id,
         forma_pago: this.forma_pago,
-        pagoEfectivo: this.pagando,
-        pagoTarjeta: 0,
-        total: this.pagando,
+        pagoEfectivo: this.pagandoEfectivo,
+        pagoTarjeta: this.pagandoTarjeta,
+        total: this.pagandoEfectivo + this.pagandoTarjeta,
         estado: ventaEstado,
         enabled: 1
       };
@@ -8090,7 +8178,7 @@ __webpack_require__.r(__webpack_exports__);
 
         var cuentaEstado = '';
 
-        if (_this2.totalNeto - _this2.pagando > 0) {
+        if (_this2.totalNeto - (_this2.pagandoEfectivo + _this2.pagandoTarjeta) > 0) {
           cuentaEstado = 'Deuda';
         } else {
           cuentaEstado = 'Sin Deuda';
@@ -8099,8 +8187,8 @@ __webpack_require__.r(__webpack_exports__);
         var cuentaParams = {
           cliente_id: venta.cliente_id,
           total: _this2.totalNeto + _this2.cuentaCliente.total,
-          pagado: parseInt(_this2.pagando) + _this2.cuentaCliente.pagado,
-          deuda: _this2.totalNeto + _this2.cuentaCliente.total - _this2.pagando - _this2.cuentaCliente.pagado,
+          pagado: parseInt(_this2.pagandoEfectivo) + parseInt(_this2.pagandoTarjeta) + _this2.cuentaCliente.pagado,
+          deuda: _this2.totalNeto + _this2.cuentaCliente.total - (_this2.pagandoEfectivo + _this2.pagandoTarjeta) - _this2.cuentaCliente.pagado,
           estado: cuentaEstado,
           batch: _this2.cuentaCliente.batch
         };
@@ -8157,7 +8245,9 @@ __webpack_require__.r(__webpack_exports__);
           var pagosParams = {
             cuenta_id: _this2.cuentaCliente.id,
             venta_id: venta.id,
-            pagado: _this2.pagando,
+            efectivo: _this2.pagandoEfectivo,
+            tarjeta: _this2.pagandoTarjeta,
+            pagado: _this2.pagandoEfectivo + _this2.pagandoTarjeta,
             descripcion: descripcionPago,
             batch: cuentaActualizada.batch
           };
@@ -8165,6 +8255,19 @@ __webpack_require__.r(__webpack_exports__);
           _this2.postPagos(pagosParams).then(function (response) {
             console.log(response);
           });
+
+          if (_this2.listTarjetas.length > 0) {
+            // Tarjetas
+            _this2.listTarjetas.forEach(function (tarjeta) {
+              var parametros = {
+                nombre: tarjeta.nombre,
+                total: tarjeta.total,
+                venta_id: venta.id
+              };
+              axios.post('tarjetas', parametros).then(function (response) {//console.log(response);
+              });
+            });
+          }
         });
 
         _this2.$toasted.show('Cuenta Corriente Creada', {
@@ -8203,9 +8306,9 @@ __webpack_require__.r(__webpack_exports__);
 
         if (estadoCuenta && _this3.forma_pago == 'Cuenta') {
           ventaEstado = 'Cuenta Corriente';
-          enEfectivo = _this3.pagando;
-          enTarjeta = 0;
-          enTotal = _this3.pagando;
+          enEfectivo = _this3.pagandoEfectivo;
+          enTarjeta = _this3.pagandoTarjeta;
+          enTotal = _this3.pagandoEfectivo + _this3.pagandoTarjeta;
         } else if (_this3.forma_pago == 'Seña') {
           seña = _this3.señaPagado;
           enEfectivo = 0;
@@ -8257,7 +8360,7 @@ __webpack_require__.r(__webpack_exports__);
           if (venta.estado == 'Cuenta Corriente') {
             var cuentaEstado = '';
 
-            if (_this3.totalNeto - _this3.pagando > 0) {
+            if (_this3.totalNeto - (_this3.pagandoEfectivo + _this3.pagandoTarjeta) > 0) {
               cuentaEstado = 'Deuda';
             } else {
               cuentaEstado = 'Saldado';
@@ -8266,9 +8369,9 @@ __webpack_require__.r(__webpack_exports__);
             var cuentaParams = {
               cliente_id: venta.cliente_id,
               total: _this3.totalNeto,
-              pagado: _this3.pagando,
+              pagado: _this3.pagandoEfectivo + _this3.pagandoTarjeta,
               estado: cuentaEstado,
-              deuda: _this3.totalNeto - _this3.pagando,
+              deuda: _this3.totalNeto - (_this3.pagandoEfectivo + _this3.pagandoTarjeta),
               batch: 1
             };
 
@@ -8324,13 +8427,28 @@ __webpack_require__.r(__webpack_exports__);
               var paramsPagos = {
                 cuenta_id: cuentaCreada.id,
                 venta_id: venta.id,
-                pagado: venta.total,
+                efectivo: _this3.pagandoEfectivo,
+                tarjeta: _this3.pagandoTarjeta,
+                pagado: _this3.pagandoEfectivo + _this3.pagandoTarjeta,
                 descripcion: _this3.descripcion + ' (Abrir Cuenta)',
                 batch: 1
               };
 
               _this3.postPagos(paramsPagos).then(function (response) {});
             });
+
+            if (_this3.listTarjetas.length > 0) {
+              // Tarjetas
+              _this3.listTarjetas.forEach(function (tarjeta) {
+                var parametros = {
+                  nombre: tarjeta.nombre,
+                  total: tarjeta.total,
+                  venta_id: venta.id
+                };
+                axios.post('tarjetas', parametros).then(function (response) {//console.log(response);
+                });
+              });
+            }
 
             _this3.$toasted.show('Cuenta Corriente Creada', {
               theme: "toasted-primary",
@@ -8690,8 +8808,24 @@ __webpack_require__.r(__webpack_exports__);
         this.pagoEfectivo = 0;
       }
     },
-    dejaPagando: function dejaPagando(valor) {
-      this.pagando = valor;
+    dejaPagando: function dejaPagando(efectivo, tarjeta) {
+      this.pagandoEfectivo = parseInt(efectivo);
+      this.pagandoTarjeta = parseInt(tarjeta);
+      console.log(this.pagandoEfectivo);
+      console.log(this.pagandoTarjeta);
+    },
+    Cuenta_agregarTarjetas: function Cuenta_agregarTarjetas(lista) {
+      var _this7 = this;
+
+      lista.forEach(function (t) {
+        _this7.listTarjetas.forEach(function (tarjetas) {
+          if (tarjetas.nombre == t.nombre) {
+            tarjetas.total = t.total;
+          }
+        });
+      });
+      console.log('Lista Tarjetas');
+      console.log(this.listTarjetas);
     },
     FormaTarjeta: function FormaTarjeta(e) {
       var total = 0;
@@ -8744,14 +8878,14 @@ __webpack_require__.r(__webpack_exports__);
       console.log('emitiendo una devolucion');
     },
     elegirPromocion: function elegirPromocion() {
-      var _this7 = this;
+      var _this8 = this;
 
       if (this.promocion == '2x1') {
         this.promocion2x1Activate = true;
         console.log('2x1');
       } else {
         this.productsVenta.forEach(function (product) {
-          _this7.totalNeto = product.precio;
+          _this8.totalNeto = product.precio;
         });
         console.log('2x1 desactivado');
         this.promocion2x1Activate = false;
@@ -8873,12 +9007,12 @@ __webpack_require__.r(__webpack_exports__);
       this.totalNeto = this.obtenerTotal('general') - totalNetoFinal + this.totalRecargo;
     },
     eliminarDescuento: function eliminarDescuento() {
-      var _this8 = this;
+      var _this9 = this;
 
       this.descuentoActivate = false;
       this.totalNeto = 0;
       this.productsVenta.forEach(function (product) {
-        _this8.totalNeto += product.precio;
+        _this9.totalNeto += product.precio;
       });
 
       if (this.recargoActivate) {
@@ -90742,40 +90876,153 @@ var render = function() {
             ])
           ]),
           _vm._v(" "),
-          _c("tr", [
-            _vm._m(6),
-            _vm._v(" "),
-            _c("td", { staticClass: "td-venta" }, [
-              _c("input", {
-                directives: [
-                  {
-                    name: "model",
-                    rawName: "v-model",
-                    value: _vm.pagado,
-                    expression: "pagado"
-                  }
-                ],
-                staticClass: "input-venta",
-                attrs: { type: "number" },
-                domProps: { value: _vm.pagado },
-                on: {
-                  keyup: _vm.insertPagado,
-                  input: function($event) {
-                    if ($event.target.composing) {
-                      return
+          _vm.Cuenta_formaPago == "Efectivo"
+            ? _c("tr", [
+                _vm._m(6),
+                _vm._v(" "),
+                _c("td", { staticClass: "td-venta" }, [
+                  _c("input", {
+                    directives: [
+                      {
+                        name: "model",
+                        rawName: "v-model",
+                        value: _vm.pagadoEfectivo,
+                        expression: "pagadoEfectivo"
+                      }
+                    ],
+                    staticClass: "input-venta",
+                    attrs: { type: "number" },
+                    domProps: { value: _vm.pagadoEfectivo },
+                    on: {
+                      keyup: _vm.insertPagado,
+                      input: function($event) {
+                        if ($event.target.composing) {
+                          return
+                        }
+                        _vm.pagadoEfectivo = $event.target.value
+                      }
                     }
-                    _vm.pagado = $event.target.value
-                  }
-                }
-              })
-            ])
-          ]),
+                  })
+                ])
+              ])
+            : _vm._e(),
+          _vm._v(" "),
+          _vm._l(_vm.listTarjetas, function(tarjeta, index) {
+            return _vm.Cuenta_formaPago == "Tarjeta"
+              ? _c("tr", [
+                  _c(
+                    "td",
+                    {
+                      staticClass: "text-right table-light td-venta",
+                      attrs: { colspan: "5" }
+                    },
+                    [
+                      _c(
+                        "button",
+                        {
+                          staticClass: "btn btn-danger btn-sm",
+                          attrs: { type: "button" },
+                          on: {
+                            click: function($event) {
+                              return _vm.eliminarTarjeta(index)
+                            }
+                          }
+                        },
+                        [_vm._v("X")]
+                      ),
+                      _vm._v(" "),
+                      _c("strong", [_vm._v(_vm._s(tarjeta.nombre))])
+                    ]
+                  ),
+                  _vm._v(" "),
+                  _c("td", { staticClass: "td-venta" }, [
+                    _c("input", {
+                      staticClass: "input-venta",
+                      attrs: { id: tarjeta.nombre, type: "number" },
+                      on: { keyup: _vm.FormaTarjeta }
+                    })
+                  ])
+                ])
+              : _vm._e()
+          }),
+          _vm._v(" "),
+          _vm.Cuenta_formaPago == "efectivoTarjeta"
+            ? _c("tr", [
+                _vm._m(7),
+                _vm._v(" "),
+                _c("td", { staticClass: "td-venta" }, [
+                  _c("input", {
+                    directives: [
+                      {
+                        name: "model",
+                        rawName: "v-model",
+                        value: _vm.pagadoEfectivo,
+                        expression: "pagadoEfectivo"
+                      }
+                    ],
+                    staticClass: "input-venta",
+                    attrs: { type: "number" },
+                    domProps: { value: _vm.pagadoEfectivo },
+                    on: {
+                      keyup: _vm.insertPagado,
+                      input: function($event) {
+                        if ($event.target.composing) {
+                          return
+                        }
+                        _vm.pagadoEfectivo = $event.target.value
+                      }
+                    }
+                  })
+                ])
+              ])
+            : _vm._e(),
+          _vm._v(" "),
+          _vm._l(_vm.listTarjetas, function(tarjeta, index) {
+            return _vm.Cuenta_formaPago == "efectivoTarjeta"
+              ? _c("tr", [
+                  _c(
+                    "td",
+                    {
+                      staticClass: "text-right table-light td-venta",
+                      attrs: { colspan: "5" }
+                    },
+                    [
+                      _c(
+                        "button",
+                        {
+                          staticClass: "btn btn-danger btn-sm",
+                          attrs: { type: "button" },
+                          on: {
+                            click: function($event) {
+                              return _vm.eliminarTarjeta(index)
+                            }
+                          }
+                        },
+                        [_vm._v("X")]
+                      ),
+                      _vm._v(" "),
+                      _c("strong", [_vm._v(_vm._s(tarjeta.nombre))])
+                    ]
+                  ),
+                  _vm._v(" "),
+                  _c("td", { staticClass: "td-venta" }, [
+                    _c("input", {
+                      staticClass: "input-venta",
+                      attrs: { id: tarjeta.nombre, type: "number" },
+                      on: { keyup: _vm.FormaTarjeta }
+                    })
+                  ])
+                ])
+              : _vm._e()
+          }),
           _vm._v(" "),
           _c("tr", [
-            _vm._m(7),
+            _vm._m(8),
             _vm._v(" "),
             _c("td", { staticClass: "td-venta" }, [
-              _vm._v(_vm._s(_vm.totalNeto - _vm.pagado))
+              _vm._v(
+                _vm._s(_vm.totalNeto - _vm.pagadoEfectivo - _vm.pagadoTarjeta)
+              )
             ])
           ])
         ],
@@ -90887,7 +91134,20 @@ var staticRenderFns = [
         staticClass: "text-right table-light td-venta",
         attrs: { colspan: "5" }
       },
-      [_c("strong", [_vm._v("Deja Pagando")])]
+      [_c("strong", [_vm._v("Efectivo")])]
+    )
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c(
+      "td",
+      {
+        staticClass: "text-right table-light td-venta",
+        attrs: { colspan: "5" }
+      },
+      [_c("strong", [_vm._v("Efectivo")])]
     )
   },
   function() {
@@ -91740,7 +92000,7 @@ var render = function() {
                   _vm._v(" "),
                   _c("th", [_vm._v(_vm._s(product.created_at))]),
                   _vm._v(" "),
-                  _c("th", [_vm._v(_vm._s(product.precio))])
+                  _c("th", [_vm._v("$" + _vm._s(product.precio))])
                 ])
               }),
               _vm._v(" "),
@@ -91749,35 +92009,72 @@ var render = function() {
                     _vm._m(4),
                     _vm._v(" "),
                     _c("td", { staticClass: "td-venta" }, [
-                      _vm._v(_vm._s(_vm.Total_Neto()))
+                      _vm._v("$" + _vm._s(_vm.Total_Neto()))
                     ])
                   ])
                 : _vm._e(),
               _vm._v(" "),
-              _c("tr", [
-                _vm._m(5),
-                _vm._v(" "),
-                _vm.productsVendidos.length == 0
-                  ? _c("td", { staticClass: "td-venta" }, [
-                      _vm._v(_vm._s(_vm.editMode.total))
+              _vm.editMode.pagoEfectivo > 0
+                ? _c("tr", [
+                    _vm._m(5),
+                    _vm._v(" "),
+                    _c("td", { staticClass: "td-venta" }, [
+                      _vm._v("$" + _vm._s(_vm.editMode.pagoEfectivo))
                     ])
-                  : _c("td", { staticClass: "td-venta" }, [
-                      _vm._v(_vm._s(_vm.editMode.total))
+                  ])
+                : _vm._e(),
+              _vm._v(" "),
+              _vm._l(_vm.editMode.tarjetas, function(tarjeta) {
+                return _vm.editMode.tarjetas.length > 0
+                  ? _c("tr", { key: tarjeta.id }, [
+                      _c(
+                        "td",
+                        {
+                          staticClass: "text-right td-venta table-secondary",
+                          attrs: { colspan: "5" }
+                        },
+                        [_c("strong", [_vm._v(_vm._s(tarjeta.nombre))])]
+                      ),
+                      _vm._v(" "),
+                      _c("td", { staticClass: "td-venta" }, [
+                        _vm._v("$" + _vm._s(tarjeta.total))
+                      ])
                     ])
-              ]),
+                  : _vm._e()
+              }),
               _vm._v(" "),
               _c("tr", [
                 _vm._m(6),
                 _vm._v(" "),
+                _c("td", { staticClass: "td-venta" }, [
+                  _vm._v("$" + _vm._s(_vm.editMode.total))
+                ])
+              ]),
+              _vm._v(" "),
+              _c("tr", [
+                _vm._m(7),
+                _vm._v(" "),
                 _vm.productsVendidos.length == 0
-                  ? _c("td", { staticClass: "td-venta" }, [
-                      _vm._v(_vm._s(_vm.editMode.deuda))
-                    ])
-                  : _c("td", [
-                      _vm._v(
-                        _vm._s(Math.abs(_vm.Total_Neto() - _vm.editMode.total))
-                      )
-                    ])
+                  ? _c(
+                      "td",
+                      {
+                        staticClass: "td-venta",
+                        staticStyle: { color: "green", "font-size": "19px" }
+                      },
+                      [_vm._v(_vm._s(_vm.editMode.deuda))]
+                    )
+                  : _c(
+                      "td",
+                      { staticStyle: { color: "green", "font-size": "19px" } },
+                      [
+                        _vm._v(
+                          "$" +
+                            _vm._s(
+                              Math.abs(_vm.Total_Neto() - _vm.editMode.total)
+                            )
+                        )
+                      ]
+                    )
               ])
             ],
             2
@@ -91845,7 +92142,7 @@ var render = function() {
                         )
                       : _vm._e(),
                     _vm._v(" "),
-                    _vm._m(7)
+                    _vm._m(8)
                   ]),
                   _vm._v(" "),
                   _c("div", { staticClass: "modal-body" }, [
@@ -91919,7 +92216,7 @@ var render = function() {
                               class: { "table-active": _vm.enBatchAnterior }
                             },
                             [
-                              _vm._m(8),
+                              _vm._m(9),
                               _vm._v(" "),
                               _c(
                                 "tbody",
@@ -91941,7 +92238,7 @@ var render = function() {
                                   }),
                                   _vm._v(" "),
                                   _c("tr", [
-                                    _vm._m(9),
+                                    _vm._m(10),
                                     _vm._v(" "),
                                     !_vm.enBatchAnterior
                                       ? _c("td", { staticClass: "td-venta" }, [
@@ -92045,7 +92342,7 @@ var render = function() {
                                 }
                               }),
                               _vm._v(" "),
-                              _vm._m(10)
+                              _vm._m(11)
                             ]),
                             _vm._v(" "),
                             _c("div", { staticClass: "col-sm-4" }, [
@@ -92110,7 +92407,7 @@ var render = function() {
                       : _vm._e()
                   ]),
                   _vm._v(" "),
-                  _vm._m(11)
+                  _vm._m(12)
                 ])
               ]
             )
@@ -92203,9 +92500,19 @@ var staticRenderFns = [
     return _c(
       "td",
       {
-        staticClass: "text-right table-secondary td-venta totalPagado",
+        staticClass: "text-right td-venta table-secondary",
         attrs: { colspan: "5" }
       },
+      [_c("strong", [_vm._v("Efectivo")])]
+    )
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c(
+      "td",
+      { staticClass: "text-right td-venta ", attrs: { colspan: "5" } },
       [_c("strong", [_vm._v("Total Pagado")])]
     )
   },
@@ -92217,6 +92524,7 @@ var staticRenderFns = [
       "td",
       {
         staticClass: "text-right table-light td-venta",
+        staticStyle: { "font-size": "19px" },
         attrs: { colspan: "5" }
       },
       [_c("strong", [_vm._v("Total a Pagar")])]
@@ -93440,11 +93748,14 @@ var render = function() {
                 totalNeto: _vm.totalNeto,
                 cuentaActivada: _vm.cuentaActivada,
                 cuentaCliente: _vm.cuentaCliente,
-                Cuenta_formaPago: _vm.Cuenta_formaPago
+                Cuenta_formaPago: _vm.Cuenta_formaPago,
+                listTarjetas: _vm.listTarjetas
               },
               on: {
                 dejaPagando: _vm.dejaPagando,
-                Cuenta_deleteProductVenta: _vm.deleteProductVenta
+                Cuenta_deleteProductVenta: _vm.deleteProductVenta,
+                Cuenta_eliminarTarjeta: _vm.eliminarTarjeta,
+                Cuenta_FormaTarjeta: _vm.Cuenta_agregarTarjetas
               }
             })
           ],

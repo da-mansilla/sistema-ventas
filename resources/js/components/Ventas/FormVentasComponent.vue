@@ -186,8 +186,11 @@
               :cuentaActivada="cuentaActivada"
               :cuentaCliente="cuentaCliente"
               :Cuenta_formaPago="Cuenta_formaPago"
+              :listTarjetas="listTarjetas"
               @dejaPagando = 'dejaPagando'
-              @Cuenta_deleteProductVenta="deleteProductVenta">
+              @Cuenta_deleteProductVenta="deleteProductVenta"
+              @Cuenta_eliminarTarjeta='eliminarTarjeta'
+              @Cuenta_FormaTarjeta="Cuenta_agregarTarjetas">
               
             </cuenta-component>
           </div>
@@ -513,7 +516,8 @@
             habilitarCuenta: false,
             habilitarSeña: false,
             cuentaActivada: false,
-            pagando: '',
+            pagandoEfectivo: '',
+            pagandoTarjeta: '',
             cuentaCliente: '',
             hechoDesactivado: true,
             descripcion: '',
@@ -713,9 +717,9 @@
             var params = {
               cliente_id: this.id,
               forma_pago: this.forma_pago,
-              pagoEfectivo: this.pagando,
-              pagoTarjeta: 0,
-              total: this.pagando,
+              pagoEfectivo: this.pagandoEfectivo,
+              pagoTarjeta: this.pagandoTarjeta,
+              total: this.pagandoEfectivo+this.pagandoTarjeta,
               estado: ventaEstado,
               enabled: 1
             }
@@ -726,7 +730,7 @@
                   this.$emit('new', venta);
                   // Cuenta
                   var cuentaEstado = '';
-                  if((this.totalNeto - this.pagando) > 0){
+                  if((this.totalNeto - (this.pagandoEfectivo+this.pagandoTarjeta)) > 0){
                     cuentaEstado = 'Deuda'
                   } else {
                     cuentaEstado = 'Sin Deuda'
@@ -734,8 +738,8 @@
                   var cuentaParams= {
                     cliente_id: venta.cliente_id,
                     total: (this.totalNeto+this.cuentaCliente.total),
-                    pagado: (parseInt(this.pagando) + this.cuentaCliente.pagado),
-                    deuda: ((this.totalNeto+this.cuentaCliente.total) - this.pagando - this.cuentaCliente.pagado),
+                    pagado: (parseInt(this.pagandoEfectivo)+parseInt(this.pagandoTarjeta) + this.cuentaCliente.pagado),
+                    deuda: ((this.totalNeto+this.cuentaCliente.total) - (this.pagandoEfectivo+this.pagandoTarjeta) - this.cuentaCliente.pagado),
                     estado: cuentaEstado,
                     batch: this.cuentaCliente.batch
                   }
@@ -773,13 +777,28 @@
                     var pagosParams= {
                       cuenta_id: this.cuentaCliente.id,
                       venta_id: venta.id,
-                      pagado: this.pagando,
+                      efectivo: this.pagandoEfectivo,
+                      tarjeta: this.pagandoTarjeta,
+                      pagado: this.pagandoEfectivo+this.pagandoTarjeta,
                       descripcion: descripcionPago,
                       batch : cuentaActualizada.batch
                     }
                     this.postPagos(pagosParams).then(response=>{
                       console.log(response);
                     })
+                    if(this.listTarjetas.length>0){
+                      // Tarjetas
+                      this.listTarjetas.forEach((tarjeta)=>{
+                        let parametros = {
+                          nombre: tarjeta.nombre,
+                          total: tarjeta.total,
+                          venta_id : venta.id
+                        }
+                        axios.post('tarjetas', parametros).then((response)=>{
+                          //console.log(response);
+                        })
+                      })
+                    }
                   })
                   this.$toasted.show('Cuenta Corriente Creada', { 
                    theme: "toasted-primary", 
@@ -813,9 +832,9 @@
                 var recargo = '';
                 if(estadoCuenta && this.forma_pago == 'Cuenta'){
                   ventaEstado = 'Cuenta Corriente';
-                  enEfectivo = this.pagando;
-                  enTarjeta = 0;
-                  enTotal = this.pagando;
+                  enEfectivo = this.pagandoEfectivo;
+                  enTarjeta = this.pagandoTarjeta;
+                  enTotal = this.pagandoEfectivo+this.pagandoTarjeta;
 
                 } else if(this.forma_pago == 'Seña'){
                   seña= this.señaPagado;
@@ -865,7 +884,7 @@
                   if(venta.estado == 'Cuenta Corriente')
                   {
                       var cuentaEstado = '';
-                      if((this.totalNeto - this.pagando) > 0){
+                      if((this.totalNeto - (this.pagandoEfectivo+this.pagandoTarjeta)) > 0){
                         cuentaEstado = 'Deuda'
                       } else {
                         cuentaEstado = 'Saldado'
@@ -873,9 +892,9 @@
                       var cuentaParams= {
                         cliente_id: venta.cliente_id,
                         total: this.totalNeto,
-                        pagado: this.pagando,
+                        pagado: this.pagandoEfectivo+this.pagandoTarjeta,
                         estado: cuentaEstado,
-                        deuda: (this.totalNeto-this.pagando),
+                        deuda: (this.totalNeto-(this.pagandoEfectivo+this.pagandoTarjeta)),
                         batch: 1
                       }
 
@@ -913,7 +932,9 @@
                           var paramsPagos= {
                             cuenta_id: cuentaCreada.id,
                             venta_id: venta.id,
-                            pagado: venta.total,
+                            efectivo: this.pagandoEfectivo,
+                            tarjeta: this.pagandoTarjeta,
+                            pagado: this.pagandoEfectivo+this.pagandoTarjeta,
                             descripcion: (this.descripcion+' (Abrir Cuenta)'),
                             batch: 1
                           }
@@ -921,6 +942,19 @@
                             .then(response =>{
                             })
                         })
+                         if(this.listTarjetas.length>0){
+                          // Tarjetas
+                          this.listTarjetas.forEach((tarjeta)=>{
+                            let parametros = {
+                              nombre: tarjeta.nombre,
+                              total: tarjeta.total,
+                              venta_id : venta.id
+                            }
+                            axios.post('tarjetas', parametros).then((response)=>{
+                              //console.log(response);
+                            })
+                          })
+                         }
                       this.$toasted.show('Cuenta Corriente Creada', { 
                        theme: "toasted-primary", 
                        position: "top-right", 
@@ -1204,8 +1238,22 @@
               this.pagoEfectivo = 0;
             }
           },
-          dejaPagando(valor){
-            this.pagando = valor;
+          dejaPagando(efectivo,tarjeta){
+            this.pagandoEfectivo = parseInt(efectivo);
+            this.pagandoTarjeta = parseInt(tarjeta);
+            console.log(this.pagandoEfectivo)
+            console.log(this.pagandoTarjeta)
+          },
+          Cuenta_agregarTarjetas(lista){
+            lista.forEach(t=>{
+              this.listTarjetas.forEach(tarjetas=>{
+                if(tarjetas.nombre == t.nombre){
+                  tarjetas.total = t.total
+                }
+              })
+            })
+            console.log('Lista Tarjetas');
+            console.log(this.listTarjetas)
           },
           FormaTarjeta(e){
             var total = 0;

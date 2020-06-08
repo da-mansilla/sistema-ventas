@@ -88,24 +88,33 @@
                 <th>{{product.color}}</th>
                 <th>{{product.talle}}</th>
                 <th>{{product.created_at}}</th>
-                <th>{{product.precio}}</th>
+                <th>${{product.precio}}</th>
               </tr>
               <tr v-if="productsVendidos.length > 0">
                   <td colspan="5" class="text-right table-light td-venta" ><strong>Total Neto</strong></td>
-                  <td class="td-venta">{{Total_Neto()}}</td> 
+                  <td class="td-venta">${{Total_Neto()}}</td> 
+              </tr> 
+              <!-- -->
+
+              <tr v-if="editMode.pagoEfectivo>0">
+                  <td colspan="5" class="text-right td-venta table-secondary"><strong>Efectivo</strong></td>
+                  <td  class="td-venta">${{editMode.pagoEfectivo}}</td> 
+              </tr> 
+
+              <tr v-if="editMode.tarjetas.length>0" v-for="tarjeta in editMode.tarjetas" :key="tarjeta.id">
+                  <td colspan="5" class="text-right td-venta table-secondary"><strong>{{tarjeta.nombre}}</strong></td>
+                  <td  class="td-venta">${{tarjeta.total}}</td> 
               </tr> 
 
               <tr>
-                  <td colspan="5" class="text-right table-secondary td-venta totalPagado"><strong>Total Pagado</strong></td>
-                  <td v-if="productsVendidos.length == 0" class="td-venta">{{editMode.total}}</td> 
-                  <td v-else class="td-venta">{{editMode.total}}</td> 
+                  <td colspan="5" class="text-right td-venta "><strong>Total Pagado</strong></td>
+                  <td  class="td-venta">${{editMode.total}}</td> 
               </tr> 
-
-
+              <!-- -->
               <tr>
-                  <td colspan="5" class="text-right table-light td-venta"><strong>Total a Pagar</strong></td>
-                  <td v-if="productsVendidos.length == 0"class="td-venta">{{editMode.deuda}}</td> 
-                  <td v-else>{{Math.abs(Total_Neto() - editMode.total)}}</td> 
+                  <td colspan="5" class="text-right table-light td-venta" style="font-size: 19px;"><strong>Total a Pagar</strong></td>
+                  <td v-if="productsVendidos.length == 0"class="td-venta" style="color:green;font-size: 19px;">{{editMode.deuda}}</td> 
+                  <td v-else style="color:green;font-size: 19px;">${{Math.abs(Total_Neto() - editMode.total)}}</td> 
               </tr> 
             </tbody>
           </table>
