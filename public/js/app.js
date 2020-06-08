@@ -8224,7 +8224,8 @@ __webpack_require__.r(__webpack_exports__);
           promocion: promocion,
           recargo: recargo,
           estado: ventaEstado,
-          enabled: 1
+          enabled: 1,
+          descuento: _this3.totalDescuento
         };
         console.log('parametros');
         console.log(params);

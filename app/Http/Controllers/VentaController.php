@@ -210,6 +210,7 @@ class VentaController extends Controller
         $venta->recargo = $request->input('recargo');
         $venta->estado = $request->input('estado');
         $venta->enabled = $request->input('enabled');
+        $venta->descuento = $request->input('descuento');
 
         $venta->save();
 

@@ -835,7 +835,8 @@
                   promocion: promocion,
                   recargo : recargo,
                   estado: ventaEstado,
-                  enabled: 1
+                  enabled: 1,
+                  descuento: this.totalDescuento
                 }
                 console.log('parametros');
                 console.log(params);
