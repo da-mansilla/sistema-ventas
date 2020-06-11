@@ -321,4 +321,16 @@ class ProductController extends Controller
                     ->get();
         return $productos;
     }
+    public function modificarProductos(Request $request){
+        $listaProductos = $request->input();
+        $productosModificados= [];
+        foreach ($listaProductos as $key => $element) {
+            $product = Product::find($element['producto']['id']);
+            $product->categoria_id = $element['categoria'];
+            $product->save();
+            array_push($productosModificados,$product);
+
+        }
+        return $productosModificados;
+    }
 }

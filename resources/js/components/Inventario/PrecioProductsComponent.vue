@@ -94,19 +94,28 @@
                           <th scope="col">Talle</th>
                           <th scope="col">Color</th>
                           <th scope="col">Precio</th>
-                          <th scope="col">Nuevo Precio</th>
+                          <th scope="col" >Nuevo Precio</th>
                         </tr>
                       </thead>
                       <paginate ref="paginator" name="productsModificar" :list="productsModificar" :per="10" tag="tbody">
                         <tr v-for="(product,index) in paginated('productsModificar')" :key="product.id">
-                            <td><button  type="button" class="btn btn-danger btn-sm" v-on:click="onClickDelete(index)"><i class="fas fa-times-circle"></i></button></td>
+                            <td><button  v-if="!activateModificarCategoria"type="button" class="btn btn-danger btn-sm" v-on:click="onClickDelete(index)"><i class="fas fa-times-circle"></i></button></td>
                             <td>{{product.n_serie}}</td>
-                            <td>{{product.categoria}}</td>
+                            <td v-if="activateModificarCategoria != product.id">
+                                <button  type="button" class="btn btn-light" v-on:click="abrirModificarCategoria(product.id)" v-bind:class="{'btn-outline-success' : product.cambio}">{{product.categoria}}</button>
+                            </td>
+                            <td v-else>
+                                <button  type="button" class="btn btn-danger btn-sm" v-on:click="cerrarModificarCategoria"><i class="fas fa-times-circle"></i></button>
+                                <button  type="button" class="btn btn-success btn-sm" v-on:click="modificarCategoria(product.id)"><i class="fas fa-times-circle"></i></button>
+                                <select class="form-control" style="width: 100px; display: inline;" v-model="nuevaCategoria">
+                                    <option v-for="sugerencia in sortedArrayCategorias" :value="sugerencia.id">{{sugerencia.nombre.replace(/\w\S*/g, (w) => (w.replace(/^\w/, (c) => c.toUpperCase())))}} ({{sugerencia.tipo}})</option>
+                                </select>
+                            </td>
                             <td>{{product.talle}}</td>
                             <td>{{product.color}}</td>
                             <td>{{product.precio}}</td>
-                            <td v-if="accion == 'aumentar'"><input :id="product.id" v-on:keyup="cambiarPrecioIndividual(product.id)" type="number" :value="product.nuevoPrecio"></td>
-                            <td v-if="accion == 'disminuir'"><input :id="product.id" v-on:keyup="cambiarPrecioIndividual(product.id)" type="number" :value="product.nuevoPrecio"></td>
+                            <td v-if="accion == 'aumentar'" style="width: 100px;"><input  style="width: 100px;" :id="product.id" v-on:keyup="cambiarPrecioIndividual(product.id)" type="number" :value="product.nuevoPrecio"></td>
+                            <td v-if="accion == 'disminuir'" style="width: 100px;"><input style="width: 100px;" :id="product.id" v-on:keyup="cambiarPrecioIndividual(product.id)" type="number" :value="product.nuevoPrecio"></td>
                         </tr>
                       </paginate>
                       
@@ -158,7 +167,10 @@
                 paginate: ['productsModificar'],
                 nuevoPrecio: 0,
                 preciosModificar: [],
-                precioIndividual: 0
+                precioIndividual: 0,
+                activateModificarCategoria: false,
+                nuevaCategoria: '',
+                cambiarCategoria:[]
 
     		}
     	},
@@ -170,6 +182,8 @@
                 this.productsModificar = [];
                 this.listaElegida = [];
                 this.seleccionado = 1;
+                this.cambiarCategoria = [];
+                this.activateModificarCategoria= false
 
             },
             getTodosProductos(){
@@ -286,7 +300,14 @@
 
             },
             onClickDelete(index){
+                let productoID = this.productsModificar[index].id
                 this.productsModificar.splice(index,1);
+                this.cambiarCategoria.forEach((product,i)=>{
+                    if(product.producto.id == productoID){
+                        this.cambiarCategoria.splice(i,1)
+                    }
+                })
+                console.log(this.cambiarCategoria);
             },
             elegirAccion(e){
                 if (this.clickAccion){
@@ -332,6 +353,18 @@
                     })
                     */
                 })
+                let cantidadProductosCategoria = this.cambiarCategoria.length
+                if(cantidadProductosCategoria > 0){
+                    await axios.post('/modificarProductos', this.cambiarCategoria)
+                    .then(response=>{
+                        console.log(response)
+                        this.$toasted.show('Se actualizaron la categoria de '+cantidadProductosCategoria+' productos exitosamente', { 
+                            theme: "toasted-primary", 
+                            position: "top-right", 
+                            duration : 2000
+                        });
+                    })
+                }
                 await axios.put('/precio',listaParam)
                     .then((response)=>{
                         console.log(response);
@@ -345,6 +378,7 @@
                     .catch(error =>{
                         console.log(error);
                 })
+
                 
                 
             },
@@ -444,6 +478,37 @@
                 } else {
                     return precioFinal
                }
+            },
+            abrirModificarCategoria(id){
+                this.activateModificarCategoria = id;
+            },
+            modificarCategoria(id){
+                var categoriaNueva= ''
+                this.categorias.forEach(categoria=>{
+                    if(categoria.id == this.nuevaCategoria){
+                        categoriaNueva = categoria.nombre
+                     }
+                })
+                console.log('El producto de id '+id+' se va a cambiar a la cateogoria '+this.nuevaCategoria)
+                this.productsModificar.forEach((product,index)=>{
+                    if(product.id == id && product.categoria_id != this.nuevaCategoria){
+                        this.productsModificar[index].categoria = categoriaNueva
+                        this.productsModificar[index].cambio = true
+                        let param = {
+                            producto: product,
+                            categoria: this.nuevaCategoria,
+                            cambio:'categoria'
+                        }
+                        this.cambiarCategoria.push(param)
+                    }
+                })
+                this.activateModificarCategoria = false
+                this.nuevaCategoria = ''
+                console.log(this.cambiarCategoria);
+            },
+            cerrarModificarCategoria(){
+                this.activateModificarCategoria = false;
+                this.nuevaCategoria = ''
             }
         },
         computed: {
@@ -457,7 +522,17 @@
                 }
 
                 return this.listaElegida.sort(compare);
+            },
+            sortedArrayCategorias: function() {
+                function compare(a, b) {
+                  if (a.nombre.toLowerCase() < b.nombre.toLowerCase() )
+                    return -1;
+                  if (a.nombre.toLowerCase() > b.nombre.toLowerCase())
+                    return 1;
+                  return 0;
+                }
 
+                return this.categorias.sort(compare);
             }
         }
     }

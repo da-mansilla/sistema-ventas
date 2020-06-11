@@ -24,6 +24,7 @@ Route::get('todosproductos','ProductController@todosProductos')->name('products.
 Route::post('filtrar','ProductController@filtrar')->name('products.filtrar');
 Route::post('informacionFiltro','ProductController@informacionFiltro')->name('products.informacionFiltro');
 Route::get('productosPorSerie/{serie}','ProductController@productosPorSerie')->name('products.productosPorSerie');
+Route::post('modificarProductos','ProductController@modificarProductos')->name('products.modificarProductos');
 
 Route::apiResource('ventas','VentaController');
 Route::get('ingresos/{fecha}','VentaController@ingresos')->name('ventas.ingresos');

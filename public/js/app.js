@@ -4443,6 +4443,15 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   props: {
     categorias: {},
@@ -4465,7 +4474,10 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       paginate: ['productsModificar'],
       nuevoPrecio: 0,
       preciosModificar: [],
-      precioIndividual: 0
+      precioIndividual: 0,
+      activateModificarCategoria: false,
+      nuevaCategoria: '',
+      cambiarCategoria: []
     };
   },
   mounted: function mounted() {
@@ -4476,6 +4488,8 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       this.productsModificar = [];
       this.listaElegida = [];
       this.seleccionado = 1;
+      this.cambiarCategoria = [];
+      this.activateModificarCategoria = false;
     },
     getTodosProductos: function getTodosProductos() {
       axios.get('todosproductos').then(function (response) {});
@@ -4602,7 +4616,16 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       });
     },
     onClickDelete: function onClickDelete(index) {
+      var _this5 = this;
+
+      var productoID = this.productsModificar[index].id;
       this.productsModificar.splice(index, 1);
+      this.cambiarCategoria.forEach(function (product, i) {
+        if (product.producto.id == productoID) {
+          _this5.cambiarCategoria.splice(i, 1);
+        }
+      });
+      console.log(this.cambiarCategoria);
     },
     elegirAccion: function elegirAccion(e) {
       if (this.clickAccion) {
@@ -4622,9 +4645,9 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       var _modificarPrecio = _asyncToGenerator(
       /*#__PURE__*/
       _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee() {
-        var _this5 = this;
+        var _this6 = this;
 
-        var cantidadProductos, listaParam;
+        var cantidadProductos, listaParam, cantidadProductosCategoria;
         return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee$(_context) {
           while (1) {
             switch (_context.prev = _context.next) {
@@ -4634,10 +4657,10 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
                 this.productsModificar.forEach(function (elemento) {
                   var precioFinal;
 
-                  if (_this5.accion == 'aumentar') {
+                  if (_this6.accion == 'aumentar') {
                     precioFinal = elemento.nuevoPrecio;
                     console.log('El producto ' + elemento.id + ' de precio ' + elemento.precio + ' se aumentara a ' + precioFinal);
-                  } else if (_this5.accion == 'disminuir') {
+                  } else if (_this6.accion == 'disminuir') {
                     precioFinal = elemento.nuevoPrecio;
                     console.log('El producto ' + elemento.id + ' de precio ' + elemento.precio + ' se disminuira a ' + precioFinal);
                   }
@@ -4658,11 +4681,30 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
                   })
                   */
                 });
-                _context.next = 5;
+                cantidadProductosCategoria = this.cambiarCategoria.length;
+
+                if (!(cantidadProductosCategoria > 0)) {
+                  _context.next = 7;
+                  break;
+                }
+
+                _context.next = 7;
+                return axios.post('/modificarProductos', this.cambiarCategoria).then(function (response) {
+                  console.log(response);
+
+                  _this6.$toasted.show('Se actualizaron la categoria de ' + cantidadProductosCategoria + ' productos exitosamente', {
+                    theme: "toasted-primary",
+                    position: "top-right",
+                    duration: 2000
+                  });
+                });
+
+              case 7:
+                _context.next = 9;
                 return axios.put('/precio', listaParam).then(function (response) {
                   console.log(response);
 
-                  _this5.$toasted.show('Se actualizaron los precios de ' + cantidadProductos + ' productos exitosamente', {
+                  _this6.$toasted.show('Se actualizaron los precios de ' + cantidadProductos + ' productos exitosamente', {
                     theme: "toasted-primary",
                     position: "top-right",
                     duration: 2000
@@ -4673,7 +4715,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
                   console.log(error);
                 });
 
-              case 5:
+              case 9:
               case "end":
                 return _context.stop();
             }
@@ -4688,16 +4730,16 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       return modificarPrecio;
     }(),
     agregarPrecios: function agregarPrecios() {
-      var _this6 = this;
+      var _this7 = this;
 
       this.preciosModificar = [];
       this.productsModificar.forEach(function (product) {
-        if (_this6.accion == 'aumentar') {
-          var precioFinal = _this6.redondeoAumentar(product.precio);
+        if (_this7.accion == 'aumentar') {
+          var precioFinal = _this7.redondeoAumentar(product.precio);
         }
 
-        if (_this6.accion == 'disminuir') {
-          var precioFinal = _this6.redondeoDisminuir(product.precio);
+        if (_this7.accion == 'disminuir') {
+          var precioFinal = _this7.redondeoDisminuir(product.precio);
         }
 
         product.nuevoPrecio = precioFinal;
@@ -4705,14 +4747,14 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       console.log(this.productsModificar);
     },
     cambiarPrecioIndividual: function cambiarPrecioIndividual(id) {
-      var _this7 = this;
+      var _this8 = this;
 
       var precioingresado = $('#' + id).val();
       console.log(precioingresado);
       this.productsModificar.forEach(function (element, index) {
         if (element.id == id) {
           console.log("El precio de este producto se va a modificar de " + element.nuevoPrecio + " a " + precioingresado);
-          _this7.productsModificar[index].nuevoPrecio = parseInt(precioingresado);
+          _this8.productsModificar[index].nuevoPrecio = parseInt(precioingresado);
         }
       });
       console.log(this.preciosModificar);
@@ -4771,6 +4813,40 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       } else {
         return precioFinal;
       }
+    },
+    abrirModificarCategoria: function abrirModificarCategoria(id) {
+      this.activateModificarCategoria = id;
+    },
+    modificarCategoria: function modificarCategoria(id) {
+      var _this9 = this;
+
+      var categoriaNueva = '';
+      this.categorias.forEach(function (categoria) {
+        if (categoria.id == _this9.nuevaCategoria) {
+          categoriaNueva = categoria.nombre;
+        }
+      });
+      console.log('El producto de id ' + id + ' se va a cambiar a la cateogoria ' + this.nuevaCategoria);
+      this.productsModificar.forEach(function (product, index) {
+        if (product.id == id && product.categoria_id != _this9.nuevaCategoria) {
+          _this9.productsModificar[index].categoria = categoriaNueva;
+          _this9.productsModificar[index].cambio = true;
+          var param = {
+            producto: product,
+            categoria: _this9.nuevaCategoria,
+            cambio: 'categoria'
+          };
+
+          _this9.cambiarCategoria.push(param);
+        }
+      });
+      this.activateModificarCategoria = false;
+      this.nuevaCategoria = '';
+      console.log(this.cambiarCategoria);
+    },
+    cerrarModificarCategoria: function cerrarModificarCategoria() {
+      this.activateModificarCategoria = false;
+      this.nuevaCategoria = '';
     }
   },
   computed: {
@@ -4782,6 +4858,15 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       }
 
       return this.listaElegida.sort(compare);
+    },
+    sortedArrayCategorias: function sortedArrayCategorias() {
+      function compare(a, b) {
+        if (a.nombre.toLowerCase() < b.nombre.toLowerCase()) return -1;
+        if (a.nombre.toLowerCase() > b.nombre.toLowerCase()) return 1;
+        return 0;
+      }
+
+      return this.categorias.sort(compare);
     }
   }
 });
@@ -88769,28 +88854,160 @@ var render = function() {
                           ) {
                             return _c("tr", { key: product.id }, [
                               _c("td", [
-                                _c(
-                                  "button",
-                                  {
-                                    staticClass: "btn btn-danger btn-sm",
-                                    attrs: { type: "button" },
-                                    on: {
-                                      click: function($event) {
-                                        return _vm.onClickDelete(index)
-                                      }
-                                    }
-                                  },
-                                  [
-                                    _c("i", {
-                                      staticClass: "fas fa-times-circle"
-                                    })
-                                  ]
-                                )
+                                !_vm.activateModificarCategoria
+                                  ? _c(
+                                      "button",
+                                      {
+                                        staticClass: "btn btn-danger btn-sm",
+                                        attrs: { type: "button" },
+                                        on: {
+                                          click: function($event) {
+                                            return _vm.onClickDelete(index)
+                                          }
+                                        }
+                                      },
+                                      [
+                                        _c("i", {
+                                          staticClass: "fas fa-times-circle"
+                                        })
+                                      ]
+                                    )
+                                  : _vm._e()
                               ]),
                               _vm._v(" "),
                               _c("td", [_vm._v(_vm._s(product.n_serie))]),
                               _vm._v(" "),
-                              _c("td", [_vm._v(_vm._s(product.categoria))]),
+                              _vm.activateModificarCategoria != product.id
+                                ? _c("td", [
+                                    _c(
+                                      "button",
+                                      {
+                                        staticClass: "btn btn-light",
+                                        class: {
+                                          "btn-outline-success": product.cambio
+                                        },
+                                        attrs: { type: "button" },
+                                        on: {
+                                          click: function($event) {
+                                            return _vm.abrirModificarCategoria(
+                                              product.id
+                                            )
+                                          }
+                                        }
+                                      },
+                                      [_vm._v(_vm._s(product.categoria))]
+                                    )
+                                  ])
+                                : _c("td", [
+                                    _c(
+                                      "button",
+                                      {
+                                        staticClass: "btn btn-danger btn-sm",
+                                        attrs: { type: "button" },
+                                        on: {
+                                          click: _vm.cerrarModificarCategoria
+                                        }
+                                      },
+                                      [
+                                        _c("i", {
+                                          staticClass: "fas fa-times-circle"
+                                        })
+                                      ]
+                                    ),
+                                    _vm._v(" "),
+                                    _c(
+                                      "button",
+                                      {
+                                        staticClass: "btn btn-success btn-sm",
+                                        attrs: { type: "button" },
+                                        on: {
+                                          click: function($event) {
+                                            return _vm.modificarCategoria(
+                                              product.id
+                                            )
+                                          }
+                                        }
+                                      },
+                                      [
+                                        _c("i", {
+                                          staticClass: "fas fa-times-circle"
+                                        })
+                                      ]
+                                    ),
+                                    _vm._v(" "),
+                                    _c(
+                                      "select",
+                                      {
+                                        directives: [
+                                          {
+                                            name: "model",
+                                            rawName: "v-model",
+                                            value: _vm.nuevaCategoria,
+                                            expression: "nuevaCategoria"
+                                          }
+                                        ],
+                                        staticClass: "form-control",
+                                        staticStyle: {
+                                          width: "100px",
+                                          display: "inline"
+                                        },
+                                        on: {
+                                          change: function($event) {
+                                            var $$selectedVal = Array.prototype.filter
+                                              .call(
+                                                $event.target.options,
+                                                function(o) {
+                                                  return o.selected
+                                                }
+                                              )
+                                              .map(function(o) {
+                                                var val =
+                                                  "_value" in o
+                                                    ? o._value
+                                                    : o.value
+                                                return val
+                                              })
+                                            _vm.nuevaCategoria = $event.target
+                                              .multiple
+                                              ? $$selectedVal
+                                              : $$selectedVal[0]
+                                          }
+                                        }
+                                      },
+                                      _vm._l(
+                                        _vm.sortedArrayCategorias,
+                                        function(sugerencia) {
+                                          return _c(
+                                            "option",
+                                            {
+                                              domProps: { value: sugerencia.id }
+                                            },
+                                            [
+                                              _vm._v(
+                                                _vm._s(
+                                                  sugerencia.nombre.replace(
+                                                    /\w\S*/g,
+                                                    function(w) {
+                                                      return w.replace(
+                                                        /^\w/,
+                                                        function(c) {
+                                                          return c.toUpperCase()
+                                                        }
+                                                      )
+                                                    }
+                                                  )
+                                                ) +
+                                                  " (" +
+                                                  _vm._s(sugerencia.tipo) +
+                                                  ")"
+                                              )
+                                            ]
+                                          )
+                                        }
+                                      ),
+                                      0
+                                    )
+                                  ]),
                               _vm._v(" "),
                               _c("td", [_vm._v(_vm._s(product.talle))]),
                               _vm._v(" "),
@@ -88799,35 +89016,55 @@ var render = function() {
                               _c("td", [_vm._v(_vm._s(product.precio))]),
                               _vm._v(" "),
                               _vm.accion == "aumentar"
-                                ? _c("td", [
-                                    _c("input", {
-                                      attrs: { id: product.id, type: "number" },
-                                      domProps: { value: product.nuevoPrecio },
-                                      on: {
-                                        keyup: function($event) {
-                                          return _vm.cambiarPrecioIndividual(
-                                            product.id
-                                          )
+                                ? _c(
+                                    "td",
+                                    { staticStyle: { width: "100px" } },
+                                    [
+                                      _c("input", {
+                                        staticStyle: { width: "100px" },
+                                        attrs: {
+                                          id: product.id,
+                                          type: "number"
+                                        },
+                                        domProps: {
+                                          value: product.nuevoPrecio
+                                        },
+                                        on: {
+                                          keyup: function($event) {
+                                            return _vm.cambiarPrecioIndividual(
+                                              product.id
+                                            )
+                                          }
                                         }
-                                      }
-                                    })
-                                  ])
+                                      })
+                                    ]
+                                  )
                                 : _vm._e(),
                               _vm._v(" "),
                               _vm.accion == "disminuir"
-                                ? _c("td", [
-                                    _c("input", {
-                                      attrs: { id: product.id, type: "number" },
-                                      domProps: { value: product.nuevoPrecio },
-                                      on: {
-                                        keyup: function($event) {
-                                          return _vm.cambiarPrecioIndividual(
-                                            product.id
-                                          )
+                                ? _c(
+                                    "td",
+                                    { staticStyle: { width: "100px" } },
+                                    [
+                                      _c("input", {
+                                        staticStyle: { width: "100px" },
+                                        attrs: {
+                                          id: product.id,
+                                          type: "number"
+                                        },
+                                        domProps: {
+                                          value: product.nuevoPrecio
+                                        },
+                                        on: {
+                                          keyup: function($event) {
+                                            return _vm.cambiarPrecioIndividual(
+                                              product.id
+                                            )
+                                          }
                                         }
-                                      }
-                                    })
-                                  ])
+                                      })
+                                    ]
+                                  )
                                 : _vm._e()
                             ])
                           }),
