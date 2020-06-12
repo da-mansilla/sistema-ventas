@@ -7050,6 +7050,10 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   props: {
     cuentaMode: {},
@@ -7068,9 +7072,10 @@ __webpack_require__.r(__webpack_exports__);
       listPagosMostrar: [],
       batchCargado: '',
       enBatchAnterior: false,
-      formaPago: '',
+      formaPago: 'Efectivo',
       pagandoEfectivo: 0,
-      pagandoTarjeta: 0
+      pagandoTarjeta: 0,
+      tarjetaElegida: 'Debito'
     };
   },
   mounted: function mounted() {
@@ -7079,6 +7084,13 @@ __webpack_require__.r(__webpack_exports__);
 
     if (this.cuentaClient) {
       this.ver = true;
+    }
+  },
+  watch: {
+    formaPago: function formaPago() {
+      this.pagandoEfectivo = 0;
+      this.pagandoTarjeta = 0;
+      this.valorPago = 0;
     }
   },
   methods: {
@@ -7140,9 +7152,15 @@ __webpack_require__.r(__webpack_exports__);
       this.modalPagina = 1;
     },
     saldarDeuda: function saldarDeuda() {
-      if (this.formaPago == 'Efectivo') {}
+      if (this.formaPago == 'Efectivo') {
+        this.pagandoEfectivo = this.cuentaMode.cuenta[0].deuda;
+        this.valorPago = this.pagandoEfectivo;
+      }
 
-      this.valorPago = this.cuentaMode.cuenta[0].deuda;
+      if (this.formaPago == 'Tarjeta') {
+        this.pagandoTarjeta = this.cuentaMode.cuenta[0].deuda;
+        this.valorPago = this.pagandoTarjeta;
+      }
     },
     verPagos: function verPagos() {
       var _this = this;
@@ -7197,6 +7215,7 @@ __webpack_require__.r(__webpack_exports__);
       };
       axios.post('/ventas', paramVenta).then(function (response) {
         console.log(response.data);
+        var ventaID = response.data.id;
         var desc = _this3.descripcionPago;
 
         if (_this3.cuentaMode.cuenta[0].deuda - _this3.valorPago == 0) {
@@ -7255,6 +7274,16 @@ __webpack_require__.r(__webpack_exports__);
         })["catch"](function (err) {
           console.log(err);
         });
+
+        if (_this3.formaPago == 'Tarjeta' || _this3.formaPago == 'efectivoTarjeta') {
+          var parametros = {
+            nombre: _this3.tarjetaElegida,
+            total: _this3.pagandoTarjeta,
+            venta_id: ventaID
+          };
+          axios.post('tarjetas', parametros).then(function (response) {//console.log(response);
+          });
+        }
       });
     },
     ingresarValorPago: function ingresarValorPago() {
@@ -9716,6 +9745,8 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   data: function data() {
     return {
@@ -9730,7 +9761,10 @@ __webpack_require__.r(__webpack_exports__);
       ventaDevolucion: '',
       ventasHoy: '',
       ingresosHoy: '',
-      cantidadCuentasActivas: 0
+      cantidadCuentasActivas: 0,
+      habilitarFechaTableVentas: false,
+      fechaTableVentasAux: '',
+      fechaTableVentas: ''
     };
   },
   mounted: function mounted() {
@@ -9787,9 +9821,14 @@ __webpack_require__.r(__webpack_exports__);
       this.pagina = 1;
       this.getCantidad();
     },
-    detail: function detail(index, venta) {
+    detail: function detail(index, venta, busquedaPorFecha, fecha) {
       var _this2 = this;
 
+      if (busquedaPorFecha) {
+        this.fechaTableVentas = fecha;
+      }
+
+      this.habilitarFechaTableVentas = busquedaPorFecha;
       this.getProductsVendidos(venta.id).then(function (response) {
         _this2.pagina = 2;
         _this2.indexEdit = index;
@@ -9840,6 +9879,11 @@ __webpack_require__.r(__webpack_exports__);
     },
     exit: function exit() {
       this.pagina = 1;
+
+      if (this.habilitarFechaTableVentas) {
+        console.log(this.fechaTableVentas);
+      }
+
       this.editMode = '';
     },
     exitDevolucion: function exitDevolucion() {
@@ -10189,7 +10233,9 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
 //
 //
 /* harmony default export */ __webpack_exports__["default"] = ({
-  props: {},
+  props: {
+    fechaTableVentas: {}
+  },
   data: function data() {
     return {
       listaVentas: {},
@@ -10205,14 +10251,25 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
     };
   },
   mounted: function mounted() {
-    var day = this.fechaElegida.getDate();
-    var month = parseInt(this.fechaElegida.getMonth() + 1);
-    var year = this.fechaElegida.getFullYear();
-    var fechaCadena = day + "-" + month + "-" + year;
-    this.fechaElegida = fechaCadena;
+    if (this.fechaTableVentas) {
+      console.log('si aparece');
+      this.fechaElegida = this.fechaTableVentas;
+      this.busquedaPorFecha = true;
+      console.log(this.fechaElegida);
+    } else {
+      var day = this.fechaElegida.getDate();
+      var month = parseInt(this.fechaElegida.getMonth() + 1);
+      var year = this.fechaElegida.getFullYear();
+      var fechaCadena = day + "-" + month + "-" + year;
+      this.fechaElegida = fechaCadena;
+    }
+
     this.getResults();
     this.getTotal();
     this.getVentasSeña();
+  },
+  watch: {
+    fechaTableVentas: function fechaTableVentas() {}
   },
   methods: {
     getVentasSeña: function () {
@@ -10230,7 +10287,6 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
                 page = _args.length > 0 && _args[0] !== undefined ? _args[0] : 1;
                 _context.next = 3;
                 return axios.get('ventasseña?page=' + page).then(function (response) {
-                  console.log(response.data.data);
                   _this.ventasSeña = response.data.data;
                 });
 
@@ -10326,7 +10382,10 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       return getResults2;
     }(),
     editVenta: function editVenta(index, venta) {
-      this.$emit('detail', index, venta);
+      var fechaEnviar = this.fechaElegida;
+      this.fechaElegida = '';
+      this.$emit('detail', index, venta, this.busquedaPorFecha, fechaEnviar);
+      this.busquedaPorFecha = false;
     },
     editCuenta: function editCuenta(index, venta) {
       this.$emit('detailCuenta', index, venta);
@@ -10343,7 +10402,6 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       var _this4 = this;
 
       var page = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 1;
-      console.log('click');
       axios.get('ventasseña?page=' + page).then(function (response) {
         _this4.verSeñas = true;
         console.log(response.data);
@@ -10360,6 +10418,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
     habilitarFecha: function habilitarFecha() {
       this.busquedaPorFecha = true;
       this.getResults();
+      this.getTotal();
     },
     desabilitarFecha: function desabilitarFecha() {
       this.busquedaPorFecha = false;
@@ -10370,25 +10429,48 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       var fechaCadena = day + "-" + month + "-" + year;
       this.fechaElegida = fechaCadena;
       this.getResults();
+      this.getTotal();
     },
-    getResults: function getResults() {
-      var _this5 = this;
+    getResults: function () {
+      var _getResults2 = _asyncToGenerator(
+      /*#__PURE__*/
+      _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee4() {
+        var _this5 = this;
 
-      var page = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 1;
-      console.log(this.fechaElegida);
-      var param = {
-        fecha: {
-          fecha: this.fechaElegida,
-          enabled: this.busquedaPorFecha
-        }
-      };
-      axios.post('ventasPorFecha?page=' + page, param).then(function (response) {
-        console.log(response.data);
-        _this5.listaVentas = response.data;
+        var page,
+            param,
+            _args4 = arguments;
+        return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee4$(_context4) {
+          while (1) {
+            switch (_context4.prev = _context4.next) {
+              case 0:
+                page = _args4.length > 0 && _args4[0] !== undefined ? _args4[0] : 1;
+                param = {
+                  fecha: {
+                    fecha: this.fechaElegida,
+                    enabled: this.busquedaPorFecha
+                  }
+                };
+                _context4.next = 4;
+                return axios.post('ventasPorFecha?page=' + page, param).then(function (response) {
+                  console.log(response.data);
+                  _this5.listaVentas = response.data;
+                });
 
-        _this5.getTotal();
-      });
-    }
+              case 4:
+              case "end":
+                return _context4.stop();
+            }
+          }
+        }, _callee4, this);
+      }));
+
+      function getResults() {
+        return _getResults2.apply(this, arguments);
+      }
+
+      return getResults;
+    }()
   },
   computed: {
     /*
@@ -92479,7 +92561,8 @@ var render = function() {
                   ]),
                   _vm._v(" "),
                   _c("div", { staticClass: "modal-body" }, [
-                    _vm.modalPagina == 1
+                    _vm.modalPagina == 1 &&
+                    _vm.cuentaMode.cuenta[0].estado !== "Saldado"
                       ? _c(
                           "button",
                           {
@@ -92566,7 +92649,9 @@ var render = function() {
                                         _vm._v(_vm._s(pago.descripcion))
                                       ]),
                                       _vm._v(" "),
-                                      _c("th", [_vm._v(_vm._s(pago.pagado))])
+                                      _c("th", [
+                                        _vm._v("$" + _vm._s(pago.pagado))
+                                      ])
                                     ])
                                   }),
                                   _vm._v(" "),
@@ -92582,7 +92667,7 @@ var render = function() {
                                           )
                                         ])
                                       : _c("td", { staticClass: "td-venta" }, [
-                                          _vm._v(_vm._s(_vm.totalDePagos))
+                                          _vm._v("$" + _vm._s(_vm.totalDePagos))
                                         ])
                                   ])
                                 ],
@@ -92623,9 +92708,8 @@ var render = function() {
                             ]),
                             _vm._v(" "),
                             _c("div", { staticClass: "col-sm-4" }, [
-                              _vm._v(
-                                "\n                  Total a Pagar\n                  "
-                              ),
+                              _c("strong", [_vm._v("Total a Pagar")]),
+                              _vm._v(" "),
                               _c("input", {
                                 staticClass: "form-control",
                                 attrs: { disabled: "" },
@@ -92695,7 +92779,60 @@ var render = function() {
                               ? _c("div", { staticClass: "col-sm-6" }, [
                                   _c("label", [_vm._v("Tarjeta")]),
                                   _vm._v(" "),
-                                  _vm._m(11)
+                                  _c(
+                                    "select",
+                                    {
+                                      directives: [
+                                        {
+                                          name: "model",
+                                          rawName: "v-model",
+                                          value: _vm.tarjetaElegida,
+                                          expression: "tarjetaElegida"
+                                        }
+                                      ],
+                                      staticClass: "d-block form-control",
+                                      attrs: { required: "" },
+                                      on: {
+                                        change: function($event) {
+                                          var $$selectedVal = Array.prototype.filter
+                                            .call(
+                                              $event.target.options,
+                                              function(o) {
+                                                return o.selected
+                                              }
+                                            )
+                                            .map(function(o) {
+                                              var val =
+                                                "_value" in o
+                                                  ? o._value
+                                                  : o.value
+                                              return val
+                                            })
+                                          _vm.tarjetaElegida = $event.target
+                                            .multiple
+                                            ? $$selectedVal
+                                            : $$selectedVal[0]
+                                        }
+                                      }
+                                    },
+                                    [
+                                      _c(
+                                        "option",
+                                        { attrs: { selected: "Debito" } },
+                                        [_vm._v("Debito")]
+                                      ),
+                                      _vm._v(" "),
+                                      _c("option", [_vm._v("Visa")]),
+                                      _vm._v(" "),
+                                      _c("option", [_vm._v("MasterCard")]),
+                                      _vm._v(" "),
+                                      _c(
+                                        "option",
+                                        { attrs: { value: "TarjetaNaranja" } },
+                                        [_vm._v("Tarjeta Naranja")]
+                                      )
+                                    ]
+                                  )
                                 ])
                               : _vm._e()
                           ]),
@@ -92764,6 +92901,25 @@ var render = function() {
                                     }
                                   })
                                 ])
+                              : _vm._e(),
+                            _vm._v(" "),
+                            _vm.formaPago == "Efectivo" ||
+                            _vm.formaPago == "Tarjeta"
+                              ? _c(
+                                  "div",
+                                  {
+                                    staticClass: "col-sm-4",
+                                    staticStyle: { "padding-top": "31px" },
+                                    on: { click: _vm.saldarDeuda }
+                                  },
+                                  [
+                                    _c(
+                                      "button",
+                                      { staticClass: "btn btn-success" },
+                                      [_vm._v("Saldar Cuenta")]
+                                    )
+                                  ]
+                                )
                               : _vm._e()
                           ]),
                           _vm._v(" "),
@@ -92817,7 +92973,7 @@ var render = function() {
                       : _vm._e()
                   ]),
                   _vm._v(" "),
-                  _vm._m(12)
+                  _vm._m(11)
                 ])
               ]
             )
@@ -92985,22 +93141,6 @@ var staticRenderFns = [
       },
       [_c("strong", [_vm._v("Total Neto")])]
     )
-  },
-  function() {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c("select", { staticClass: "d-block form-control" }, [
-      _c("option", [_vm._v("Debito")]),
-      _vm._v(" "),
-      _c("option", [_vm._v("Visa")]),
-      _vm._v(" "),
-      _c("option", [_vm._v("MasterCard")]),
-      _vm._v(" "),
-      _c("option", { attrs: { value: "TarjetaNaranja" } }, [
-        _vm._v("Tarjeta Naranja")
-      ])
-    ])
   },
   function() {
     var _vm = this
@@ -95641,11 +95781,7 @@ var render = function() {
                   {
                     staticClass: "btn btn-secondary",
                     attrs: { type: "button" },
-                    on: {
-                      click: function($event) {
-                        return _vm.onClickCuenta()
-                      }
-                    }
+                    on: { click: _vm.onClickCuenta }
                   },
                   [
                     _vm._v("Ir a Cuenta Corriente "),
@@ -95662,11 +95798,7 @@ var render = function() {
                   {
                     staticClass: "btn btn-secondary",
                     attrs: { type: "button" },
-                    on: {
-                      click: function($event) {
-                        return _vm.onClickInicio()
-                      }
-                    }
+                    on: { click: _vm.onClickInicio }
                   },
                   [_vm._v("Ir a Ventas")]
                 )
@@ -95696,7 +95828,10 @@ var render = function() {
             "span",
             [
               _c("tableventas-component", {
-                attrs: { ventas: _vm.ventas },
+                attrs: {
+                  ventas: _vm.ventas,
+                  fechaTableVentas: _vm.fechaTableVentas
+                },
                 on: {
                   detail: _vm.detail,
                   detailCuenta: _vm.detailCuenta,
@@ -96314,7 +96449,7 @@ var render = function() {
             })
           : _c("pagination", {
               staticClass: "float-right",
-              attrs: { data: _vm.listaVentas },
+              attrs: { data: _vm.listaVentas, limit: 2 },
               on: { "pagination-change-page": _vm.getResults }
             })
       ],

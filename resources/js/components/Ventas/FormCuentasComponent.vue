@@ -140,7 +140,7 @@
                   </button>
                 </div>
                 <div class="modal-body">
-                  <button v-if="modalPagina == 1" v-on:click="nuevoPago"class="btn btn-success">Nuevo Pago <i class="fas fa-plus-circle"></i></button>
+                  <button v-if="modalPagina == 1 && cuentaMode.cuenta[0].estado !== 'Saldado' " v-on:click="nuevoPago"class="btn btn-success">Nuevo Pago <i class="fas fa-plus-circle"></i></button>
                   <button v-if="modalPagina == 1" v-on:click="pagosAnterior"class="btn btn-secondary">Pagos Anteriores <i class="fas fa-arrow-circle-left"></i></button>
                   <button v-if="modalPagina == 1 && batchCargado !== this.cuentaMode.cuenta[0].batch" v-on:click="pagosPosterior"class="btn btn-secondary">Volver<i class="fas fa-arrow-circle-right"></i></button>
 
@@ -164,12 +164,12 @@
                           <th>{{pago.batch}}</th>
                           <th>{{pago.created_at}}</th>
                           <th>{{pago.descripcion}}</th>
-                          <th>{{pago.pagado}}</th>
+                          <th>${{pago.pagado}}</th>
                         </tr>
                         <tr>
                             <td colspan="3" class="text-right table-light td-venta" ><strong>Total Neto</strong></td>
                             <td v-if="!enBatchAnterior"class="td-venta">{{cuentaMode.cuenta[0].pagado}}</td> 
-                            <td v-else class="td-venta">{{totalDePagos}}</td> 
+                            <td v-else class="td-venta">${{totalDePagos}}</td> 
                         </tr> 
                       </tbody>
                     </table>
@@ -187,7 +187,7 @@
                         <input class="form-control" disabled :value="cuentaMode.cuenta[0].pagado">
                       </div>
                       <div class="col-sm-4">
-                        Total a Pagar
+                        <strong>Total a Pagar</strong>
                         <input class="form-control" disabled :value="cuentaMode.cuenta[0].deuda - valorPago">
                       </div>
                     </div>
@@ -203,8 +203,8 @@
                       </div>
                       <div class="col-sm-6" v-if="formaPago == 'Tarjeta' || formaPago == 'efectivoTarjeta'">
                         <label>Tarjeta</label>
-                        <select class="d-block form-control" >
-                          <option>Debito</option>
+                        <select class="d-block form-control" v-model="tarjetaElegida" required="">
+                          <option selected="Debito">Debito</option>
                           <option>Visa</option>
                           <option>MasterCard</option>
                           <option value="TarjetaNaranja">Tarjeta Naranja</option>
@@ -219,11 +219,15 @@
                         <input type="number" class="form-control" v-model="pagandoEfectivo" v-on:keyup="ingresarValorPago">
                       </div>
 
+
                       <div class="col-sm-4" v-if="formaPago == 'Tarjeta' || formaPago == 'efectivoTarjeta'">
                         <label for="inputPago">Tarjeta</label>
                         <input type="number" class="form-control" v-model="pagandoTarjeta" v-on:keyup="ingresarValorPago">
                       </div>
 
+                      <div class="col-sm-4" style="padding-top:31px;" v-if="formaPago == 'Efectivo' || formaPago == 'Tarjeta'" v-on:click="saldarDeuda">
+                        <button class="btn btn-success">Saldar Cuenta</button>
+                      </div>
                     </div>
 
                     <div class="form-group row">
@@ -280,9 +284,10 @@
             listPagosMostrar: [],
             batchCargado: '',
             enBatchAnterior: false,
-            formaPago:'',
+            formaPago:'Efectivo',
             pagandoEfectivo: 0,
-            pagandoTarjeta: 0
+            pagandoTarjeta: 0,
+            tarjetaElegida: 'Debito'
 
         };
       },
@@ -292,6 +297,13 @@
         if(this.cuentaClient){
           this.ver = true;
         }
+      },
+      watch:{
+        formaPago: function(){
+          this.pagandoEfectivo = 0
+          this.pagandoTarjeta = 0
+          this.valorPago = 0
+        } 
       },
       methods:{ 
           cerrarModal(){
@@ -359,8 +371,13 @@
           },
           saldarDeuda(){
             if(this.formaPago == 'Efectivo'){
+              this.pagandoEfectivo = this.cuentaMode.cuenta[0].deuda;
+              this.valorPago = this.pagandoEfectivo
             }
-            this.valorPago = this.cuentaMode.cuenta[0].deuda;
+            if(this.formaPago == 'Tarjeta'){
+              this.pagandoTarjeta = this.cuentaMode.cuenta[0].deuda;
+              this.valorPago = this.pagandoTarjeta
+            }
           },
           verPagos(){
             this.batchCargado = this.cuentaMode.cuenta[0].batch;
@@ -409,6 +426,7 @@
             }
             axios.post('/ventas',paramVenta).then((response)=>{
                 console.log(response.data)
+                var ventaID = response.data.id;
                 var desc = this.descripcionPago
                 if((this.cuentaMode.cuenta[0].deuda - this.valorPago) == 0){
                   desc += ' (Cerrar Cuenta)'
@@ -463,6 +481,17 @@
                   .catch(err=>{
                     console.log(err);
                   })
+                  if(this.formaPago == 'Tarjeta' || this.formaPago == 'efectivoTarjeta'){
+                      let parametros = {
+                        nombre: this.tarjetaElegida,
+                        total: this.pagandoTarjeta,
+                        venta_id : ventaID
+                      }
+                      axios.post('tarjetas', parametros).then((response)=>{
+                        //console.log(response);
+                      })
+
+                   }
               })
           },
           ingresarValorPago(){

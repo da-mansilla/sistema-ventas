@@ -6,8 +6,8 @@
       </div>
       <div class="card-body">
         <span v-if='pagina==1 || pagina==4'>
-          <button v-if="pagina != 4" type="button" class="btn btn-secondary" v-on:click="onClickCuenta()">Ir a Cuenta Corriente <span class="badge badge-light mr-1">{{ cantidadCuentasActivas }}</span></button>
-          <button v-if="pagina != 1"type="button" class="btn btn-secondary" v-on:click="onClickInicio()">Ir a Ventas</button>
+          <button v-if="pagina != 4" type="button" class="btn btn-secondary" v-on:click="onClickCuenta">Ir a Cuenta Corriente <span class="badge badge-light mr-1">{{ cantidadCuentasActivas }}</span></button>
+          <button v-if="pagina != 1"type="button" class="btn btn-secondary" v-on:click="onClickInicio">Ir a Ventas</button>
           <button type="button" class="btn btn-success" v-on:click="onClickNuevaVenta()">Nueva Venta <i class="fas fa-plus-circle"></i></button>
         </span>
         
@@ -15,12 +15,14 @@
         <span v-if="pagina==1">
           <tableventas-component
            :ventas="ventas"
+           :fechaTableVentas="fechaTableVentas"
            @detail='detail'
            @detailCuenta='detailCuenta'
            @detailSena='detailSena'>
             
           </tableventas-component>
         </span>
+
         <span v-if="pagina==4">
           <tablecuentas-component
            :ventas="ventas"
@@ -98,7 +100,10 @@
           ventaDevolucion: '',
           ventasHoy : '',
           ingresosHoy: '',
-          cantidadCuentasActivas: 0
+          cantidadCuentasActivas: 0,
+          habilitarFechaTableVentas : false,
+          fechaTableVentasAux: '',
+          fechaTableVentas: ''
         
         };
       },
@@ -157,7 +162,11 @@
               this.pagina=1;
               this.getCantidad();
             },
-            detail(index,venta){
+            detail(index,venta,busquedaPorFecha,fecha){
+              if(busquedaPorFecha){
+                this.fechaTableVentas = fecha
+              }
+              this.habilitarFechaTableVentas= busquedaPorFecha
               this.getProductsVendidos(venta.id)
               .then((response)=>{
                 this.pagina = 2;
@@ -210,6 +219,9 @@
             },
             exit(){
               this.pagina=1;
+              if(this.habilitarFechaTableVentas){
+                console.log(this.fechaTableVentas);
+              }
               this.editMode= '';
             },
             exitDevolucion(){

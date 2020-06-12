@@ -117,7 +117,7 @@
       </table>
       <pagination v-if="verSeñas" :data="listaVentas" @pagination-change-page="getVentasSeña" class="float-right">
       </pagination>
-      <pagination v-else :data="listaVentas" @pagination-change-page="getResults" class="float-right">
+      <pagination v-else :data="listaVentas" :limit="2" @pagination-change-page="getResults" class="float-right">
       </pagination>
 
     </div>
@@ -127,6 +127,9 @@
 <script>
     export default {
       props: {
+        fechaTableVentas:{
+
+        }
 
       },
       data(){
@@ -147,20 +150,31 @@
         };
       },
       mounted() {
+        if(this.fechaTableVentas){
+          console.log('si aparece');
+          this.fechaElegida= this.fechaTableVentas;
+          this.busquedaPorFecha = true;
+          console.log(this.fechaElegida);
+        }else {
           let day = this.fechaElegida.getDate();
           let month = parseInt(this.fechaElegida.getMonth()+1);
           let year = this.fechaElegida.getFullYear();
           let fechaCadena = day+"-"+month+"-"+year;
           this.fechaElegida = fechaCadena;
+        }
 
           this.getResults();
           this.getTotal();
           this.getVentasSeña();
       },
+      watch:{
+        fechaTableVentas: function(){
+
+        }
+      },
       methods:{
           async getVentasSeña(page = 1){
             await axios.get('ventasseña?page=' + page).then(response=>{
-              console.log(response.data.data);
               this.ventasSeña = response.data.data;
             })
           },
@@ -186,7 +200,10 @@
               });
           },
           editVenta(index,venta){
-            this.$emit('detail',index,venta);
+            let fechaEnviar = this.fechaElegida;
+            this.fechaElegida = ''
+            this.$emit('detail',index,venta,this.busquedaPorFecha,fechaEnviar);
+            this.busquedaPorFecha = false;
           },
           editCuenta(index,venta){
             this.$emit('detailCuenta',index,venta);
@@ -200,7 +217,6 @@
             this.verSeñas = false;
           },
           mostrarSena(page = 1){
-            console.log('click');
             axios.get('ventasseña?page=' + page).then(response=>{
               this.verSeñas = true;
               console.log(response.data);
@@ -217,6 +233,7 @@
           habilitarFecha(){
             this.busquedaPorFecha=true;
             this.getResults()
+            this.getTotal()
           },
           desabilitarFecha(){
             this.busquedaPorFecha=false;
@@ -229,19 +246,18 @@
             let fechaCadena = day+"-"+month+"-"+year;
             this.fechaElegida = fechaCadena;
             this.getResults()
+            this.getTotal()
           },
-          getResults(page = 1){
-            console.log(this.fechaElegida)
+          async getResults(page = 1){
             let param= {
               fecha:{
                 fecha: this.fechaElegida,
                 enabled: this.busquedaPorFecha
               }
             }
-            axios.post('ventasPorFecha?page=' + page,param).then(response=>{
+            await axios.post('ventasPorFecha?page=' + page,param).then(response=>{
               console.log(response.data);
               this.listaVentas = response.data;
-              this.getTotal();
             })
 
 

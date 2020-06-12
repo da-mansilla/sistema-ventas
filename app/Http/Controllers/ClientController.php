@@ -26,12 +26,15 @@ class ClientController extends Controller
     }
     public function clientesCuentas(){
         $clients = DB::table('clients')
-                    ->select('*')
-                    ->where('cuenta','=',1)
+                    ->leftJoin('cuentas','cuentas.cliente_id','=','clients.id')
+                    ->select('clients.*')
+                    ->where('clients.cuenta','=',1)
+                    ->orderBy('cuentas.estado')
                     ->paginate(5);
 
         $cuentas = DB::table('cuentas')
                 ->select('*')
+                ->orderBy('estado')
                 //->where('cuentas.cliente_id','=',$id)
                 ->get();
         $products = DB::table('product_vendidos')
