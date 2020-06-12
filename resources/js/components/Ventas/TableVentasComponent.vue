@@ -206,10 +206,16 @@
             this.busquedaPorFecha = false;
           },
           editCuenta(index,venta){
-            this.$emit('detailCuenta',index,venta);
+            let fechaEnviar = this.fechaElegida;
+            this.fechaElegida = ''
+            this.$emit('detailCuenta',index,venta,this.busquedaPorFecha,fechaEnviar);
+            this.busquedaPorFecha = false;
           },
           editSeña(venta){
-            this.$emit('detailSena',venta);
+            let fechaEnviar = this.fechaElegida;
+            this.fechaElegida = ''
+            this.$emit('detailSena',venta,this.busquedaPorFecha,fechaEnviar);
+            this.busquedaPorFecha = false;
           },
           mostrarVentas(){
             this.getResults();

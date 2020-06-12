@@ -8094,13 +8094,6 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
-//
-//
-//
-//
-//
-//
-//
 /* harmony default export */ __webpack_exports__["default"] = ({
   props: {
     editMode: {},
@@ -8354,6 +8347,14 @@ __webpack_require__.r(__webpack_exports__);
       this.id = this.selectedClient.id; // Estado Cuenta
 
       var ventaEstado = 'Cuenta Corriente';
+      var cambiarFecha = false;
+      var fechaVenta = '';
+
+      if (this.cambiarFechaVenta) {
+        cambiarFecha = true;
+        fechaVenta = this.fechaElegida;
+      }
+
       var params = {
         cliente_id: this.id,
         forma_pago: this.forma_pago,
@@ -8361,7 +8362,9 @@ __webpack_require__.r(__webpack_exports__);
         pagoTarjeta: this.pagandoTarjeta,
         total: this.pagandoEfectivo + this.pagandoTarjeta,
         estado: ventaEstado,
-        enabled: 1
+        enabled: 1,
+        enableFecha: cambiarFecha,
+        fecha: fechaVenta
       };
       console.log(params);
       axios.post('/ventas', params).then(function (response) {
@@ -8409,7 +8412,9 @@ __webpack_require__.r(__webpack_exports__);
                 costo: product.costo,
                 cantidad: product.cantidad,
                 descuento: product.descuento,
-                estado: 'Cuenta Corriente'
+                estado: 'Cuenta Corriente',
+                enableFecha: cambiarFecha,
+                fecha: fechaVenta
               };
               axios.post('productsvendidos/' + venta.id, _params).then(function (response) {
                 axios["delete"]('products/' + product.id).then(function (response) {});
@@ -8497,7 +8502,7 @@ __webpack_require__.r(__webpack_exports__);
         var deuda = '';
         var promocion = '';
         var recargo = '';
-        var cambiarFecha = '';
+        var cambiarFecha = false;
         var fechaVenta = '';
 
         if (estadoCuenta && _this3.forma_pago == 'Cuenta') {
@@ -8601,7 +8606,9 @@ __webpack_require__.r(__webpack_exports__);
                     costo: product.costo,
                     cantidad: product.cantidad,
                     descuento: product.descuento,
-                    estado: estadoProducto
+                    estado: estadoProducto,
+                    enableFecha: cambiarFecha,
+                    fecha: fechaVenta
                   };
 
                   _this3.postProductsVendidos(_params2, venta.id).then(function (response) {
@@ -8724,7 +8731,9 @@ __webpack_require__.r(__webpack_exports__);
                   costo: product.costo,
                   cantidad: product.cantidad,
                   descuento: product.descuento,
-                  estado: 'Vendido'
+                  estado: 'Vendido',
+                  enableFecha: cambiarFecha,
+                  fecha: fechaVenta
                 };
                 axios.post('productsvendidos/' + venta.id, _params4).then(function (response) {
                   axios["delete"]('products/' + product.id).then(function (response) {
@@ -9763,8 +9772,9 @@ __webpack_require__.r(__webpack_exports__);
       ingresosHoy: '',
       cantidadCuentasActivas: 0,
       habilitarFechaTableVentas: false,
-      fechaTableVentasAux: '',
-      fechaTableVentas: ''
+      fechaTableVentas: '',
+      habilitarFechaTableCuentas: false,
+      fechaTableCuentas: ''
     };
   },
   mounted: function mounted() {
@@ -9828,7 +9838,6 @@ __webpack_require__.r(__webpack_exports__);
         this.fechaTableVentas = fecha;
       }
 
-      this.habilitarFechaTableVentas = busquedaPorFecha;
       this.getProductsVendidos(venta.id).then(function (response) {
         _this2.pagina = 2;
         _this2.indexEdit = index;
@@ -9839,8 +9848,12 @@ __webpack_require__.r(__webpack_exports__);
         _this2.editMode = response.data[0];
       });
     },
-    detailCuenta: function detailCuenta(index, venta) {
+    detailCuenta: function detailCuenta(index, venta, busquedaPorFecha, fecha) {
       var _this3 = this;
+
+      if (busquedaPorFecha) {
+        this.fechaTableVentas = fecha;
+      }
 
       this.getProductsVendidos(venta.id).then(function (response) {
         _this3.pagina = 3;
@@ -9858,9 +9871,14 @@ __webpack_require__.r(__webpack_exports__);
         return console.log(err);
       });
     },
-    detailSena: function detailSena(venta) {
+    detailSena: function detailSena(venta, busquedaPorFecha, fecha) {
       var _this4 = this;
 
+      if (busquedaPorFecha) {
+        this.fechaTableVentas = fecha;
+      }
+
+      this.habilitarFechaTableVentas = busquedaPorFecha;
       console.log('Ver Seña');
       this.getProductsVendidos(venta.id).then(function (response) {
         _this4.pagina = 6;
@@ -9879,11 +9897,6 @@ __webpack_require__.r(__webpack_exports__);
     },
     exit: function exit() {
       this.pagina = 1;
-
-      if (this.habilitarFechaTableVentas) {
-        console.log(this.fechaTableVentas);
-      }
-
       this.editMode = '';
     },
     exitDevolucion: function exitDevolucion() {
@@ -10388,10 +10401,16 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       this.busquedaPorFecha = false;
     },
     editCuenta: function editCuenta(index, venta) {
-      this.$emit('detailCuenta', index, venta);
+      var fechaEnviar = this.fechaElegida;
+      this.fechaElegida = '';
+      this.$emit('detailCuenta', index, venta, this.busquedaPorFecha, fechaEnviar);
+      this.busquedaPorFecha = false;
     },
     editSeña: function editSeA(venta) {
-      this.$emit('detailSena', venta);
+      var fechaEnviar = this.fechaElegida;
+      this.fechaElegida = '';
+      this.$emit('detailSena', venta, this.busquedaPorFecha, fechaEnviar);
+      this.busquedaPorFecha = false;
     },
     mostrarVentas: function mostrarVentas() {
       this.getResults();
@@ -94475,10 +94494,6 @@ var render = function() {
                         ]),
                         _vm._v(" "),
                         _c("td", [
-                          _c("span", [_vm._v(_vm._s(productVenta.cantidad))])
-                        ]),
-                        _vm._v(" "),
-                        _c("td", [
                           _c("span", [_vm._v(_vm._s(productVenta.talle))])
                         ]),
                         _vm._v(" "),
@@ -94538,7 +94553,7 @@ var render = function() {
                               "td",
                               {
                                 staticClass: "text-right table-light td-venta",
-                                attrs: { colspan: "7" }
+                                attrs: { colspan: "6" }
                               },
                               [_c("strong", [_vm._v(_vm._s(tarjeta.nombre))])]
                             ),
@@ -94627,10 +94642,6 @@ var render = function() {
                         ]),
                         _vm._v(" "),
                         _c("td", [
-                          _c("span", [_vm._v(_vm._s(productVenta.cantidad))])
-                        ]),
-                        _vm._v(" "),
-                        _c("td", [
                           _c("span", [_vm._v(_vm._s(productVenta.talle))])
                         ]),
                         _vm._v(" "),
@@ -94658,7 +94669,7 @@ var render = function() {
                             "td",
                             {
                               staticClass: "text-right table-light td-venta",
-                              attrs: { colspan: "7" }
+                              attrs: { colspan: "6" }
                             },
                             [
                               _c(
@@ -94698,7 +94709,7 @@ var render = function() {
                             "td",
                             {
                               staticClass: "text-right table-light td-venta",
-                              attrs: { colspan: "7" }
+                              attrs: { colspan: "6" }
                             },
                             [
                               _c(
@@ -94749,7 +94760,7 @@ var render = function() {
                               "td",
                               {
                                 staticClass: "text-right table-light td-venta",
-                                attrs: { colspan: "7" }
+                                attrs: { colspan: "6" }
                               },
                               [
                                 _c(
@@ -94824,7 +94835,7 @@ var render = function() {
                               "td",
                               {
                                 staticClass: "text-right table-light td-venta",
-                                attrs: { colspan: "7" }
+                                attrs: { colspan: "6" }
                               },
                               [_c("strong", [_vm._v(_vm._s(tarjeta.nombre))])]
                             ),
@@ -95163,8 +95174,6 @@ var staticRenderFns = [
         _vm._v(" "),
         _c("th", { attrs: { scope: "col" } }, [_vm._v("Precio")]),
         _vm._v(" "),
-        _c("th", { attrs: { scope: "col" } }, [_vm._v("Cantidad")]),
-        _vm._v(" "),
         _c("th", { attrs: { scope: "col" } }, [_vm._v("Talle")]),
         _vm._v(" "),
         _c("th", { attrs: { scope: "col" } }, [_vm._v("Color")]),
@@ -95181,7 +95190,7 @@ var staticRenderFns = [
       "td",
       {
         staticClass: "text-right table-light td-venta",
-        attrs: { colspan: "7" }
+        attrs: { colspan: "6" }
       },
       [_c("strong", [_vm._v("Recargo")])]
     )
@@ -95194,7 +95203,7 @@ var staticRenderFns = [
       "td",
       {
         staticClass: "text-right table-light td-venta",
-        attrs: { colspan: "7" }
+        attrs: { colspan: "6" }
       },
       [_c("strong", [_vm._v("Efectivo")])]
     )
@@ -95207,7 +95216,7 @@ var staticRenderFns = [
       "td",
       {
         staticClass: "text-right table-light td-venta",
-        attrs: { colspan: "7" }
+        attrs: { colspan: "6" }
       },
       [_c("strong", [_vm._v("Efectivo")])]
     )
@@ -95220,7 +95229,7 @@ var staticRenderFns = [
       "td",
       {
         staticClass: "text-right table-light td-venta",
-        attrs: { colspan: "7" }
+        attrs: { colspan: "6" }
       },
       [_c("strong", [_vm._v("Tarjeta")])]
     )
@@ -95231,7 +95240,7 @@ var staticRenderFns = [
     var _c = _vm._self._c || _h
     return _c(
       "td",
-      { staticClass: "text-right table-light", attrs: { colspan: "7" } },
+      { staticClass: "text-right table-light", attrs: { colspan: "6" } },
       [_c("strong", [_vm._v("Total Neto")])]
     )
   },
@@ -95243,7 +95252,7 @@ var staticRenderFns = [
       "td",
       {
         staticClass: "text-right table-light td-venta",
-        attrs: { colspan: "7" }
+        attrs: { colspan: "6" }
       },
       [_c("strong", [_vm._v("Efectivo")])]
     )
@@ -95256,7 +95265,7 @@ var staticRenderFns = [
       "td",
       {
         staticClass: "text-right table-light td-venta",
-        attrs: { colspan: "7" }
+        attrs: { colspan: "6" }
       },
       [_c("strong", [_vm._v("Efectivo")])]
     )
@@ -95267,7 +95276,7 @@ var staticRenderFns = [
     var _c = _vm._self._c || _h
     return _c(
       "td",
-      { staticClass: "text-right table-light", attrs: { colspan: "7" } },
+      { staticClass: "text-right table-light", attrs: { colspan: "6" } },
       [
         _c("strong", { staticStyle: { "font-size": "19px" } }, [
           _vm._v("Total Neto")

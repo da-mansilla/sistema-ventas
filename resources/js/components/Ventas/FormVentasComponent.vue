@@ -276,7 +276,6 @@
                   <th scope="col">N° Serie</th>
                   <th scope="col">Categoria</th>
                   <th scope="col">Precio</th>
-                  <th scope="col">Cantidad</th>
                   <th scope="col">Talle</th>
                   <th scope="col">Color</th>
                   <th scope="col">Total</th>
@@ -297,9 +296,6 @@
                     <span>{{productVenta.precio}}$</span>
                   </td>
                   <td>
-                    <span>{{productVenta.cantidad}}</span>
-                  </td>
-                  <td>
                     <span>{{productVenta.talle}}</span>
                   </td>
                   <td>
@@ -310,33 +306,33 @@
                   </td>
                 </tr>
                 <tr v-if="editMode.recargo > 0">
-                    <td colspan="7" class="text-right table-light td-venta"><strong>Recargo</strong></td>
+                    <td colspan="6" class="text-right table-light td-venta"><strong>Recargo</strong></td>
                     <td class="td-venta" v-bind:value="editMode.pagoEfectivo">${{editMode.recargo}}</td> 
                 </tr>
                 <tr v-if="editMode.forma_pago=='Efectivo'">
-                    <td colspan="7" class="text-right table-light td-venta"><strong>Efectivo</strong></td>
+                    <td colspan="6" class="text-right table-light td-venta"><strong>Efectivo</strong></td>
                     <td class="td-venta" v-bind:value="editMode.pagoEfectivo">${{editMode.pagoEfectivo}}</td> 
                 </tr> 
 
                 <tr v-if="editMode.forma_pago=='Tarjeta'" v-for="tarjeta in editMode.tarjetas">
                     <!--
-                    <td colspan="7" class="text-right table-light td-venta"><strong>Tarjeta</strong></td>
+                    <td colspan="6" class="text-right table-light td-venta"><strong>Tarjeta</strong></td>
                     <td class="td-venta" v-bind:value="editMode.pagoTarjeta" disabled>{{editMode.pagoTarjeta}}</td> 
                     -->
-                    <td colspan="7" class="text-right table-light td-venta"><strong>{{tarjeta.nombre}}</strong></td>
+                    <td colspan="6" class="text-right table-light td-venta"><strong>{{tarjeta.nombre}}</strong></td>
                     <td class="td-venta" disabled>${{tarjeta.total}}</td>
                 </tr>
 
                 <tr v-if="editMode.forma_pago=='efectivoTarjeta'">
-                    <td colspan="7" class="text-right table-light td-venta"><strong>Efectivo</strong></td>
+                    <td colspan="6" class="text-right table-light td-venta"><strong>Efectivo</strong></td>
                     <td class="td-venta"><input type="number" class="input-venta" v-bind:value="editMode.pagoEfectivo" disabled></td> 
                 </tr> 
                 <tr v-if="editMode.forma_pago=='efectivoTarjeta'">
-                    <td colspan="7" class="text-right table-light td-venta"><strong>Tarjeta</strong></td>
+                    <td colspan="6" class="text-right table-light td-venta"><strong>Tarjeta</strong></td>
                     <td class="td-venta"><input type="number" class="input-venta" v-bind:value="editMode.pagoTarjeta" disabled></td> 
                 </tr>
                 <tr>
-                    <td colspan="7" class="text-right table-light"><strong>Total Neto</strong></td>
+                    <td colspan="6" class="text-right table-light"><strong>Total Neto</strong></td>
                     <td>${{editMode.total}}$</td> 
                 </tr>  
               </tbody>
@@ -356,9 +352,6 @@
                     <span>{{productVenta.precio}}$</span>
                   </td>
                   <td>
-                    <span>{{productVenta.cantidad}}</span>
-                  </td>
-                  <td>
                     <span>{{productVenta.talle}}</span>
                   </td>
                   <td>
@@ -369,27 +362,27 @@
                   </td>
                 </tr>
                 <tr v-if="recargoActivate">
-                    <td colspan="7" class="text-right table-light td-venta">
+                    <td colspan="6" class="text-right table-light td-venta">
                       <button type="button" class="btn btn-danger btn-sm" v-on:click="eliminarRecargo()">X</button>
                       <strong>{{TitulovalorRecargo}}</strong>
                     </td>
                     <td class="td-venta" style="color:green;">+${{totalRecargo}}</td>
                 </tr>
                 <tr v-if="descuentoActivate">
-                    <td colspan="7" class="text-right table-light td-venta">
+                    <td colspan="6" class="text-right table-light td-venta">
                       <button type="button" class="btn btn-danger btn-sm" v-on:click="eliminarDescuento()">X</button>
                       <strong>{{TitulovalorDescuento}}</strong>
                     </td>
                     <td class="td-venta" style="color:red;">-${{totalDescuento}}</td>
                 </tr>
                 <tr v-if="forma_pago=='Efectivo'">
-                    <td colspan="7" class="text-right table-light td-venta"><strong>Efectivo</strong></td>
+                    <td colspan="6" class="text-right table-light td-venta"><strong>Efectivo</strong></td>
                     <td class="td-venta">${{totalNeto}}</td> 
                 </tr> 
 
                 <tr v-if="forma_pago=='Tarjeta'" v-for='(tarjeta,index) in listTarjetas'>
 
-                    <td colspan="7" class="text-right table-light td-venta">
+                    <td colspan="6" class="text-right table-light td-venta">
                       <button type="button" class="btn btn-danger btn-sm" v-on:click="eliminarTarjeta(index)">X</button>
                       <strong>{{tarjeta.nombre}}</strong>
                     </td>
@@ -399,11 +392,11 @@
                 </tr>
 
                 <tr v-if="forma_pago=='efectivoTarjeta'">
-                    <td colspan="7" class="text-right table-light td-venta"><strong>Efectivo</strong></td>
+                    <td colspan="6" class="text-right table-light td-venta"><strong>Efectivo</strong></td>
                     <td class="td-venta"><input type="number" class="input-venta" v-model="pagoEfectivo" v-on:keyup="FormaEyT"></td> 
                 </tr> 
                 <tr v-if="forma_pago=='efectivoTarjeta'" v-for='tarjeta in listTarjetas'>
-                    <td colspan="7" class="text-right table-light td-venta"><strong>{{tarjeta.nombre}}</strong></td>
+                    <td colspan="6" class="text-right table-light td-venta"><strong>{{tarjeta.nombre}}</strong></td>
                     <td class="td-venta"><input type="number" :id="tarjeta.nombre" class="input-venta" v-on:keyup="FormaEyT"></td> 
                 </tr>
                 
@@ -412,7 +405,7 @@
 
 
                 <tr>
-                    <td colspan="7" class="text-right table-light"><strong style="font-size: 19px;">Total Neto</strong></td>
+                    <td colspan="6" class="text-right table-light"><strong style="font-size: 19px;">Total Neto</strong></td>
                     <td><strong style="color:green;font-size: 19px;">${{totalNeto}}</strong></td> 
                 </tr>  
               </tbody>
@@ -746,6 +739,12 @@
             this.id = this.selectedClient.id;
             // Estado Cuenta
             var ventaEstado= 'Cuenta Corriente'
+            var cambiarFecha= false
+            var fechaVenta= ''
+            if(this.cambiarFechaVenta){
+              cambiarFecha = true
+              fechaVenta = this.fechaElegida
+            }
             var params = {
               cliente_id: this.id,
               forma_pago: this.forma_pago,
@@ -753,7 +752,9 @@
               pagoTarjeta: this.pagandoTarjeta,
               total: this.pagandoEfectivo+this.pagandoTarjeta,
               estado: ventaEstado,
-              enabled: 1
+              enabled: 1,
+              enableFecha: cambiarFecha,
+              fecha : fechaVenta
             }
             console.log(params);
             axios.post('/ventas', params)
@@ -794,7 +795,9 @@
                         costo: product.costo,
                         cantidad: product.cantidad,
                         descuento: product.descuento,
-                        estado: 'Cuenta Corriente'
+                        estado: 'Cuenta Corriente',
+                        enableFecha: cambiarFecha,
+                        fecha : fechaVenta
                       };
                       axios.post('productsvendidos/'+venta.id, params)
                            .then((response)=>{
@@ -862,7 +865,7 @@
                 var deuda = '';
                 var promocion = '';
                 var recargo = '';
-                var cambiarFecha = '';
+                var cambiarFecha = false;
                 var fechaVenta = '';
                 if(estadoCuenta && this.forma_pago == 'Cuenta'){
                   ventaEstado = 'Cuenta Corriente';
@@ -958,7 +961,9 @@
                               costo: product.costo,
                               cantidad: product.cantidad,
                               descuento: product.descuento,
-                              estado: estadoProducto
+                              estado: estadoProducto,
+                              enableFecha: cambiarFecha,
+                              fecha : fechaVenta
                             };
                             this.postProductsVendidos(params,venta.id)
                               .then((response)=>{
@@ -1046,7 +1051,9 @@
                           costo: product.costo,
                           cantidad: product.cantidad,
                           descuento: product.descuento,
-                          estado: 'Vendido'
+                          estado: 'Vendido',
+                          enableFecha: cambiarFecha,
+                          fecha : fechaVenta
                         }
                         axios.post('productsvendidos/'+venta.id, params)
                              .then((response)=>{

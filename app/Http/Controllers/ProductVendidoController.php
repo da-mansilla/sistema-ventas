@@ -49,6 +49,11 @@ class ProductVendidoController extends Controller
         $productVendido->descuento = $request->input('descuento');
         $productVendido->estado = $request->input('estado');
 
+        if($request->input('enableFecha')){
+            $nuevaFecha = date_create($request->input('fecha'));
+            $productVendido->created_at = $nuevaFecha;
+        }
+
         $productVendido->save();
 
         return $productVendido;

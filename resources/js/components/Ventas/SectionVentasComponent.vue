@@ -102,8 +102,11 @@
           ingresosHoy: '',
           cantidadCuentasActivas: 0,
           habilitarFechaTableVentas : false,
-          fechaTableVentasAux: '',
-          fechaTableVentas: ''
+          fechaTableVentas: '',
+          habilitarFechaTableCuentas : false,
+          fechaTableCuentas: '',
+
+
         
         };
       },
@@ -166,7 +169,6 @@
               if(busquedaPorFecha){
                 this.fechaTableVentas = fecha
               }
-              this.habilitarFechaTableVentas= busquedaPorFecha
               this.getProductsVendidos(venta.id)
               .then((response)=>{
                 this.pagina = 2;
@@ -179,7 +181,10 @@
                 this.editMode = response.data[0];
               })
             },
-            detailCuenta(index,venta){
+            detailCuenta(index,venta,busquedaPorFecha,fecha){
+              if(busquedaPorFecha){
+                this.fechaTableVentas = fecha
+              }
               this.getProductsVendidos(venta.id)
               .then((response)=>{
                 this.pagina = 3;
@@ -198,7 +203,11 @@
               })
               .catch(err => console.log(err))
             },
-            detailSena(venta){
+            detailSena(venta,busquedaPorFecha,fecha){
+              if(busquedaPorFecha){
+                this.fechaTableVentas = fecha
+              }
+              this.habilitarFechaTableVentas= busquedaPorFecha
               console.log('Ver Seña');
               this.getProductsVendidos(venta.id).then(response=>{
                 this.pagina=6;
@@ -219,9 +228,6 @@
             },
             exit(){
               this.pagina=1;
-              if(this.habilitarFechaTableVentas){
-                console.log(this.fechaTableVentas);
-              }
               this.editMode= '';
             },
             exitDevolucion(){
