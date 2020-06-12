@@ -211,6 +211,10 @@ class VentaController extends Controller
         $venta->estado = $request->input('estado');
         $venta->enabled = $request->input('enabled');
         $venta->descuento = $request->input('descuento');
+        if($request->input('enableFecha')){
+            $nuevaFecha = date_create($request->input('fecha'));
+            $venta->created_at = $nuevaFecha;
+        }
 
         $venta->save();
 

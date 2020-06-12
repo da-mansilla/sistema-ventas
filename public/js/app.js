@@ -4691,12 +4691,6 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
                 _context.next = 7;
                 return axios.post('/modificarProductos', this.cambiarCategoria).then(function (response) {
                   console.log(response);
-
-                  _this6.$toasted.show('Se actualizaron la categoria de ' + cantidadProductosCategoria + ' productos exitosamente', {
-                    theme: "toasted-primary",
-                    position: "top-right",
-                    duration: 2000
-                  });
                 });
 
               case 7:
@@ -8053,6 +8047,31 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   props: {
     editMode: {},
@@ -8103,10 +8122,18 @@ __webpack_require__.r(__webpack_exports__);
       valorDescuento: 0,
       totalDescuento: 0,
       totalNetoAnterior: 0,
-      Cuenta_formaPago: ''
+      Cuenta_formaPago: '',
+      cambiarFechaVenta: false,
+      fechaElegida: new Date()
     };
   },
-  mounted: function mounted() {},
+  mounted: function mounted() {
+    var day = this.fechaElegida.getDate();
+    var month = parseInt(this.fechaElegida.getMonth() + 1);
+    var year = this.fechaElegida.getFullYear();
+    var fechaCadena = day + "/" + month + "/" + year;
+    this.fechaElegida = fechaCadena;
+  },
   methods: {
     newProductVenta: function newProductVenta() {
       var esValido = true;
@@ -8441,6 +8468,8 @@ __webpack_require__.r(__webpack_exports__);
         var deuda = '';
         var promocion = '';
         var recargo = '';
+        var cambiarFecha = '';
+        var fechaVenta = '';
 
         if (estadoCuenta && _this3.forma_pago == 'Cuenta') {
           ventaEstado = 'Cuenta Corriente';
@@ -8469,6 +8498,11 @@ __webpack_require__.r(__webpack_exports__);
 
         if (_this3.recargoActivate) {
           recargo = _this3.totalRecargo;
+        }
+
+        if (_this3.cambiarFechaVenta) {
+          cambiarFecha = true;
+          fechaVenta = _this3.fechaElegida;
         } // Fin Estado Cuenta
 
 
@@ -8484,7 +8518,9 @@ __webpack_require__.r(__webpack_exports__);
           recargo: recargo,
           estado: ventaEstado,
           enabled: 1,
-          descuento: _this3.totalDescuento
+          descuento: _this3.totalDescuento,
+          enableFecha: cambiarFecha,
+          fecha: fechaVenta
         };
         console.log('parametros');
         console.log(params);
@@ -9244,7 +9280,13 @@ __webpack_require__.r(__webpack_exports__);
 
       return totalNetoRetornar;
     },
-    Cuenta_deleteProductVenta: function Cuenta_deleteProductVenta() {}
+    activateCambiarFecha: function activateCambiarFecha() {
+      if (this.cambiarFechaVenta) {
+        this.cambiarFechaVenta = false;
+      } else {
+        this.cambiarFechaVenta = true;
+      }
+    }
   },
   computed: {}
 });
@@ -94098,7 +94140,53 @@ var render = function() {
                     : _vm._e()
                 ]),
                 _vm._v(" "),
-                _vm._m(0)
+                _c("br"),
+                _vm._v(" "),
+                _c("div", { staticClass: "row" }, [
+                  _c("div", { staticClass: "col-md-2" }, [
+                    _c(
+                      "button",
+                      {
+                        staticClass: "btn btn-secondary",
+                        attrs: { type: "button" },
+                        on: { click: _vm.activateCambiarFecha }
+                      },
+                      [_vm._v("Seleccionar otra Fecha")]
+                    )
+                  ]),
+                  _vm._v(" "),
+                  _vm.cambiarFechaVenta
+                    ? _c("div", { staticClass: "col-md 2 pb-2 form-inline" }, [
+                        _vm._m(0),
+                        _vm._v(" "),
+                        _c("input", {
+                          directives: [
+                            {
+                              name: "model",
+                              rawName: "v-model",
+                              value: _vm.fechaElegida,
+                              expression: "fechaElegida"
+                            }
+                          ],
+                          staticClass: "form-control",
+                          attrs: { type: "date" },
+                          domProps: { value: _vm.fechaElegida },
+                          on: {
+                            input: function($event) {
+                              if ($event.target.composing) {
+                                return
+                              }
+                              _vm.fechaElegida = $event.target.value
+                            }
+                          }
+                        })
+                      ])
+                    : _c("div", { staticClass: "col-md 2 pb-2 form-inline" }),
+                  _vm._v(" "),
+                  _c("div", { staticClass: "col-md-4" }),
+                  _vm._v(" "),
+                  _vm._m(1)
+                ])
               ])
         ])
       ]
@@ -94132,7 +94220,7 @@ var render = function() {
       : _vm.forma_pago == "Seña"
       ? _c("div", [
           _c("table", { staticClass: "table table-bordered " }, [
-            _vm._m(1),
+            _vm._m(2),
             _vm._v(" "),
             _c(
               "tbody",
@@ -94170,7 +94258,7 @@ var render = function() {
                 }),
                 _vm._v(" "),
                 _c("tr", [
-                  _vm._m(2),
+                  _vm._m(3),
                   _vm._v(" "),
                   _c("td", { staticClass: "td-venta" }, [
                     _vm._v("$" + _vm._s(_vm.totalNeto))
@@ -94178,7 +94266,7 @@ var render = function() {
                 ]),
                 _vm._v(" "),
                 _c("tr", [
-                  _vm._m(3),
+                  _vm._m(4),
                   _vm._v(" "),
                   _c("td", { staticClass: "td-venta" }, [
                     _c("input", {
@@ -94209,7 +94297,7 @@ var render = function() {
                 ]),
                 _vm._v(" "),
                 _c("tr", [
-                  _vm._m(4),
+                  _vm._m(5),
                   _vm._v(" "),
                   _c("td", { staticClass: "td-venta" }, [
                     _vm._v("$" + _vm._s(_vm.totalNeto - _vm.señaPagado))
@@ -94222,7 +94310,7 @@ var render = function() {
         ])
       : _c("div", [
           _c("table", { staticClass: "table table-bordered table-ventas" }, [
-            _vm._m(5),
+            _vm._m(6),
             _vm._v(" "),
             _vm.editMode && _vm.disabled
               ? _c(
@@ -94275,7 +94363,7 @@ var render = function() {
                     _vm._v(" "),
                     _vm.editMode.recargo > 0
                       ? _c("tr", [
-                          _vm._m(6),
+                          _vm._m(7),
                           _vm._v(" "),
                           _c(
                             "td",
@@ -94290,7 +94378,7 @@ var render = function() {
                     _vm._v(" "),
                     _vm.editMode.forma_pago == "Efectivo"
                       ? _c("tr", [
-                          _vm._m(7),
+                          _vm._m(8),
                           _vm._v(" "),
                           _c(
                             "td",
@@ -94329,7 +94417,7 @@ var render = function() {
                     _vm._v(" "),
                     _vm.editMode.forma_pago == "efectivoTarjeta"
                       ? _c("tr", [
-                          _vm._m(8),
+                          _vm._m(9),
                           _vm._v(" "),
                           _c("td", { staticClass: "td-venta" }, [
                             _c("input", {
@@ -94343,7 +94431,7 @@ var render = function() {
                     _vm._v(" "),
                     _vm.editMode.forma_pago == "efectivoTarjeta"
                       ? _c("tr", [
-                          _vm._m(9),
+                          _vm._m(10),
                           _vm._v(" "),
                           _c("td", { staticClass: "td-venta" }, [
                             _c("input", {
@@ -94356,7 +94444,7 @@ var render = function() {
                       : _vm._e(),
                     _vm._v(" "),
                     _c("tr", [
-                      _vm._m(10),
+                      _vm._m(11),
                       _vm._v(" "),
                       _c("td", [_vm._v("$" + _vm._s(_vm.editMode.total) + "$")])
                     ])
@@ -94506,7 +94594,7 @@ var render = function() {
                     _vm._v(" "),
                     _vm.forma_pago == "Efectivo"
                       ? _c("tr", [
-                          _vm._m(11),
+                          _vm._m(12),
                           _vm._v(" "),
                           _c("td", { staticClass: "td-venta" }, [
                             _vm._v("$" + _vm._s(_vm.totalNeto))
@@ -94560,7 +94648,7 @@ var render = function() {
                     _vm._v(" "),
                     _vm.forma_pago == "efectivoTarjeta"
                       ? _c("tr", [
-                          _vm._m(12),
+                          _vm._m(13),
                           _vm._v(" "),
                           _c("td", { staticClass: "td-venta" }, [
                             _c("input", {
@@ -94613,7 +94701,7 @@ var render = function() {
                     }),
                     _vm._v(" "),
                     _c("tr", [
-                      _vm._m(13),
+                      _vm._m(14),
                       _vm._v(" "),
                       _c("td", [
                         _c(
@@ -94793,11 +94881,11 @@ var render = function() {
           },
           [
             _c("div", { staticClass: "modal-content" }, [
-              _vm._m(14),
+              _vm._m(15),
               _vm._v(" "),
               _c("div", { staticClass: "modal-body pt-0" }, [
                 _c("div", { staticClass: "card" }, [
-                  _vm._m(15),
+                  _vm._m(16),
                   _vm._v(" "),
                   _c("div", { staticClass: "card-body" }, [
                     _c("h4", { staticClass: "mb-5" }, [
@@ -94846,8 +94934,14 @@ var staticRenderFns = [
     var _vm = this
     var _h = _vm.$createElement
     var _c = _vm._self._c || _h
-    return _c("div", { staticClass: "form-row row justify-content-end" }, [
-      _c("div", { staticClass: "form-group" }, [
+    return _c("label", {}, [_c("strong", [_vm._v("Fecha")])])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("div", { staticClass: "col-md-4" }, [
+      _c("div", { staticClass: "d-flex justify-content-end" }, [
         _c("button", { staticClass: "btn btn-success btn-lg" }, [
           _vm._v("Agregar")
         ])

@@ -358,11 +358,6 @@
                     await axios.post('/modificarProductos', this.cambiarCategoria)
                     .then(response=>{
                         console.log(response)
-                        this.$toasted.show('Se actualizaron la categoria de '+cantidadProductosCategoria+' productos exitosamente', { 
-                            theme: "toasted-primary", 
-                            position: "top-right", 
-                            duration : 2000
-                        });
                     })
                 }
                 await axios.put('/precio',listaParam)

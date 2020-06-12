@@ -168,12 +168,37 @@
                 
                 
               </div>
+              <br>
+
               
-              <div class="form-row row justify-content-end">
-                <div class="form-group">
-                  <button class="btn btn-success btn-lg">Agregar</button>         
+              <div class="row">
+                <div class="col-md-2">
+                  <button type="button" class="btn btn-secondary" v-on:click="activateCambiarFecha">Seleccionar otra Fecha</button>  
                 </div>
+                <div v-if="cambiarFechaVenta" class="col-md 2 pb-2 form-inline">
+
+                   <label class=""><strong>Fecha</strong></label>
+                   <input type="date" class="form-control" v-model="fechaElegida"> 
+
+                   
+                </div>
+                <div v-else class="col-md 2 pb-2 form-inline"></div>
+                <div class="col-md-4">
+                  
+                </div>
+                <div class="col-md-4">
+                  <div class="d-flex justify-content-end">
+
+                      <button class="btn btn-success btn-lg">Agregar</button>         
+
+                  </div>
+                </div>
+
+
+                
+                
               </div>
+
             </span>
           </span>
         </form>
@@ -532,12 +557,19 @@
             valorDescuento: 0,
             totalDescuento: 0,
             totalNetoAnterior: 0,
-            Cuenta_formaPago:''
+            Cuenta_formaPago:'',
+            cambiarFechaVenta: false,
+            fechaElegida: new Date()
 
 
         };
       },
       mounted() {
+          let day = this.fechaElegida.getDate();
+          let month = parseInt(this.fechaElegida.getMonth()+1);
+          let year = this.fechaElegida.getFullYear();
+          let fechaCadena = day+"/"+month+"/"+year;
+          this.fechaElegida = fechaCadena;
       },
       methods:{
 
@@ -830,6 +862,8 @@
                 var deuda = '';
                 var promocion = '';
                 var recargo = '';
+                var cambiarFecha = '';
+                var fechaVenta = '';
                 if(estadoCuenta && this.forma_pago == 'Cuenta'){
                   ventaEstado = 'Cuenta Corriente';
                   enEfectivo = this.pagandoEfectivo;
@@ -858,6 +892,10 @@
                 if(this.recargoActivate){
                   recargo = this.totalRecargo
                 }
+                if(this.cambiarFechaVenta){
+                  cambiarFecha = true
+                  fechaVenta = this.fechaElegida
+                }
                 // Fin Estado Cuenta
 
                 var params = {
@@ -872,7 +910,9 @@
                   recargo : recargo,
                   estado: ventaEstado,
                   enabled: 1,
-                  descuento: this.totalDescuento
+                  descuento: this.totalDescuento,
+                  enableFecha: cambiarFecha,
+                  fecha : fechaVenta
                 }
                 console.log('parametros');
                 console.log(params);
@@ -1551,8 +1591,12 @@
             }
             return totalNetoRetornar
           },
-          Cuenta_deleteProductVenta(){
-
+          activateCambiarFecha(){
+            if(this.cambiarFechaVenta){
+              this.cambiarFechaVenta=false
+            }else{
+              this.cambiarFechaVenta=true
+            }
           }
 
       },
