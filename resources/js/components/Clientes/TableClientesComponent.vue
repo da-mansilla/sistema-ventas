@@ -8,7 +8,7 @@
               <th scope="col">Telefono</th>
               <th scope="col">Compras</th>
               <th scope="col">Email</th>
-              <th scope="col">Estado</th>
+
 
             </tr>
           </thead>
@@ -44,9 +44,7 @@
                   <span  v-else> {{client.email}} </span>
               </th>
                
-              <th>
-                  Ok
-              </th>
+
                 
 
             </tr>

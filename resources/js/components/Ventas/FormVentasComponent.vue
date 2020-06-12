@@ -302,7 +302,7 @@
                     <span>{{productVenta.color}}</span>
                   </td>
                   <td>
-                    <span>${{(productVenta.precio * productVenta.cantidad) - productVenta.descuento}}$</span>
+                    <span>${{(productVenta.precio * productVenta.cantidad) - productVenta.descuento}}</span>
                   </td>
                 </tr>
                 <tr v-if="editMode.recargo > 0">
@@ -327,13 +327,13 @@
                     <td colspan="6" class="text-right table-light td-venta"><strong>Efectivo</strong></td>
                     <td class="td-venta"><input type="number" class="input-venta" v-bind:value="editMode.pagoEfectivo" disabled></td> 
                 </tr> 
-                <tr v-if="editMode.forma_pago=='efectivoTarjeta'">
-                    <td colspan="6" class="text-right table-light td-venta"><strong>Tarjeta</strong></td>
-                    <td class="td-venta"><input type="number" class="input-venta" v-bind:value="editMode.pagoTarjeta" disabled></td> 
+                <tr v-if="editMode.forma_pago=='efectivoTarjeta'" v-for="tarjeta in editMode.tarjetas">
+                    <td colspan="6" class="text-right table-light td-venta"><strong>{{tarjeta.nombre}}</strong></td>
+                    <td class="td-venta"><input type="number" class="input-venta" v-bind:value="tarjeta.total" disabled></td> 
                 </tr>
                 <tr>
                     <td colspan="6" class="text-right table-light"><strong>Total Neto</strong></td>
-                    <td>${{editMode.total}}$</td> 
+                    <td>${{editMode.total}}</td> 
                 </tr>  
               </tbody>
 
