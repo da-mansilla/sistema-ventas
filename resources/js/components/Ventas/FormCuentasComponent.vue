@@ -120,13 +120,20 @@
           </table>
 
           <hr>
-
-          <div class="form-row justify-content-end">
-            <button type="submit" class="btn btn-primary btn-lg ml-5" v-on:click="exitEditMode">Salir</button> 
-          </div>
           <div>
+            
+            <div v-if="cuentaMode" class="form-row justify-content-end">
+              <button type="submit" class="btn btn-primary btn-lg ml-5" v-on:click="exitEditMode">Salir</button> 
+            </div>
+
+            <div v-else class="form-row justify-content-end" >
+              <button type="submit" class="btn btn-primary btn-lg ml-5" v-on:click="exitEditMode">Salir</button> 
+            </div>
+
+
           </div>
-        
+
+      
 
           <!-- Modal -->
           <div v-if="cuentaMode" class="modal fade" id="exampleModalScrollable" tabindex="-1" role="dialog" aria-labelledby="exampleModalScrollableTitle" aria-hidden="true">
@@ -386,7 +393,6 @@
                 this.listPagosMostrar.push(pago)
               }
             })
-            console.log(this.listPagosMostrar);
           },
           pagosAnterior(){
             if(this.batchCargado > 1){
@@ -442,7 +448,6 @@
                 }
                 this.postPagos(paramsPago).then(response=>{
                   console.log('Pago Generado');
-                  console.log(response.data);
                   var estadoCuenta = 'Deuda';
                   var batchCuenta = parseInt(this.cuentaMode.cuenta[0].batch);
 
@@ -456,7 +461,6 @@
                     this.cuentaMode.cuenta[0].products.forEach(product=>{
                       if(product.estado == 'Cuenta Corriente'){
                         axios.put('finalizarproducto/'+product.id).then(response=>{
-                          console.log(response);
                         })  
 
                       }
@@ -473,8 +477,6 @@
                   return this.putCuenta(paramsCuenta, this.cuentaMode.cuenta[0].id)
                   })
                   .then(response=>{
-                    console.log('Cuenta Modificada');
-                    console.log(response);
                     this.$emit('nuevoPago',this.cuentaMode.id);
                     $('#exampleModalScrollable').modal('hide')
                   })
@@ -514,7 +516,60 @@
             if(this.formaPago == 'efectivoTarjeta'){
               this.valorPago = parseInt(this.pagandoEfectivo)+parseInt(this.pagandoTarjeta)
             }
-          }
+          },
+          borrarVenta(){
+            console.log('borrando Venta');
+            console.log(this.cuentaCliente);
+            var pagoIndex = ''
+            this.cuentaCliente.pagos.forEach((pago,index)=>{
+              if(pago.venta_id == editMode.id){
+                  pagoIndex = index
+              }
+            })
+            let pagoSeleccionado = this.cuentaCliente.pagos[pagoIndex];
+
+            let paramDeuda= this.cuentaCliente.deuda - pagoSeleccionado.pagado
+            let params = {
+              deuda:'',
+              estado:'',
+              pagado:'',
+              pagos:'',
+              products:'',
+              total:''
+            }
+            console.log(this.editMode)
+            console.log(this.productsVendidos)
+          },
+          deleteVenta(id,indexEdit){
+            this.productsVendidos.forEach(product=>{
+              let params = {
+                    nombre : product.nombre,               
+                    categoria_id: product.categoria_id,
+                    talle: product.talle,
+                    color: product.color,
+                    costo: product.costo,
+                    precio: product.precio,
+                    n_serie: product.n_serie,
+                    enabled: 1,
+                    estado: 'Inventario',
+                    cantidadProducts: 1
+                };
+                axios.post('/products', params)
+                .then((response)=>{
+                      console.log('producto creado');
+                      console.log(response);      
+                });
+            })
+            var ventaID= this.editMode.id
+            axios.delete('/ventas/'+ventaID).then(()=>{
+                  this.$emit('delete');
+                  this.$toasted.show('Venta Cancelada Satisfactoriamente', { 
+                     theme: "toasted-primary", 
+                     position: "top-right", 
+                     duration : 2000
+                  });
+                })
+          },
         },
 
 

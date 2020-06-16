@@ -174,7 +174,6 @@
                 this.pagina = 2;
                 this.indexEdit = index;
                 this.productsVendidos = response.data;
-                console.log(this.productsVendidos);
                 return this.getVenta(venta.id)
               })
               .then(response=>{
@@ -189,17 +188,14 @@
               .then((response)=>{
                 this.pagina = 3;
                 this.productsVendidos = response.data;
-                console.log(this.productsVendidos);
                  return this.getVenta(venta.id)
               })
               .then(response=>{ 
                 this.editMode = response.data[0];
-                console.log(this.editMode);
                 return this.getCuenta(venta.cliente_id)
               })
               .then((response)=>{
                 this.cuentaCliente = response.data[0];
-                console.log(this.cuentaCliente);
               })
               .catch(err => console.log(err))
             },
@@ -216,15 +212,14 @@
                 return this.getVenta(venta.id);
               })
               .then(response=>{
-                console.log(response.data);
                 this.señaMode = response.data;
+                console.log(this.señaMode);
               })
 
             },
             deleteVenta(i){
               this.pagina=1;
               this.editMode= '';
-              console.log('Venta Borrada');
             },
             exit(){
               this.pagina=1;
@@ -248,7 +243,6 @@
               this.editMode= '';
             },
             verCuenta(client){
-              console.log('Ver Cuenta');
               this.cuentaMode = client;
               console.log(this.cuentaMode);
               this.pagina=3;
@@ -263,7 +257,6 @@
                 this.pagina = 5;
                 this.ventaDevolucion.products = response.data;
                 console.log('Una devolucion');
-                console.log(this.ventaDevolucion);
               })
             },
             updateVenta(){

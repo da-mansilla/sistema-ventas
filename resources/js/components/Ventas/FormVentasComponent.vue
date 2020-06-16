@@ -69,7 +69,7 @@
                 </span>
 
                 <span v-else>
-                  <span v-if="forma_pago=='Cuenta'">
+                  <span v-if="forma_pago=='Cuenta' || forma_pago=='Seña'">
 
                     <label for="exampleFormControlSelect1">Efectivo o Tarjeta</label>
                     <select class="form-control"  value="Efectivo" v-model="Cuenta_formaPago"required>
@@ -101,7 +101,7 @@
                 <input type="text" class="form-control" v-bind:placeholder="editMode.tarjeta" v-model="tarjeta" disabled>
               </div>
 
-              <div v-else-if="forma_pago=='Tarjeta' || forma_pago=='efectivoTarjeta' || (forma_pago=='Cuenta' && (Cuenta_formaPago =='Tarjeta' || Cuenta_formaPago =='efectivoTarjeta'))">
+              <div v-else-if="forma_pago=='Tarjeta' || forma_pago=='efectivoTarjeta' || ((forma_pago=='Cuenta' || forma_pago=='Seña') && (Cuenta_formaPago =='Tarjeta' || Cuenta_formaPago =='efectivoTarjeta'))">
                 
                 <label for="exampleFormControlSelect1">Tarjeta</label>
                 <div class="input-group">
@@ -228,7 +228,6 @@
                     <th scope="col">Categoria</th>
                     <th scope="col">Color</th>
                     <th scope="col">Talle</th>
-                    <th scope="col">Fecha</th>
                     <th scope="col">Precio</th>
 
                   </tr>
@@ -245,21 +244,41 @@
                     <th>{{product.categoria}}</th>
                     <th>{{product.color}}</th>
                     <th>{{product.talle}}</th>
-                    <th>Nuevo</th>
                     <th>${{product.precio}}</th>
 
                   </tr>
                   <tr>
-                      <td colspan="6" class="text-right table-light td-venta" ><strong>Total Neto</strong></td>
+                      <td colspan="5" class="text-right table-light td-venta" ><strong>Total Neto</strong></td>
                       <td class="td-venta">${{totalNeto}}</td> 
                   </tr> 
-                  <tr>
-                      <td colspan="6" class="text-right table-light td-venta"><strong>Deja Pagando</strong></td>
-                      <td class="td-venta"><input type="number" class="input-venta" v-model="señaPagado" v-on:keyup="insertSeñaPagado"></td> 
-                  </tr> 
+
+                  <tr v-if="Cuenta_formaPago == 'Efectivo'">
+                    <td colspan="5" class="text-right table-light td-venta"><strong>Efectivo</strong></td>
+                    <td class="td-venta"><input type="number" class="input-venta" v-model="pagandoEfectivo" v-on:keyup="insertPagado"></td> 
+                </tr>
+
+                <tr v-if="Cuenta_formaPago == 'Tarjeta'" v-for='(tarjeta,index) in listTarjetas'>
+                    <td colspan="5" class="text-right table-light td-venta">
+                      <button type="button" class="btn btn-danger btn-sm" v-on:click="eliminarTarjeta(index)">X</button>
+                      <strong>{{tarjeta.nombre}}</strong>
+                    </td>
+                    <td class="td-venta"><input :id="tarjeta.nombre" type="number" class="input-venta" v-on:keyup="FormaTarjeta"></td> 
+                </tr> 
+
+                <tr v-if="Cuenta_formaPago == 'efectivoTarjeta'">
+                    <td colspan="5" class="text-right table-light td-venta"><strong>Efectivo</strong></td>
+                    <td class="td-venta"><input type="number" class="input-venta" v-model="pagandoEfectivo" v-on:keyup="insertPagado"></td> 
+                </tr>
+                <tr v-if="Cuenta_formaPago == 'efectivoTarjeta'" v-for='(tarjeta,index) in listTarjetas'>
+                    <td colspan="5" class="text-right table-light td-venta">
+                      <button type="button" class="btn btn-danger btn-sm" v-on:click="eliminarTarjeta(index)">X</button>
+                      <strong>{{tarjeta.nombre}}</strong>
+                    </td>
+                    <td class="td-venta"><input :id="tarjeta.nombre" type="number" class="input-venta" v-on:keyup="FormaTarjeta"></td> 
+                </tr>
 
                   <tr>
-                      <td colspan="6" class="text-right table-light td-venta"><strong>Total a Pagar</strong></td>
+                      <td colspan="5" class="text-right table-light td-venta"><strong>Total a Pagar</strong></td>
                       <td class="td-venta">${{totalNeto - señaPagado}}</td>  
                   </tr> 
 
@@ -439,6 +458,7 @@
               <button type="submit" class="btn btn-primary btn-lg mr-5" v-on:click="exitEditMode">Salir</button>
 
               <button v-if="cuentaActivada && forma_pago == 'Cuenta'"type="submit" class="btn btn-primary btn-lg" v-on:click="modiicarCuenta()">Hecho</button> 
+              <button v-else-if="forma_pago == 'Seña'" type="submit" class="btn btn-primary btn-lg"v-on:click="saveVenta()">Hecho</button> 
               <button v-else type="submit" class="btn btn-primary btn-lg" :disabled="hechoDesactivado"v-on:click="saveVenta()">Hecho</button> 
           </div>
           </span>
@@ -534,8 +554,8 @@
             habilitarCuenta: false,
             habilitarSeña: false,
             cuentaActivada: false,
-            pagandoEfectivo: '',
-            pagandoTarjeta: '',
+            pagandoEfectivo: 0,
+            pagandoTarjeta: 0,
             cuentaCliente: '',
             hechoDesactivado: true,
             descripcion: '',
@@ -875,8 +895,8 @@
 
                 } else if(this.forma_pago == 'Seña'){
                   seña= this.señaPagado;
-                  enEfectivo= 0;
-                  enTarjeta = 0;
+                  enEfectivo= this.pagandoEfectivo;
+                  enTarjeta = this.pagandoTarjeta;
                   ventaEstado = 'Seña';
                   deuda = (parseInt(this.totalNeto) - parseInt(this.señaPagado))
                 }
@@ -1033,6 +1053,16 @@
                               });
                            });
                     }
+                    this.listTarjetas.forEach((tarjeta)=>{
+                      let parametros = {
+                        nombre: tarjeta.nombre,
+                        total: tarjeta.total,
+                        venta_id : venta.id
+                      }
+                      axios.post('tarjetas', parametros).then((response)=>{
+                        //console.log(response);
+                      })
+                    })
             
                   }
                   else
@@ -1303,6 +1333,7 @@
             console.log(this.listTarjetas)
           },
           FormaTarjeta(e){
+            this.pagandoTarjeta=0
             var total = 0;
             this.listTarjetas.forEach(tarjeta=>{
               tarjeta.total = parseInt($('#'+tarjeta.nombre).val());
@@ -1313,12 +1344,17 @@
               let valor = tarjeta.total
               total += valor;
             })
-            console.log(total);
+            this.pagandoTarjeta = parseInt(total)
+            console.log(this.pagandoTarjeta);
             if(total == this.totalNeto){
               console.log('Son Iguales');
               this.hechoDesactivado = false;
             } else {
               this.hechoDesactivado = true;
+            }
+            if(this.forma_pago == 'Seña')
+            {
+              this.insertPagado()
             }
           },
           FormaEyT(e){
@@ -1604,7 +1640,33 @@
             }else{
               this.cambiarFechaVenta=true
             }
-          }
+          },
+          insertPagado(e){
+            var valorPagadoEfectivo=0
+            var valorPagadoTarjeta=0
+            if(this.Cuenta_formaPago == 'Efectivo'){
+              valorPagadoEfectivo=parseInt(this.pagandoEfectivo)
+              valorPagadoTarjeta=0
+            }
+            if(this.Cuenta_formaPago == 'Tarjeta'){
+              valorPagadoEfectivo=0
+              valorPagadoTarjeta=this.pagandoTarjeta
+            }
+            if(this.Cuenta_formaPago == 'efectivoTarjeta'){
+              valorPagadoEfectivo= parseInt(this.pagandoEfectivo)
+              valorPagadoTarjeta= parseInt(this.pagandoTarjeta)
+            }
+
+            if(isNaN(this.pagandoEfectivo)){
+              this.pagandoEfectivo = 0
+            }
+            if(isNaN(this.pagandoTarjeta)){
+              this.pagandoTarjeta = 0
+            }
+            console.log("Efectivo: "+valorPagadoEfectivo)
+            console.log("Tarjeta: "+valorPagadoTarjeta)
+            this.señaPagado = valorPagadoEfectivo+valorPagadoTarjeta
+        },
 
       },
       computed: {

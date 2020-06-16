@@ -64,18 +64,26 @@
               </tr>
               <tr v-if="señaMode">
                   <td colspan="5" class="text-right table-light td-venta" ><strong>Total Neto</strong></td>
-                  <td class="td-venta">{{señaMode[0].total}}</td> 
+                  <td class="td-venta">${{señaMode[0].total}}</td> 
               </tr> 
 
+              <tr v-if="señaMode && señaMode[0].pagoEfectivo > 0">
+                  <td colspan="5" class="text-right  td-venta" data-toggle="modal" data-target="#exampleModalScrollable"><strong>Total Pagado en Efectivo</strong></td>
+                  <td class="td-venta">${{señaMode[0].pagoEfectivo}}</td> 
+              </tr> 
+              <tr v-if="señaMode && señaMode[0].pagoTarjeta > 0">
+                  <td colspan="5" class="text-right  td-venta" data-toggle="modal" data-target="#exampleModalScrollable"><strong>Total Pagado en Tarjeta</strong></td>
+                  <td class="td-venta">${{señaMode[0].pagoTarjeta}}</td> 
+              </tr> 
               <tr v-if="señaMode">
                   <td colspan="5" class="text-right table-secondary td-venta totalPagado" data-toggle="modal" data-target="#exampleModalScrollable"><strong>Total Pagado</strong></td>
-                  <td class="td-venta">{{señaMode[0].seña}}</td> 
+                  <td class="td-venta">${{señaMode[0].seña}}</td> 
               </tr> 
 
 
               <tr v-if="señaMode">
                   <td colspan="5" class="text-right table-light td-venta"><strong>Total a Pagar</strong></td>
-                  <td class="td-venta">{{señaMode[0].deuda}}</td> 
+                  <td class="td-venta">${{señaMode[0].deuda}}</td> 
               </tr> 
             </tbody>
           </table>
@@ -117,16 +125,11 @@
                         <input class="form-control" :value="señaMode[0].deuda - pagoDeuda" disabled >
                       </div>
                     </div>
-                    <div class="form-group row">
-                      <label class="col-sm-3 col-form-label">Vencimiento</label>
-                      <div class="input-group col-sm-5">
-                        15-03-2019 (faltan 7 dias)
-                      </div>
-                    </div>
+
                     <div class="form-group row" >
                       <label for="inputPago" class="col-sm-3 col-form-label">Pagar</label>
                       <div class="input-group col-sm-5">
-                        <input type="number" class="form-control" v-model="pagoDeuda" disabled >
+                        <input type="number" class="form-control" v-model="pagoDeuda">
                         <div class="input-group-append">
                           <button class="btn btn-outline-secondary" style="cursor: default;" type="button" id="button-addon2"><i class="fas fa-dollar-sign"></i></button>
                         </div>
@@ -142,7 +145,7 @@
                   </div>
                 </div>
                 <div class="modal-footer">
-                  <button class="btn btn-primary ml-3" :disabled="habilitarGuardar"  data-dismiss="modal" v-on:click="guardar">Guardar</button>
+                  <button class="btn btn-primary ml-3"  data-dismiss="modal" v-on:click="guardar">Guardar</button>
                   <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
                 </div>
               </div>
@@ -214,54 +217,65 @@
             this.habilitarGuardar = false;
           },
           guardar(){
+            let estado = ''
+            let deuda = this.señaMode[0].total - parseInt(this.señaMode[0].pagoEfectivo+parseInt(this.pagoDeuda)+this.señaMode[0].pagoTarjeta)
+            if(parseInt(this.pagoDeuda) == this.señaMode[0].deuda){
+              estado = 'Finalizado'
+            }else{
+              estado = 'Seña'
+            }
             var paramsVenta= {
               cliente_id: this.señaMode[0].cliente_id,
               forma_pago: this.señaMode[0].forma_pago,
-              pagoEfectivo: this.señaMode[0].total,
-              pagoTarjeta: 0,
+              pagoEfectivo: this.señaMode[0].pagoEfectivo+parseInt(this.pagoDeuda),
+              pagoTarjeta: this.señaMode[0].pagoTarjeta,
               total: this.señaMode[0].total,
-              seña: 0,
-              deuda: 0,
-              estado: 'Finalizado'
+              seña: this.señaMode[0].seña+parseInt(this.pagoDeuda),
+              deuda: deuda,
+              estado: estado
             }
             axios.put('ventas/'+this.señaMode[0].id,paramsVenta).then(response=>{
               console.log('Venta Finalizada');
               console.log(response.data);
               var venta = response.data;
-              this.productsVendidos.forEach(product=>{
-                var comienzo = product.estado.indexOf('(');
-                var fin = product.estado.indexOf(')');
-                var idProducto = product.estado.slice(comienzo+1,fin)
-                axios.delete('products/'+idProducto).then(response=>{
-                  console.log('Producto Eliminado de Inventario');
-                  console.log(response.data);
+              if(estado == 'Finalizado'){
+
+                this.productsVendidos.forEach(product=>{
+                  var comienzo = product.estado.indexOf('(');
+                  var fin = product.estado.indexOf(')');
+                  var idProducto = product.estado.slice(comienzo+1,fin)
+                  axios.delete('products/'+idProducto).then(response=>{
+                    console.log('Producto Eliminado de Inventario');
+                    console.log(response.data);
+
+                  })
+                  let paramsProduct = {
+                      nombre: product.producto,
+                      categoria_id: product.categoria_id,
+                      cuenta_id : '',
+                      n_serie : product.n_serie,
+                      talle : product.talle,
+                      color : product.color,
+                      precio: product.precio,
+                      costo: product.costo,
+                      cantidad: product.cantidad,
+                      descuento: product.descuento,
+                      estado: 'Vendido'
+                  }
+                  axios.post('productsvendidos/'+venta.id, paramsProduct).then((response)=>
+                  {
+                    console.log(response);
+                  });
 
                 })
-                let paramsProduct = {
-                    nombre: product.producto,
-                    categoria_id: product.categoria_id,
-                    cuenta_id : '',
-                    n_serie : product.n_serie,
-                    talle : product.talle,
-                    color : product.color,
-                    precio: product.precio,
-                    costo: product.costo,
-                    cantidad: product.cantidad,
-                    descuento: product.descuento,
-                    estado: 'Vendido'
-                }
-                axios.post('productsvendidos/'+venta.id, paramsProduct).then((response)=>
-                {
-                  console.log('Producto Registrado pero Sigue en inventario')
-                  this.$toasted.show('Seña Realizada Satisfactoriamente', { 
-                     theme: "toasted-primary", 
-                     position: "top-right", 
-                     duration : 2000
-                  });
-                  this.$emit('exitSena');
-                });
-
-              })
+              }
+              console.log('Producto Registrado pero Sigue en inventario')
+              this.$toasted.show('Seña Realizada Satisfactoriamente', { 
+                 theme: "toasted-primary", 
+                 position: "top-right", 
+                 duration : 2000
+              });
+              this.$emit('exitSena');
 
             })
           }
