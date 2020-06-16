@@ -42,9 +42,9 @@
                         </td>
                       </tr>
                     </tbody>
-                    <pagination :data="listaClients" @pagination-change-page="getResults" class="float-right">
-                    </pagination>
                   </table>
+                    <pagination :data="listaClients" :limit="2" @pagination-change-page="getResults" class="float-right">
+                    </pagination>
               </div>
           </div>
         </div>

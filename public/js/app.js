@@ -8182,6 +8182,27 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   props: {
     editMode: {},
@@ -8234,7 +8255,9 @@ __webpack_require__.r(__webpack_exports__);
       totalNetoAnterior: 0,
       Cuenta_formaPago: '',
       cambiarFechaVenta: false,
-      fechaElegida: new Date()
+      fechaElegida: new Date(),
+      cantidadDescuento: 0,
+      descuentoCantidadActivate: false
     };
   },
   mounted: function mounted() {
@@ -8309,6 +8332,10 @@ __webpack_require__.r(__webpack_exports__);
 
         if (this.descuentoActivate) {
           this.agregarDescuento();
+        }
+
+        if (this.descuentoCantidad) {
+          this.agregarDescuentoCantidad();
         }
 
         if (this.promocion2x1Activate) {
@@ -8614,6 +8641,11 @@ __webpack_require__.r(__webpack_exports__);
 
           if (_this3.descuentoActivate) {
             ventaEstado += ' (Descuento ' + _this3.valorDescuento + '%)';
+            promocion = _this3.promocion;
+          }
+
+          if (_this3.descuentoCantidadActivate) {
+            ventaEstado += ' (Descuento $' + _this3.cantidadDescuento + ')';
             promocion = _this3.promocion;
           }
         }
@@ -9203,7 +9235,6 @@ __webpack_require__.r(__webpack_exports__);
         this.productsVenta.forEach(function (product) {
           _this8.totalNeto = product.precio;
         });
-        console.log('2x1 desactivado');
         this.promocion2x1Activate = false;
         this.hechoDesactivado = false;
       }
@@ -9333,6 +9364,17 @@ __webpack_require__.r(__webpack_exports__);
 
       if (this.recargoActivate) {
         this.cargarRecargo();
+      }
+    },
+    agregarDescuentoCantidad: function agregarDescuentoCantidad() {
+      console.log(this.cantidadDescuento);
+      this.totalNeto = this.obtenerTotal();
+      this.descuentoCantidadActivate = true;
+      this.totalDescuento = this.cantidadDescuento;
+      this.totalNeto = this.totalNeto - parseInt(this.cantidadDescuento);
+
+      if (this.forma_pago == 'Efectivo') {
+        this.pagoEfectivo = this.totalNeto;
       }
     },
     obtenerTotal: function obtenerTotal() {
@@ -94374,9 +94416,7 @@ var render = function() {
                     })
                   ]),
                   _vm._v(" "),
-                  _vm.forma_pago == "Efectivo" ||
-                  _vm.forma_pago == "Tarjeta" ||
-                  _vm.forma_pago == "efectivoTarjeta"
+                  _vm.forma_pago !== "Cuenta" && _vm.forma_pago !== "Seña"
                     ? _c("div", { staticClass: "form-group col-md-3" }, [
                         _c("label", { attrs: { for: "inputState" } }, [
                           _vm._v("Promocion")
@@ -94419,8 +94459,14 @@ var render = function() {
                             ]),
                             _vm._v(" "),
                             _c("option", { attrs: { value: "descuento" } }, [
-                              _vm._v("Descuento")
-                            ])
+                              _vm._v("Descuento (%)")
+                            ]),
+                            _vm._v(" "),
+                            _c(
+                              "option",
+                              { attrs: { value: "descuentoCantidad" } },
+                              [_vm._v("Descuento ($)")]
+                            )
                           ]
                         )
                       ])
@@ -94464,6 +94510,60 @@ var render = function() {
                             )
                           ])
                         ])
+                      ])
+                    : _vm._e(),
+                  _vm._v(" "),
+                  _vm.promocion == "descuentoCantidad"
+                    ? _c("div", { staticClass: "form-group col-md-3" }, [
+                        _c("label", [_vm._v("Descuento")]),
+                        _vm._v(" "),
+                        _c(
+                          "select",
+                          {
+                            directives: [
+                              {
+                                name: "model",
+                                rawName: "v-model",
+                                value: _vm.cantidadDescuento,
+                                expression: "cantidadDescuento"
+                              }
+                            ],
+                            staticClass: "form-control",
+                            on: {
+                              click: _vm.agregarDescuentoCantidad,
+                              change: function($event) {
+                                var $$selectedVal = Array.prototype.filter
+                                  .call($event.target.options, function(o) {
+                                    return o.selected
+                                  })
+                                  .map(function(o) {
+                                    var val = "_value" in o ? o._value : o.value
+                                    return val
+                                  })
+                                _vm.cantidadDescuento = $event.target.multiple
+                                  ? $$selectedVal
+                                  : $$selectedVal[0]
+                              }
+                            }
+                          },
+                          [
+                            _c("option", { attrs: { value: "250" } }, [
+                              _vm._v("$250")
+                            ]),
+                            _vm._v(" "),
+                            _c("option", { attrs: { value: "500" } }, [
+                              _vm._v("$500")
+                            ]),
+                            _vm._v(" "),
+                            _c("option", { attrs: { value: "750" } }, [
+                              _vm._v("$750")
+                            ]),
+                            _vm._v(" "),
+                            _c("option", { attrs: { value: "1000" } }, [
+                              _vm._v("$1000")
+                            ])
+                          ]
+                        )
                       ])
                     : _vm._e()
                 ]),
@@ -94791,9 +94891,25 @@ var render = function() {
                       ])
                     }),
                     _vm._v(" "),
-                    _vm.editMode.recargo > 0
+                    _vm.editMode.descuento > 0
                       ? _c("tr", [
                           _vm._m(8),
+                          _vm._v(" "),
+                          _c(
+                            "td",
+                            {
+                              staticClass: "td-venta",
+                              staticStyle: { color: "red" },
+                              attrs: { value: _vm.editMode.pagoEfectivo }
+                            },
+                            [_vm._v("$" + _vm._s(_vm.editMode.descuento))]
+                          )
+                        ])
+                      : _vm._e(),
+                    _vm._v(" "),
+                    _vm.editMode.recargo > 0
+                      ? _c("tr", [
+                          _vm._m(9),
                           _vm._v(" "),
                           _c(
                             "td",
@@ -94808,7 +94924,7 @@ var render = function() {
                     _vm._v(" "),
                     _vm.editMode.forma_pago == "Efectivo"
                       ? _c("tr", [
-                          _vm._m(9),
+                          _vm._m(10),
                           _vm._v(" "),
                           _c(
                             "td",
@@ -94847,7 +94963,7 @@ var render = function() {
                     _vm._v(" "),
                     _vm.editMode.forma_pago == "efectivoTarjeta"
                       ? _c("tr", [
-                          _vm._m(10),
+                          _vm._m(11),
                           _vm._v(" "),
                           _c("td", { staticClass: "td-venta" }, [
                             _c("input", {
@@ -94883,9 +94999,15 @@ var render = function() {
                     }),
                     _vm._v(" "),
                     _c("tr", [
-                      _vm._m(11),
+                      _vm._m(12),
                       _vm._v(" "),
-                      _c("td", [_vm._v("$" + _vm._s(_vm.editMode.total))])
+                      _c(
+                        "td",
+                        {
+                          staticStyle: { "font-size": "19px", color: "green" }
+                        },
+                        [_vm._v("$" + _vm._s(_vm.editMode.total))]
+                      )
                     ])
                   ],
                   2
@@ -95027,9 +95149,24 @@ var render = function() {
                         ])
                       : _vm._e(),
                     _vm._v(" "),
+                    _vm.promocion == "descuentoCantidad"
+                      ? _c("tr", [
+                          _vm._m(13),
+                          _vm._v(" "),
+                          _c(
+                            "td",
+                            {
+                              staticClass: "td-venta",
+                              staticStyle: { color: "red" }
+                            },
+                            [_vm._v("-$" + _vm._s(_vm.cantidadDescuento))]
+                          )
+                        ])
+                      : _vm._e(),
+                    _vm._v(" "),
                     _vm.forma_pago == "Efectivo"
                       ? _c("tr", [
-                          _vm._m(12),
+                          _vm._m(14),
                           _vm._v(" "),
                           _c("td", { staticClass: "td-venta" }, [
                             _vm._v("$" + _vm._s(_vm.totalNeto))
@@ -95083,7 +95220,7 @@ var render = function() {
                     _vm._v(" "),
                     _vm.forma_pago == "efectivoTarjeta"
                       ? _c("tr", [
-                          _vm._m(13),
+                          _vm._m(15),
                           _vm._v(" "),
                           _c("td", { staticClass: "td-venta" }, [
                             _c("input", {
@@ -95136,7 +95273,7 @@ var render = function() {
                     }),
                     _vm._v(" "),
                     _c("tr", [
-                      _vm._m(14),
+                      _vm._m(16),
                       _vm._v(" "),
                       _c("td", [
                         _c(
@@ -95330,11 +95467,11 @@ var render = function() {
           },
           [
             _c("div", { staticClass: "modal-content" }, [
-              _vm._m(15),
+              _vm._m(17),
               _vm._v(" "),
               _c("div", { staticClass: "modal-body pt-0" }, [
                 _c("div", { staticClass: "card" }, [
-                  _vm._m(16),
+                  _vm._m(18),
                   _vm._v(" "),
                   _c("div", { staticClass: "card-body" }, [
                     _c("h4", { staticClass: "mb-5" }, [
@@ -95501,6 +95638,19 @@ var staticRenderFns = [
         staticClass: "text-right table-light td-venta",
         attrs: { colspan: "6" }
       },
+      [_c("strong", [_vm._v("Descuento")])]
+    )
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c(
+      "td",
+      {
+        staticClass: "text-right table-light td-venta",
+        attrs: { colspan: "6" }
+      },
       [_c("strong", [_vm._v("Recargo")])]
     )
   },
@@ -95536,8 +95686,25 @@ var staticRenderFns = [
     var _c = _vm._self._c || _h
     return _c(
       "td",
-      { staticClass: "text-right table-light", attrs: { colspan: "6" } },
+      {
+        staticClass: "text-right table-light",
+        staticStyle: { "font-size": "19px" },
+        attrs: { colspan: "6" }
+      },
       [_c("strong", [_vm._v("Total Neto")])]
+    )
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c(
+      "td",
+      {
+        staticClass: "text-right table-light td-venta",
+        attrs: { colspan: "6" }
+      },
+      [_c("strong", [_vm._v("Descuento")])]
     )
   },
   function() {
@@ -95682,11 +95849,11 @@ var render = function() {
               ])
             ]),
             _vm._v(" "),
-            _c("div", { staticClass: "card-body" }, [
-              _c(
-                "table",
-                { staticClass: "table mt-0" },
-                [
+            _c(
+              "div",
+              { staticClass: "card-body" },
+              [
+                _c("table", { staticClass: "table mt-0" }, [
                   _vm._m(1),
                   _vm._v(" "),
                   _c(
@@ -95736,17 +95903,17 @@ var render = function() {
                       ])
                     }),
                     0
-                  ),
-                  _vm._v(" "),
-                  _c("pagination", {
-                    staticClass: "float-right",
-                    attrs: { data: _vm.listaClients },
-                    on: { "pagination-change-page": _vm.getResults }
-                  })
-                ],
-                1
-              )
-            ])
+                  )
+                ]),
+                _vm._v(" "),
+                _c("pagination", {
+                  staticClass: "float-right",
+                  attrs: { data: _vm.listaClients, limit: 2 },
+                  on: { "pagination-change-page": _vm.getResults }
+                })
+              ],
+              1
+            )
           ])
         ])
       ])

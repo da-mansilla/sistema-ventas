@@ -146,12 +146,13 @@
                   <label for="inputState">Precio</label>
                   <input type="number" class="form-control" v-model="precio" disabled="">
                 </div>
-                <div v-if="forma_pago=='Efectivo'||forma_pago=='Tarjeta'||forma_pago=='efectivoTarjeta'"class="form-group col-md-3">
+                <div v-if="forma_pago !== 'Cuenta' && forma_pago !== 'Seña'" class="form-group col-md-3">
                   <label for="inputState">Promocion</label>
                   <select class="form-control" v-on:click="elegirPromocion" v-model="promocion">
                     <option></option>
                     <option value="2x1">2 x 1</option>
-                    <option value="descuento">Descuento</option>
+                    <option value="descuento">Descuento (%)</option>
+                    <option value="descuentoCantidad">Descuento ($)</option>
                   </select>
                 </div>
                 <div v-if="promocion =='descuento'"class="form-group col-md-3">
@@ -162,6 +163,16 @@
                         <button class="btn btn-outline-secondary" v-on:click="agregarDescuento" type="button" id="button-addon2" ><i class="fas fa-plus"></i></button>
                       </div>
                   </div>
+                  
+                </div>
+                <div v-if="promocion == 'descuentoCantidad'" class="form-group col-md-3">
+                  <label>Descuento</label>
+                  <select class="form-control" v-model="cantidadDescuento" v-on:click="agregarDescuentoCantidad">
+                    <option value="250">$250</option>
+                    <option value="500">$500</option>
+                    <option value="750">$750</option>
+                    <option value="1000">$1000</option>
+                  </select>
                   
                 </div>
                 
@@ -324,6 +335,10 @@
                     <span>${{(productVenta.precio * productVenta.cantidad) - productVenta.descuento}}</span>
                   </td>
                 </tr>
+                <tr v-if="editMode.descuento > 0">
+                    <td colspan="6" class="text-right table-light td-venta"><strong>Descuento</strong></td>
+                    <td class="td-venta" v-bind:value="editMode.pagoEfectivo" style="color:red;">${{editMode.descuento}}</td> 
+                </tr>
                 <tr v-if="editMode.recargo > 0">
                     <td colspan="6" class="text-right table-light td-venta"><strong>Recargo</strong></td>
                     <td class="td-venta" v-bind:value="editMode.pagoEfectivo">${{editMode.recargo}}</td> 
@@ -351,8 +366,8 @@
                     <td class="td-venta"><input type="number" class="input-venta" v-bind:value="tarjeta.total" disabled></td> 
                 </tr>
                 <tr>
-                    <td colspan="6" class="text-right table-light"><strong>Total Neto</strong></td>
-                    <td>${{editMode.total}}</td> 
+                    <td colspan="6" class="text-right table-light" style="font-size: 19px;"><strong>Total Neto</strong></td>
+                    <td style="font-size: 19px; color:green;">${{editMode.total}}</td> 
                 </tr>  
               </tbody>
 
@@ -393,6 +408,12 @@
                       <strong>{{TitulovalorDescuento}}</strong>
                     </td>
                     <td class="td-venta" style="color:red;">-${{totalDescuento}}</td>
+                </tr>
+                <tr v-if="promocion == 'descuentoCantidad'">
+                    <td colspan="6" class="text-right table-light td-venta">
+                      <strong>Descuento</strong>
+                    </td>
+                    <td class="td-venta" style="color:red;">-${{cantidadDescuento}}</td>
                 </tr>
                 <tr v-if="forma_pago=='Efectivo'">
                     <td colspan="6" class="text-right table-light td-venta"><strong>Efectivo</strong></td>
@@ -572,7 +593,9 @@
             totalNetoAnterior: 0,
             Cuenta_formaPago:'',
             cambiarFechaVenta: false,
-            fechaElegida: new Date()
+            fechaElegida: new Date(),
+            cantidadDescuento: 0,
+            descuentoCantidadActivate : false
 
 
         };
@@ -626,6 +649,9 @@
               }
               if(this.descuentoActivate){
                 this.agregarDescuento()
+              }
+              if(this.descuentoCantidad){
+                this.agregarDescuentoCantidad()
               }
               if(this.promocion2x1Activate){
                 this.promocion2x1() 
@@ -908,6 +934,10 @@
                   }
                   if(this.descuentoActivate){
                     ventaEstado += ' (Descuento '+this.valorDescuento+'%)'
+                    promocion = this.promocion
+                  }
+                  if(this.descuentoCantidadActivate){
+                    ventaEstado += ' (Descuento $'+this.cantidadDescuento+')'
                     promocion = this.promocion
                   }
                 }
@@ -1391,7 +1421,6 @@
               this.productsVenta.forEach(product=>{
                 this.totalNeto = product.precio
               })
-              console.log('2x1 desactivado')
 
               this.promocion2x1Activate = false;
               this.hechoDesactivado = false;
@@ -1537,6 +1566,17 @@
             })
             if(this.recargoActivate){
               this.cargarRecargo();
+            }
+          },
+          agregarDescuentoCantidad(){
+            console.log(this.cantidadDescuento);
+            this.totalNeto = this.obtenerTotal()
+            this.descuentoCantidadActivate = true;
+
+            this.totalDescuento = this.cantidadDescuento
+            this.totalNeto = this.totalNeto - parseInt(this.cantidadDescuento)
+            if(this.forma_pago == 'Efectivo'){
+              this.pagoEfectivo = this.totalNeto 
             }
           },
           obtenerTotal(destino=''){
