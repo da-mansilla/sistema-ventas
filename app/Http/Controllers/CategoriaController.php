@@ -20,7 +20,10 @@ class CategoriaController extends Controller
     }
     public function categoriasTodas(){
         $categorias = DB::table('categorias')
-                ->select('*')
+                ->leftJoin('products','products.categoria_id','=','categorias.id')
+                ->select('categorias.*')
+                ->where('products.enabled',1)
+                ->groupBy('categorias.id')
                 ->get();
         return $categorias;
     }

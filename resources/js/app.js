@@ -25,6 +25,7 @@ Vue.component('formproducts-component', require('./components/Inventario/FormPro
 Vue.component('formcategorias-component', require('./components/Inventario/FormCategoriasComponent.vue').default);
 Vue.component('tablecategorias-component', require('./components/Inventario/TableCategoriasComponent.vue').default);
 Vue.component('tablefiltro-component', require('./components/Inventario/TableFiltroComponent.vue').default);
+Vue.component('resumeninventario-component', require('./components/Inventario/ResumenComponent.vue').default);
 Vue.component('precioproducts-component', require('./components/Inventario/PrecioProductsComponent.vue').default);
 Vue.component('filtroproducts-component', require('./components/Inventario/FiltroProductsComponent.vue').default);
 

@@ -64,7 +64,6 @@
                                     <th scope="col"></th>
                                     <th scope="col">Color</th>
                                     <th scope="col">Talle</th>
-                                    <th scope="col">Costo</th>
                                     <th scope="col">Precio</th>
                                   </tr>
                                 </thead>
@@ -75,8 +74,7 @@
                                     </th>
                                     <th>{{productos.color}}</th>
                                     <th>{{productos.talle}}</th>
-                                    <th>{{productos.costo}}</th>
-                                    <th>{{productos.precio}}</th>
+                                    <th style="color:green;">${{productos.precio}}</th>
                                   </tr>
                                 </tbody>
                                   

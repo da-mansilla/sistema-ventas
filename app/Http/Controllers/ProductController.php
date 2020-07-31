@@ -333,4 +333,18 @@ class ProductController extends Controller
         }
         return $productosModificados;
     }
+    public function productsPorCategoria(Request $request){
+        $categoriasList = $request->input();
+        $productos = [];
+
+            $products = DB::table('products')
+                        ->leftJoin('categorias','products.categoria_id','=','categorias.id')
+                        ->select('categorias.id', DB::raw('categorias.nombre as nombre_categoria'),'categorias.tipo','products.*')
+                        ->where('products.enabled',1)
+                        ->whereIn('products.categoria_id', $categoriasList)
+                        ->get();
+
+        return $products; 
+        
+    }
 }

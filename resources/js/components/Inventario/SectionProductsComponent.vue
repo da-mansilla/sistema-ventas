@@ -45,27 +45,44 @@
           </div>
         </div>
           
+        <div class="row justify-content-between m-1">
+            <button class="btn btn-primary" @click="abrir_resumen = false">Back</button>
+            <button class="btn btn-primary" @click="abrir_resumen = true">Next</button>
+        </div>
 
-        <tableproducts-component v-if="pagina==1"
-        :listStock='listStock'
-        :listaFiltrada='listaFiltrada'
-        :filtros="filtros"
-        @updateProduct="updateProduct"
-        @deleteProduct="deleteProduct">
-          
-        </tableproducts-component>
-        <tablefiltro-component v-if="pagina==3"
-        :listaFiltrada='listaFiltrada'
-        :filtros="filtros"
-        :informacionListaFiltrada="informacionListaFiltrada"
-        @updateProduct="updateProduct"
-        @deleteProduct="deleteProduct"
-        @filtrarOtraVez="filtrarOtraVez">
-          
-        </tablefiltro-component>
+        <!-- Tablas -->
+        <span v-if="abrir_resumen == false">
+          <tableproducts-component v-if="pagina==1"
+          :listStock='listStock'
+          :listaFiltrada='listaFiltrada'
+          :filtros="filtros"
+          @updateProduct="updateProduct"
+          @deleteProduct="deleteProduct">
+            
+          </tableproducts-component>
+          <tablefiltro-component v-if="pagina==3"
+          :listaFiltrada='listaFiltrada'
+          :filtros="filtros"
+          :informacionListaFiltrada="informacionListaFiltrada"
+          @updateProduct="updateProduct"
+          @deleteProduct="deleteProduct"
+          @filtrarOtraVez="filtrarOtraVez">
+          </tablefiltro-component>
 
-        <tablecategorias-component v-if="pagina==2">
-        </tablecategorias-component>
+          <tablecategorias-component v-if="pagina==2">
+          </tablecategorias-component>
+        </span>
+        <span v-else>
+          <resumeninventario-component
+            :categorias='categorias'>
+            
+          </resumeninventario-component>
+          
+        </span>
+        
+
+        <!-- Resumen -->
+
           
  
       </div>
@@ -84,7 +101,8 @@
           cantidadProducts: 0,
           cantidadCategorias: 0,
           filtros: {},
-          modalFiltro: false
+          modalFiltro: false,
+          abrir_resumen: false
 
         };
       },
