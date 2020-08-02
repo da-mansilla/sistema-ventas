@@ -11,7 +11,7 @@
 		      </h2>
 		    </div>
 
-		    <div id="collapseOne" class="collapse" aria-labelledby="headingOne" data-parent="#accordionExample">
+		    <div id="collapseOne" class="collapse show" aria-labelledby="headingOne" data-parent="#accordionExample">
 			    <div class="card-body">
 			    	<div class="row mt-1">
 						<div class="col-3">
@@ -110,7 +110,7 @@
 				categoria_niñas: false,
 				categoria_unisex: false,
 				
-				tipo_seleccionado: '',
+				tipo_seleccionado: 'Niño',
 
 				cantidad_productos_niñas: 0,
 				cantidad_productos_niños: 0,
@@ -149,6 +149,7 @@
 				if(tipo == 'unisex'){
 					this.tipo_seleccionado = 'Unisex'
 				}
+				this.filtrar()
 			},
 			cantidad_talle(tipo,talle){
 				if(tipo == 'niño'){
@@ -211,9 +212,11 @@
 					})
 
 				}
+				this.filtrar()
 			},
 			click_on_color(ev){
 				this.color_elegido = ev.target.id;
+				this.filtrar()
 			},
 			cantidad_colores(color){
 				let count = 0
@@ -255,7 +258,93 @@
 	                return string;
 				}
 
-			}
+			},
+
+
+			filtrar(){
+				// Categoria
+            	var filtrarCategorias = true;
+            	var listCategorias = []
+				this.categorias.forEach(categoria=>{
+					if(categoria.nombre.toLowerCase() == this.categoria_seleccionada.toLowerCase()){
+						listCategorias.push(categoria)
+					}
+				})          
+
+				// Tipo
+				let enabled_niño = false
+				let enabled_niña = false
+				let enabled_unisex = false
+				if(this.tipo_seleccionado == 'Niño'){
+					enabled_niño = true
+				}
+				if(this.tipo_seleccionado == 'Niña'){
+					enabled_niña = true
+				}
+				if(this.tipo_seleccionado == 'Unisex'){
+					enabled_unisex = true
+				}  
+
+				// Talle
+				let enabled_talle = false
+				let talle = ''
+				if(this.talle_elegido !== ''){
+					enabled_talle = true
+					talle = this.talle_elegido
+				}
+
+				// Color
+				let enabled_color = false
+				let color = ''
+				if(this.color_elegido !== ''){
+					enabled_color = true
+					color = this.color_elegido
+				}
+
+            	let opciones={
+            		 tipo : {
+            		 	Niño: enabled_niño,
+            		 	Niña: enabled_niña,
+            		 	Unisex: enabled_unisex
+            		 },
+            		 categoria: {
+            		 	enabled: filtrarCategorias,
+            		 	categorias: listCategorias
+            		 },
+            		 precio: {
+            		 	enabled: false,
+            		 	desde: 0,
+            		 	hasta: 0
+            		 },
+            		 temporada: {
+            		 	enabled: false,
+            		 	temporada: ''
+            		 },
+            		 producto: {
+            		 	enabled: false,
+            		 	productos: ''
+            		 },
+            		 fecha: {
+            		 	enabled: false,
+            		 	fecha: '',
+            		 	intervaloFechas: false,
+            		 	fechaDesde: '',
+            		 	fechaHasta: ''
+            		 },
+            		 talle:{
+            		 	enabled: enabled_talle,
+            		 	talle: talle
+            		 },
+            		 color:{
+            		 	enabled: enabled_color,
+            		 	color: color
+            		 }
+
+            	};
+            	this.$emit('filtrar',opciones);
+
+            	console.log(opciones);
+            }
 
 
 		},
@@ -264,7 +353,7 @@
 			 	this.colores_list = []
 			 	this.talle_elegido = ''
 			 	this.color_elegido = ''
-			 	
+
 				let categorias_seleccionadas = []
 				this.categorias.forEach(categoria=>{
 					if(categoria.nombre == this.categoria_seleccionada.toLowerCase()){
@@ -325,6 +414,7 @@
 							}
 						})
 					})
+				this.filtrar()
 				
 			}
 		},

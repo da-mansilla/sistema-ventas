@@ -1,10 +1,5 @@
 <template>
     <div>
-      <div v-if="filtros.categoria.enabled">
-        Mostrando Categorias: 
-        <span v-for="categoria in filtros.categoria.categorias"> {{categoria.nombre}} ({{categoria.tipo}}),</span>
-      </div>
-      <span>Productos: {{informacionListaFiltrada.productosTotal}}</span>
         <table class="table table-bordered table-products mt-2">
           <thead>
             <tr class=" table-primary ">

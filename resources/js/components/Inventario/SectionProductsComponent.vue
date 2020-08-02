@@ -48,7 +48,8 @@
         <!-- Tablas -->
 
         <resumeninventario-component
-          :categorias='categorias'>
+          :categorias='categorias'
+          @filtrar='filtrar'>
           
         </resumeninventario-component>
 

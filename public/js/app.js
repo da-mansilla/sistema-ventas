@@ -4992,7 +4992,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       categoria_niños: false,
       categoria_niñas: false,
       categoria_unisex: false,
-      tipo_seleccionado: '',
+      tipo_seleccionado: 'Niño',
       cantidad_productos_niñas: 0,
       cantidad_productos_niños: 0,
       cantidad_productos_unisex: 0,
@@ -5027,6 +5027,8 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       if (tipo == 'unisex') {
         this.tipo_seleccionado = 'Unisex';
       }
+
+      this.filtrar();
     },
     cantidad_talle: function cantidad_talle(tipo, talle) {
       if (tipo == 'niño') {
@@ -5093,9 +5095,12 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
           }
         });
       }
+
+      this.filtrar();
     },
     click_on_color: function click_on_color(ev) {
       this.color_elegido = ev.target.id;
+      this.filtrar();
     },
     cantidad_colores: function cantidad_colores(color) {
       var _this2 = this;
@@ -5141,6 +5146,94 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
         var string = color.replace(color.charAt(0), chart);
         return string;
       }
+    },
+    filtrar: function filtrar() {
+      var _this3 = this;
+
+      // Categoria
+      var filtrarCategorias = true;
+      var listCategorias = [];
+      this.categorias.forEach(function (categoria) {
+        if (categoria.nombre.toLowerCase() == _this3.categoria_seleccionada.toLowerCase()) {
+          listCategorias.push(categoria);
+        }
+      }); // Tipo
+
+      var enabled_niño = false;
+      var enabled_niña = false;
+      var enabled_unisex = false;
+
+      if (this.tipo_seleccionado == 'Niño') {
+        enabled_niño = true;
+      }
+
+      if (this.tipo_seleccionado == 'Niña') {
+        enabled_niña = true;
+      }
+
+      if (this.tipo_seleccionado == 'Unisex') {
+        enabled_unisex = true;
+      } // Talle
+
+
+      var enabled_talle = false;
+      var talle = '';
+
+      if (this.talle_elegido !== '') {
+        enabled_talle = true;
+        talle = this.talle_elegido;
+      } // Color
+
+
+      var enabled_color = false;
+      var color = '';
+
+      if (this.color_elegido !== '') {
+        enabled_color = true;
+        color = this.color_elegido;
+      }
+
+      var opciones = {
+        tipo: {
+          Niño: enabled_niño,
+          Niña: enabled_niña,
+          Unisex: enabled_unisex
+        },
+        categoria: {
+          enabled: filtrarCategorias,
+          categorias: listCategorias
+        },
+        precio: {
+          enabled: false,
+          desde: 0,
+          hasta: 0
+        },
+        temporada: {
+          enabled: false,
+          temporada: ''
+        },
+        producto: {
+          enabled: false,
+          productos: ''
+        },
+        fecha: {
+          enabled: false,
+          fecha: '',
+          intervaloFechas: false,
+          fechaDesde: '',
+          fechaHasta: ''
+        },
+        talle: {
+          enabled: enabled_talle,
+          talle: talle
+        },
+        color: {
+          enabled: enabled_color,
+          color: color
+        }
+      };
+      this.$emit('filtrar', opciones);
+      console.log(opciones);
     }
   },
   watch: {
@@ -5148,7 +5241,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       var _categoria_seleccionada = _asyncToGenerator(
       /*#__PURE__*/
       _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee() {
-        var _this3 = this;
+        var _this4 = this;
 
         var categorias_seleccionadas, niños, niñas, unisex, categoriasID;
         return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee$(_context) {
@@ -5160,7 +5253,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
                 this.color_elegido = '';
                 categorias_seleccionadas = [];
                 this.categorias.forEach(function (categoria) {
-                  if (categoria.nombre == _this3.categoria_seleccionada.toLowerCase()) {
+                  if (categoria.nombre == _this4.categoria_seleccionada.toLowerCase()) {
                     categorias_seleccionadas.push(categoria);
                   }
                 });
@@ -5172,17 +5265,17 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
                 this.categoria_unisex = false;
                 categorias_seleccionadas.forEach(function (categoria) {
                   if (categoria.tipo == 'Niño') {
-                    _this3.categoria_niños = categoria;
+                    _this4.categoria_niños = categoria;
                     niños = false;
                   }
 
                   if (categoria.tipo == 'Niña') {
-                    _this3.categoria_niñas = categoria;
+                    _this4.categoria_niñas = categoria;
                     niñas = false;
                   }
 
                   if (categoria.tipo == 'Unisex') {
-                    _this3.categoria_unisex = categoria;
+                    _this4.categoria_unisex = categoria;
                     unisex = false;
                   }
                 });
@@ -5192,34 +5285,37 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
                 });
                 _context.next = 16;
                 return axios.post('/productsPorCategoria', categoriasID).then(function (response) {
-                  _this3.cantidad_productos_niñas = 0;
-                  _this3.cantidad_productos_niños = 0;
-                  _this3.cantidad_productos_unisex = 0;
-                  _this3.productos_niñas = [];
-                  _this3.productos_niños = [];
-                  _this3.productos_unisex = [];
+                  _this4.cantidad_productos_niñas = 0;
+                  _this4.cantidad_productos_niños = 0;
+                  _this4.cantidad_productos_unisex = 0;
+                  _this4.productos_niñas = [];
+                  _this4.productos_niños = [];
+                  _this4.productos_unisex = [];
                   response.data.forEach(function (product) {
                     if (product.tipo == 'Niño') {
-                      _this3.cantidad_productos_niños++;
+                      _this4.cantidad_productos_niños++;
 
-                      _this3.productos_niños.push(product);
+                      _this4.productos_niños.push(product);
                     }
 
                     if (product.tipo == 'Niña') {
-                      _this3.cantidad_productos_niñas++;
+                      _this4.cantidad_productos_niñas++;
 
-                      _this3.productos_niñas.push(product);
+                      _this4.productos_niñas.push(product);
                     }
 
                     if (product.tipo == 'Unisex') {
-                      _this3.cantidad_productos_unisex++;
+                      _this4.cantidad_productos_unisex++;
 
-                      _this3.productos_unisex.push(product);
+                      _this4.productos_unisex.push(product);
                     }
                   });
                 });
 
               case 16:
+                this.filtrar();
+
+              case 17:
               case "end":
                 return _context.stop();
             }
@@ -5306,6 +5402,7 @@ function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try
 
 function _asyncToGenerator(fn) { return function () { var self = this, args = arguments; return new Promise(function (resolve, reject) { var gen = fn.apply(self, args); function _next(value) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value); } function _throw(err) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err); } _next(undefined); }); }; }
 
+//
 //
 //
 //
@@ -5709,11 +5806,6 @@ __webpack_require__.r(__webpack_exports__);
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-//
-//
-//
-//
-//
 //
 //
 //
@@ -89996,7 +90088,7 @@ var render = function() {
             _c(
               "div",
               {
-                staticClass: "collapse",
+                staticClass: "collapse show",
                 attrs: {
                   id: "collapseOne",
                   "aria-labelledby": "headingOne",
@@ -90579,7 +90671,8 @@ var render = function() {
         ]),
         _vm._v(" "),
         _c("resumeninventario-component", {
-          attrs: { categorias: _vm.categorias }
+          attrs: { categorias: _vm.categorias },
+          on: { filtrar: _vm.filtrar }
         }),
         _vm._v(" "),
         _vm.pagina == 1
@@ -90835,33 +90928,6 @@ var render = function() {
   return _c(
     "div",
     [
-      _vm.filtros.categoria.enabled
-        ? _c(
-            "div",
-            [
-              _vm._v("\n    Mostrando Categorias: \n    "),
-              _vm._l(_vm.filtros.categoria.categorias, function(categoria) {
-                return _c("span", [
-                  _vm._v(
-                    " " +
-                      _vm._s(categoria.nombre) +
-                      " (" +
-                      _vm._s(categoria.tipo) +
-                      "),"
-                  )
-                ])
-              })
-            ],
-            2
-          )
-        : _vm._e(),
-      _vm._v(" "),
-      _c("span", [
-        _vm._v(
-          "Productos: " + _vm._s(_vm.informacionListaFiltrada.productosTotal)
-        )
-      ]),
-      _vm._v(" "),
       _c("table", { staticClass: "table table-bordered table-products mt-2" }, [
         _vm._m(0),
         _vm._v(" "),

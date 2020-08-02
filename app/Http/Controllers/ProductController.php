@@ -33,6 +33,8 @@ class ProductController extends Controller
         $desde = '';
         $hasta = '';
         $productos = [];
+        $talle = '';
+        $color = '';
         // Tipo
         if($request->input('tipo')['Niño']) {array_push($tipos,'Niño'); };
         if($request->input('tipo')['Niña']) {array_push($tipos,'Niña'); };
@@ -81,6 +83,15 @@ class ProductController extends Controller
         if($request->input('producto')['enabled']){
             $productos = $request->input('producto')['productos'];
         }
+        // Talle
+        if($request->input('talle')['enabled']){
+            $talle = $request->input('talle')['talle'];
+        }
+        // Color
+
+        if($request->input('color')['enabled']){
+            $color = $request->input('color')['color'];
+        }
 
         $products = DB::table('products')
                 ->leftJoin('categorias', 'products.categoria_id', '=', 'categorias.id')
@@ -105,6 +116,12 @@ class ProductController extends Controller
                 })
                 ->when($request->input('producto')['enabled'], function($query) use($productos) {
                     return $query->whereIn('products.n_serie',$productos);
+                })
+                ->when($request->input('talle')['enabled'], function($query) use($talle) {
+                    return $query->where('products.talle',$talle);
+                })
+                ->when($request->input('color')['enabled'], function($query) use($color) {
+                    return $query->where('products.color','like',$color);
                 })
                 ->orderBy('created_at','desc')
                 ->get();
