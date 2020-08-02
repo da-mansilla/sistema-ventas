@@ -1,6 +1,6 @@
 <template>
     <div>
-        <table class="table table-bordered table-products ">
+        <table class="table table-bordered table-products mt-2">
           <thead>
             <tr class=" table-primary ">
               <th scope="col">Opciones</th>

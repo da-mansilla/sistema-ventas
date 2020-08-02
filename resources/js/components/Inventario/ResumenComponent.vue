@@ -1,110 +1,101 @@
 <template>
-	<div class="container-fluid mt-5 position-relative">
-		<div class="m-2">
-			<div class="row justify-content-center bg-primary">
-				<h2 class=" pt-1 text-white ">Resumen</h2>
-			</div>
-			<div class="row mt-3">
-				<div class="col-3">
-					<select class="form-control" ref="select" @click="ver">
-						<option v-for="categoria in categorias_ordenadas" >{{categoria}}</option>
-					</select>
-				</div>
-				<div class="col-3">
-					<h4 class="ml-3 mb-2"><strong>{{categoria_seleccionada}}: {{cantidad_productos}}</strong></h4>
-					<div class=" text-center">
-						<div class="list-group" id="lista_tipos" role="tablist">
-					      <a  @click="abrir_lista_colores" class="list-group-item list-group-item-action" id="list-talles-niño" data-toggle="list" href="#talles_niño" role="tab"><h5>Niños : <strong>{{ cantidad_productos_niños }}</strong></h5></a>
+	<div class="container-fluid mt-2 px-0 position-relative">
 
-					      <a @click="abrir_lista_colores" class="list-group-item list-group-item-action" id="list-talles-niña" data-toggle="list" href="#talles_niña" role="tab"><h5>Niñas : <strong>{{ cantidad_productos_niñas }}</strong></h5></a>
+		<div class="accordion" id="accordionExample">
+		  <div class="card">
+		    <div class="justify-content-center " id="headingOne">
+		      <h2 class="mb-0 pt-1">
+		        <button class="btn btn-primary btn-link btn-block text-left" type="button" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+		          <h2 class="text-white text-center"><i class="fas fa-angle-double-down"></i></h2>
+		        </button>
+		      </h2>
+		    </div>
 
-					      <a @click="abrir_lista_colores" class="list-group-item list-group-item-action" id="list-talles-unisex" data-toggle="list" href="#talles_unisex" role="tab"><h5>Unisex : <strong>{{ cantidad_productos_unisex }}</strong></h5></a>
-					    </div>
-					</div>
-				</div>
-				<div class="col-3">
-					<h4 class=" mb-2"><strong>Talles Disponibles</strong></h4>
-					<div data-spy="scroll" data-offset="0" style="height: 200px; overflow-y:scroll;">
-						<div class="overflow-auto">
-							<div class="tab-content">
-							    <div class="tab-pane fade" id="talles_niño" role="tabpanel" aria-labelledby="list-talles-niño">
-							      	<ul v-for="talles in talles_productos_niños" class="list-group">
-									  <li :id="talles"class="list-group-item d-flex justify-content-between align-items-center list-group-item list-group-item-action h5" @click="click_on_talle" style="cursor: pointer;">
-									   	{{talles}}
-									    <span class="badge badge-primary badge-pill text-black h4">{{cantidad_talle('niño',talles)}}</span>
-									  </li>
-									</ul>
-							  	</div>
-
-
-							    <div class="tab-pane fade" id="talles_niña" role="tabpanel" aria-labelledby="list-talles-niña">
-							     	<ul v-for="talles in talles_productos_niñas" class="list-group">
-									  <li :id="talles" class="list-group-item d-flex justify-content-between align-items-center list-group-item list-group-item-action h5" @click="click_on_talle" style="cursor: pointer;">
-									    {{talles}}
-									    <span class="badge badge-primary badge-pill text-black h4">{{cantidad_talle('niña',talles)}}</span>
-									  </li>
-
-									</ul>
-							  	</div>
-
-							  	 <div class="tab-pane fade" id="talles_unisex" role="tabpanel" aria-labelledby="list-talles-unisex">
-							     	<ul v-for="talles in talles_productos_unisex" class="list-group">
-									  <li :id="talles" class="list-group-item d-flex justify-content-between align-items-center list-group-item list-group-item-action h5" @click="click_on_talle" style="cursor: pointer;">
-									    {{talles}}
-									    <span class="badge badge-primary badge-pill text-black h4">{{cantidad_talle('unisex',talles)}}</span>
-									  </li>
-
-									</ul>
-							  	</div>
-
-						    </div>
-							
+		    <div id="collapseOne" class="collapse" aria-labelledby="headingOne" data-parent="#accordionExample">
+			    <div class="card-body">
+			    	<div class="row mt-1">
+						<div class="col-3">
+							<h4 class=" mb-2"><strong>Categorias</strong></h4>
+							<select class="form-control" ref="select" @click="ver">
+								<option v-for="categoria in categorias_ordenadas" >{{categoria}}</option>
+							</select>
 						</div>
-					</div>
-				</div>
-				<div class="col 3">
-					<h4 class=" mb-2"><strong>Colores Disponibles</strong></h4>
-					<div data-spy="scroll"  data-offset="0" style="height: 200px; overflow-y:scroll;">
-					 	 <div class="overflow-auto">
-							<div class="tab-content">
-							    <div class="tab-pane fade" id="" role="tabpanel" aria-labelledby="">
-							      	<ul  class="list-group">
-									  <li class="list-group-item d-flex justify-content-between align-items-center list-group-item list-group-item-action h5">
-									   	
-									    <span class="badge badge-primary badge-pill text-black h4"></span>
-									  </li>
-									</ul>
-							  	</div>
+						<div class="col-3">
+							<h4 class="ml-3 mb-2"><strong>{{categoria_seleccionada}}: {{cantidad_productos}}</strong></h4>
+							<div class=" text-center">
+								<div class="list-group" id="lista_tipos" role="tablist">
+							      <a @click="seleccionar_tipo('niño')"   class="list-group-item list-group-item-action" id="list-talles-niño" data-toggle="list" href="#talles_niño" role="tab"><h5>Niños : <strong>{{ cantidad_productos_niños }}</strong></h5></a>
 
+							      <a @click="seleccionar_tipo('niña')"  class="list-group-item list-group-item-action" id="list-talles-niña" data-toggle="list" href="#talles_niña" role="tab"><h5>Niñas : <strong>{{ cantidad_productos_niñas }}</strong></h5></a>
 
-							    <div class="tab-pane fade" id="" role="tabpanel" aria-labelledby="">
-							     	<ul  class="list-group">
-									  <li  class="list-group-item d-flex justify-content-between align-items-center list-group-item list-group-item-action h5">
-									    
-									    <span class="badge badge-primary badge-pill text-black h4"></span>
-									  </li>
-
-									</ul>
-							  	</div>
-
-							  	 <div class="tab-pane fade" id="" role="tabpanel" aria-labelledby="">
-							     	<ul  class="list-group">
-									  <li  class="list-group-item d-flex justify-content-between align-items-center list-group-item list-group-item-action h5">
-									    
-									    <span class="badge badge-primary badge-pill text-black h4"></span>
-									  </li>
-
-									</ul>
-							  	</div>
-
-						    </div>
-							
+							      <a @click="seleccionar_tipo('unisex')"  class="list-group-item list-group-item-action" id="list-talles-unisex" data-toggle="list" href="#talles_unisex" role="tab"><h5>Unisex : <strong>{{ cantidad_productos_unisex }}</strong></h5></a>
+							    </div>
+							</div>
 						</div>
-					</div>
-				</div>
-			</div>
-			
+						<div class="col-3">
+							<h4 class=" mb-2"><strong>Talles Disponibles</strong></h4>
+							<div data-spy="scroll" data-offset="0" style="height: 163px; overflow-y:scroll;">
+								<div class="overflow-auto">
+									<div class="tab-content">
+									    <div class="tab-pane fade" id="talles_niño" role="tabpanel" aria-labelledby="list-talles-niño">
+									      	<ul v-for="talles in talles_productos_niños" class="list-group">
+											  <li :id=" 'niño_'+talles" v-bind:class="{'active': talle_elegido == talles}"class="list-group-item d-flex justify-content-between align-items-center list-group-item list-group-item-action h5 my-0" @click="click_on_talle" style="cursor: pointer;">
+											   	{{talles}}
+											    <span class="badge badge-primary badge-pill text-black h4">{{cantidad_talle('niño',talles)}}</span>
+											  </li>
+											</ul>
+									  	</div>
+
+
+									    <div class="tab-pane fade" id="talles_niña" role="tabpanel" aria-labelledby="list-talles-niña">
+									     	<ul v-for="talles in talles_productos_niñas" class="list-group">
+											  <li :id=" 'niña_'+talles" v-bind:class="{'active': talle_elegido == talles}"class="list-group-item d-flex justify-content-between align-items-center list-group-item list-group-item-action h5 my-0" @click="click_on_talle" style="cursor: pointer;">
+											    {{talles}}
+											    <span class="badge badge-primary badge-pill text-black h4">{{cantidad_talle('niña',talles)}}</span>
+											  </li>
+
+											</ul>
+									  	</div>
+
+									  	 <div class="tab-pane fade" id="talles_unisex" role="tabpanel" aria-labelledby="list-talles-unisex">
+									     	<ul v-for="talles in talles_productos_unisex" class="list-group">
+											  <li :id=" 'unisex_'+talles" v-bind:class="{'active': talle_elegido == talles}"class="list-group-item d-flex justify-content-between align-items-center list-group-item list-group-item-action h5 my-0" @click="click_on_talle" style="cursor: pointer;">
+											    {{talles}}
+											    <span class="badge badge-primary badge-pill text-black h4">{{cantidad_talle('unisex',talles)}}</span>
+											  </li>
+
+											</ul>
+									  	</div>
+
+								    </div>
+									
+								</div>
+							</div>
+						</div>
+						<div class="col 3">
+							<h4 class=" mb-2"><strong>Colores Disponibles</strong></h4>
+							<div data-spy="scroll"  data-offset="0" style="height: 163px; overflow-y:scroll;">
+							 	 <div class="overflow-auto">
+									<ul v-for="color in colores_list" class="list-group" id="lista_colores">
+									  <li :id="color" @click="click_on_color" v-bind:class="{'active': color_elegido == color}" class="list-group-item d-flex justify-content-between align-items-center list-group-item list-group-item-action h5 my-0">
+									    {{color_format(color)}}
+									    <span class="badge badge-primary badge-pill h4">{{cantidad_colores(color)}}</span>
+									  </li>
+									</ul>
+									
+								</div>
+							</div>
+						</div>
+					</div>  
+			    </div>
+		    </div>
+		  </div>
 		</div>
+
+
+
+
+		
 	</div>
 </template>
 <script>
@@ -118,6 +109,8 @@
 				categoria_niños: false,
 				categoria_niñas: false,
 				categoria_unisex: false,
+				
+				tipo_seleccionado: '',
 
 				cantidad_productos_niñas: 0,
 				cantidad_productos_niños: 0,
@@ -125,7 +118,13 @@
 
 				productos_niñas: [],
 				productos_niños: [],
-				productos_unisex: []
+				productos_unisex: [],
+
+				talle_elegido: '',
+
+				color_elegido: '',
+
+				colores_list: []
 
 			}
 		},
@@ -135,6 +134,21 @@
 		methods:{
 			ver(){
 				this.categoria_seleccionada = this.$refs.select.value
+
+			},
+			seleccionar_tipo(tipo){
+				this.color_elegido= ''
+				this.colores_list = []
+				this.talle_elegido = ''
+				if(tipo == 'niño'){
+					this.tipo_seleccionado = 'Niño'
+				}
+				if(tipo == 'niña'){
+					this.tipo_seleccionado = 'Niña'
+				}
+				if(tipo == 'unisex'){
+					this.tipo_seleccionado = 'Unisex'
+				}
 			},
 			cantidad_talle(tipo,talle){
 				if(tipo == 'niño'){
@@ -167,18 +181,90 @@
 
 			},
 			click_on_talle(ev){
-				console.log(ev);
+				this.color_elegido = ''
+				let target = ev.target.id;
+				let index = target.indexOf('_')
+				let tipo = target.slice(0,index)
+				let talle = target.slice(index+1)
+				this.talle_elegido = talle
+				this.colores_list = []
+				if(tipo == 'niño'){
+					this.productos_niños.forEach(product=>{
+						if(this.colores_list.indexOf(product.color) == -1 && product.talle == talle){
+							this.colores_list.push(product.color)
+						}
+					})
+				}
+				if(tipo == 'niña'){
+					this.productos_niñas.forEach(product=>{
+						if(this.colores_list.indexOf(product.color) == -1 && product.talle == talle){
+							this.colores_list.push(product.color)
+						}
+					})
+
+				}
+				if(tipo == 'unisex'){
+					this.productos_unisex.forEach(product=>{
+						if(this.colores_list.indexOf(product.color) == -1 && product.talle == talle){
+							this.colores_list.push(product.color)
+						}
+					})
+
+				}
 			},
-			abrir_lista_colores(){
-				$('#lista_tipos').on('click', function (e) {
-				  e.preventDefault()
-				  $(this).tab('show')
-				})
+			click_on_color(ev){
+				this.color_elegido = ev.target.id;
+			},
+			cantidad_colores(color){
+				let count = 0
+				if(this.tipo_seleccionado == 'Niño'){
+					this.productos_niños.forEach(product=>{
+						if(product.talle == this.talle_elegido){
+							if(product.color == color){
+								count++
+							}
+						}
+					})
+					return count
+				}
+				if(this.tipo_seleccionado == 'Niña'){
+					this.productos_niñas.forEach(product=>{
+						if(product.talle == this.talle_elegido){
+							if(product.color == color){
+								count++
+							}
+						}
+					})
+					return count
+				}
+				if(this.tipo_seleccionado == 'Unisex'){
+					this.productos_unisex.forEach(product=>{
+						if(product.talle == this.talle_elegido){
+							if(product.color == color){
+								count++
+							}
+						}
+					})
+					return count
+				}
+			},
+			color_format(color){
+				if(color !== '' && color !== null){
+					let chart = color.charAt(0).toUpperCase()
+					let string = color.replace(color.charAt(0),chart)
+	                return string;
+				}
+
 			}
+
 
 		},
 		watch:{
 			 categoria_seleccionada:  async function(){
+			 	this.colores_list = []
+			 	this.talle_elegido = ''
+			 	this.color_elegido = ''
+			 	
 				let categorias_seleccionadas = []
 				this.categorias.forEach(categoria=>{
 					if(categoria.nombre == this.categoria_seleccionada.toLowerCase()){
@@ -191,7 +277,6 @@
 				this.categoria_niños= false;
 				this.categoria_niñas= false;
 				this.categoria_unisex= false;
-				console.log(categorias_seleccionadas)
 				categorias_seleccionadas.forEach(categoria=>{
 					if(categoria.tipo == 'Niño'){
 						this.categoria_niños = categoria
@@ -218,7 +303,6 @@
 				})
 				await axios.post('/productsPorCategoria',categoriasID)
 					.then(response=>{
-						console.log(response.data);
 						this.cantidad_productos_niñas  = 0
 						this.cantidad_productos_niños  = 0
 						this.cantidad_productos_unisex = 0
@@ -274,7 +358,6 @@
 						talles_productos_niños.push(product.talle)
 					}
 				})
-				console.log(talles_productos_niños)
 				return talles_productos_niños
 			},
 			talles_productos_niñas(){
@@ -284,9 +367,9 @@
 						talles_productos_niñas.push(product.talle)
 					}
 				})
-				console.log(talles_productos_niñas)
 				return talles_productos_niñas
 			},
+			
 			talles_productos_unisex(){
 				let talles_productos_unisex = []
 				this.productos_unisex.forEach(product=>{
@@ -294,9 +377,9 @@
 						talles_productos_unisex.push(product.talle)
 					}
 				})
-				console.log(talles_productos_unisex)
 				return talles_productos_unisex
 			}
+
 			
 		}
 	}

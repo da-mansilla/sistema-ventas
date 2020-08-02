@@ -5,7 +5,7 @@
         <span v-for="categoria in filtros.categoria.categorias"> {{categoria.nombre}} ({{categoria.tipo}}),</span>
       </div>
       <span>Productos: {{informacionListaFiltrada.productosTotal}}</span>
-        <table class="table table-bordered table-products mt-1">
+        <table class="table table-bordered table-products mt-2">
           <thead>
             <tr class=" table-primary ">
               <th scope="col">Opciones</th>

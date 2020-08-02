@@ -4982,15 +4982,6 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
 //
 //
 //
-//
-//
-//
-//
-//
-//
-//
-//
-//
 /* harmony default export */ __webpack_exports__["default"] = ({
   props: {
     categorias: {}
@@ -5001,12 +4992,16 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       categoria_niños: false,
       categoria_niñas: false,
       categoria_unisex: false,
+      tipo_seleccionado: '',
       cantidad_productos_niñas: 0,
       cantidad_productos_niños: 0,
       cantidad_productos_unisex: 0,
       productos_niñas: [],
       productos_niños: [],
-      productos_unisex: []
+      productos_unisex: [],
+      talle_elegido: '',
+      color_elegido: '',
+      colores_list: []
     };
   },
   mounted: function mounted() {
@@ -5015,6 +5010,23 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
   methods: {
     ver: function ver() {
       this.categoria_seleccionada = this.$refs.select.value;
+    },
+    seleccionar_tipo: function seleccionar_tipo(tipo) {
+      this.color_elegido = '';
+      this.colores_list = [];
+      this.talle_elegido = '';
+
+      if (tipo == 'niño') {
+        this.tipo_seleccionado = 'Niño';
+      }
+
+      if (tipo == 'niña') {
+        this.tipo_seleccionado = 'Niña';
+      }
+
+      if (tipo == 'unisex') {
+        this.tipo_seleccionado = 'Unisex';
+      }
     },
     cantidad_talle: function cantidad_talle(tipo, talle) {
       if (tipo == 'niño') {
@@ -5048,13 +5060,87 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       }
     },
     click_on_talle: function click_on_talle(ev) {
-      console.log(ev);
+      var _this = this;
+
+      this.color_elegido = '';
+      var target = ev.target.id;
+      var index = target.indexOf('_');
+      var tipo = target.slice(0, index);
+      var talle = target.slice(index + 1);
+      this.talle_elegido = talle;
+      this.colores_list = [];
+
+      if (tipo == 'niño') {
+        this.productos_niños.forEach(function (product) {
+          if (_this.colores_list.indexOf(product.color) == -1 && product.talle == talle) {
+            _this.colores_list.push(product.color);
+          }
+        });
+      }
+
+      if (tipo == 'niña') {
+        this.productos_niñas.forEach(function (product) {
+          if (_this.colores_list.indexOf(product.color) == -1 && product.talle == talle) {
+            _this.colores_list.push(product.color);
+          }
+        });
+      }
+
+      if (tipo == 'unisex') {
+        this.productos_unisex.forEach(function (product) {
+          if (_this.colores_list.indexOf(product.color) == -1 && product.talle == talle) {
+            _this.colores_list.push(product.color);
+          }
+        });
+      }
     },
-    abrir_lista_colores: function abrir_lista_colores() {
-      $('#lista_tipos').on('click', function (e) {
-        e.preventDefault();
-        $(this).tab('show');
-      });
+    click_on_color: function click_on_color(ev) {
+      this.color_elegido = ev.target.id;
+    },
+    cantidad_colores: function cantidad_colores(color) {
+      var _this2 = this;
+
+      var count = 0;
+
+      if (this.tipo_seleccionado == 'Niño') {
+        this.productos_niños.forEach(function (product) {
+          if (product.talle == _this2.talle_elegido) {
+            if (product.color == color) {
+              count++;
+            }
+          }
+        });
+        return count;
+      }
+
+      if (this.tipo_seleccionado == 'Niña') {
+        this.productos_niñas.forEach(function (product) {
+          if (product.talle == _this2.talle_elegido) {
+            if (product.color == color) {
+              count++;
+            }
+          }
+        });
+        return count;
+      }
+
+      if (this.tipo_seleccionado == 'Unisex') {
+        this.productos_unisex.forEach(function (product) {
+          if (product.talle == _this2.talle_elegido) {
+            if (product.color == color) {
+              count++;
+            }
+          }
+        });
+        return count;
+      }
+    },
+    color_format: function color_format(color) {
+      if (color !== '' && color !== null) {
+        var chart = color.charAt(0).toUpperCase();
+        var string = color.replace(color.charAt(0), chart);
+        return string;
+      }
     }
   },
   watch: {
@@ -5062,16 +5148,19 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       var _categoria_seleccionada = _asyncToGenerator(
       /*#__PURE__*/
       _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee() {
-        var _this = this;
+        var _this3 = this;
 
         var categorias_seleccionadas, niños, niñas, unisex, categoriasID;
         return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee$(_context) {
           while (1) {
             switch (_context.prev = _context.next) {
               case 0:
+                this.colores_list = [];
+                this.talle_elegido = '';
+                this.color_elegido = '';
                 categorias_seleccionadas = [];
                 this.categorias.forEach(function (categoria) {
-                  if (categoria.nombre == _this.categoria_seleccionada.toLowerCase()) {
+                  if (categoria.nombre == _this3.categoria_seleccionada.toLowerCase()) {
                     categorias_seleccionadas.push(categoria);
                   }
                 });
@@ -5081,20 +5170,19 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
                 this.categoria_niños = false;
                 this.categoria_niñas = false;
                 this.categoria_unisex = false;
-                console.log(categorias_seleccionadas);
                 categorias_seleccionadas.forEach(function (categoria) {
                   if (categoria.tipo == 'Niño') {
-                    _this.categoria_niños = categoria;
+                    _this3.categoria_niños = categoria;
                     niños = false;
                   }
 
                   if (categoria.tipo == 'Niña') {
-                    _this.categoria_niñas = categoria;
+                    _this3.categoria_niñas = categoria;
                     niñas = false;
                   }
 
                   if (categoria.tipo == 'Unisex') {
-                    _this.categoria_unisex = categoria;
+                    _this3.categoria_unisex = categoria;
                     unisex = false;
                   }
                 });
@@ -5102,37 +5190,36 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
                 categorias_seleccionadas.forEach(function (categoria) {
                   categoriasID.push(categoria.id);
                 });
-                _context.next = 14;
+                _context.next = 16;
                 return axios.post('/productsPorCategoria', categoriasID).then(function (response) {
-                  console.log(response.data);
-                  _this.cantidad_productos_niñas = 0;
-                  _this.cantidad_productos_niños = 0;
-                  _this.cantidad_productos_unisex = 0;
-                  _this.productos_niñas = [];
-                  _this.productos_niños = [];
-                  _this.productos_unisex = [];
+                  _this3.cantidad_productos_niñas = 0;
+                  _this3.cantidad_productos_niños = 0;
+                  _this3.cantidad_productos_unisex = 0;
+                  _this3.productos_niñas = [];
+                  _this3.productos_niños = [];
+                  _this3.productos_unisex = [];
                   response.data.forEach(function (product) {
                     if (product.tipo == 'Niño') {
-                      _this.cantidad_productos_niños++;
+                      _this3.cantidad_productos_niños++;
 
-                      _this.productos_niños.push(product);
+                      _this3.productos_niños.push(product);
                     }
 
                     if (product.tipo == 'Niña') {
-                      _this.cantidad_productos_niñas++;
+                      _this3.cantidad_productos_niñas++;
 
-                      _this.productos_niñas.push(product);
+                      _this3.productos_niñas.push(product);
                     }
 
                     if (product.tipo == 'Unisex') {
-                      _this.cantidad_productos_unisex++;
+                      _this3.cantidad_productos_unisex++;
 
-                      _this.productos_unisex.push(product);
+                      _this3.productos_unisex.push(product);
                     }
                   });
                 });
 
-              case 14:
+              case 16:
               case "end":
                 return _context.stop();
             }
@@ -5177,7 +5264,6 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
           talles_productos_niños.push(product.talle);
         }
       });
-      console.log(talles_productos_niños);
       return talles_productos_niños;
     },
     talles_productos_niñas: function talles_productos_niAs() {
@@ -5187,7 +5273,6 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
           talles_productos_niñas.push(product.talle);
         }
       });
-      console.log(talles_productos_niñas);
       return talles_productos_niñas;
     },
     talles_productos_unisex: function talles_productos_unisex() {
@@ -5197,7 +5282,6 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
           talles_productos_unisex.push(product.talle);
         }
       });
-      console.log(talles_productos_unisex);
       return talles_productos_unisex;
     }
   }
@@ -5222,13 +5306,6 @@ function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try
 
 function _asyncToGenerator(fn) { return function () { var self = this, args = arguments; return new Promise(function (resolve, reject) { var gen = fn.apply(self, args); function _next(value) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value); } function _throw(err) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err); } _next(undefined); }); }; }
 
-//
-//
-//
-//
-//
-//
-//
 //
 //
 //
@@ -89905,282 +89982,464 @@ var render = function() {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
-  return _c("div", { staticClass: "container-fluid mt-5 position-relative" }, [
-    _c("div", { staticClass: "m-2" }, [
-      _vm._m(0),
-      _vm._v(" "),
-      _c("div", { staticClass: "row mt-3" }, [
-        _c("div", { staticClass: "col-3" }, [
-          _c(
-            "select",
-            {
-              ref: "select",
-              staticClass: "form-control",
-              on: { click: _vm.ver }
-            },
-            _vm._l(_vm.categorias_ordenadas, function(categoria) {
-              return _c("option", [_vm._v(_vm._s(categoria))])
-            }),
-            0
-          )
-        ]),
-        _vm._v(" "),
-        _c("div", { staticClass: "col-3" }, [
-          _c("h4", { staticClass: "ml-3 mb-2" }, [
-            _c("strong", [
-              _vm._v(
-                _vm._s(_vm.categoria_seleccionada) +
-                  ": " +
-                  _vm._s(_vm.cantidad_productos)
-              )
-            ])
-          ]),
-          _vm._v(" "),
-          _c("div", { staticClass: " text-center" }, [
+  return _c(
+    "div",
+    { staticClass: "container-fluid mt-2 px-0 position-relative" },
+    [
+      _c(
+        "div",
+        { staticClass: "accordion", attrs: { id: "accordionExample" } },
+        [
+          _c("div", { staticClass: "card" }, [
+            _vm._m(0),
+            _vm._v(" "),
             _c(
               "div",
               {
-                staticClass: "list-group",
-                attrs: { id: "lista_tipos", role: "tablist" }
+                staticClass: "collapse",
+                attrs: {
+                  id: "collapseOne",
+                  "aria-labelledby": "headingOne",
+                  "data-parent": "#accordionExample"
+                }
               },
               [
-                _c(
-                  "a",
-                  {
-                    staticClass: "list-group-item list-group-item-action",
-                    attrs: {
-                      id: "list-talles-niño",
-                      "data-toggle": "list",
-                      href: "#talles_niño",
-                      role: "tab"
-                    },
-                    on: { click: _vm.abrir_lista_colores }
-                  },
-                  [
-                    _c("h5", [
-                      _vm._v("Niños : "),
-                      _c("strong", [
-                        _vm._v(_vm._s(_vm.cantidad_productos_niños))
+                _c("div", { staticClass: "card-body" }, [
+                  _c("div", { staticClass: "row mt-1" }, [
+                    _c("div", { staticClass: "col-3" }, [
+                      _vm._m(1),
+                      _vm._v(" "),
+                      _c(
+                        "select",
+                        {
+                          ref: "select",
+                          staticClass: "form-control",
+                          on: { click: _vm.ver }
+                        },
+                        _vm._l(_vm.categorias_ordenadas, function(categoria) {
+                          return _c("option", [_vm._v(_vm._s(categoria))])
+                        }),
+                        0
+                      )
+                    ]),
+                    _vm._v(" "),
+                    _c("div", { staticClass: "col-3" }, [
+                      _c("h4", { staticClass: "ml-3 mb-2" }, [
+                        _c("strong", [
+                          _vm._v(
+                            _vm._s(_vm.categoria_seleccionada) +
+                              ": " +
+                              _vm._s(_vm.cantidad_productos)
+                          )
+                        ])
+                      ]),
+                      _vm._v(" "),
+                      _c("div", { staticClass: " text-center" }, [
+                        _c(
+                          "div",
+                          {
+                            staticClass: "list-group",
+                            attrs: { id: "lista_tipos", role: "tablist" }
+                          },
+                          [
+                            _c(
+                              "a",
+                              {
+                                staticClass:
+                                  "list-group-item list-group-item-action",
+                                attrs: {
+                                  id: "list-talles-niño",
+                                  "data-toggle": "list",
+                                  href: "#talles_niño",
+                                  role: "tab"
+                                },
+                                on: {
+                                  click: function($event) {
+                                    return _vm.seleccionar_tipo("niño")
+                                  }
+                                }
+                              },
+                              [
+                                _c("h5", [
+                                  _vm._v("Niños : "),
+                                  _c("strong", [
+                                    _vm._v(_vm._s(_vm.cantidad_productos_niños))
+                                  ])
+                                ])
+                              ]
+                            ),
+                            _vm._v(" "),
+                            _c(
+                              "a",
+                              {
+                                staticClass:
+                                  "list-group-item list-group-item-action",
+                                attrs: {
+                                  id: "list-talles-niña",
+                                  "data-toggle": "list",
+                                  href: "#talles_niña",
+                                  role: "tab"
+                                },
+                                on: {
+                                  click: function($event) {
+                                    return _vm.seleccionar_tipo("niña")
+                                  }
+                                }
+                              },
+                              [
+                                _c("h5", [
+                                  _vm._v("Niñas : "),
+                                  _c("strong", [
+                                    _vm._v(_vm._s(_vm.cantidad_productos_niñas))
+                                  ])
+                                ])
+                              ]
+                            ),
+                            _vm._v(" "),
+                            _c(
+                              "a",
+                              {
+                                staticClass:
+                                  "list-group-item list-group-item-action",
+                                attrs: {
+                                  id: "list-talles-unisex",
+                                  "data-toggle": "list",
+                                  href: "#talles_unisex",
+                                  role: "tab"
+                                },
+                                on: {
+                                  click: function($event) {
+                                    return _vm.seleccionar_tipo("unisex")
+                                  }
+                                }
+                              },
+                              [
+                                _c("h5", [
+                                  _vm._v("Unisex : "),
+                                  _c("strong", [
+                                    _vm._v(
+                                      _vm._s(_vm.cantidad_productos_unisex)
+                                    )
+                                  ])
+                                ])
+                              ]
+                            )
+                          ]
+                        )
                       ])
+                    ]),
+                    _vm._v(" "),
+                    _c("div", { staticClass: "col-3" }, [
+                      _vm._m(2),
+                      _vm._v(" "),
+                      _c(
+                        "div",
+                        {
+                          staticStyle: {
+                            height: "163px",
+                            "overflow-y": "scroll"
+                          },
+                          attrs: { "data-spy": "scroll", "data-offset": "0" }
+                        },
+                        [
+                          _c("div", { staticClass: "overflow-auto" }, [
+                            _c("div", { staticClass: "tab-content" }, [
+                              _c(
+                                "div",
+                                {
+                                  staticClass: "tab-pane fade",
+                                  attrs: {
+                                    id: "talles_niño",
+                                    role: "tabpanel",
+                                    "aria-labelledby": "list-talles-niño"
+                                  }
+                                },
+                                _vm._l(_vm.talles_productos_niños, function(
+                                  talles
+                                ) {
+                                  return _c(
+                                    "ul",
+                                    { staticClass: "list-group" },
+                                    [
+                                      _c(
+                                        "li",
+                                        {
+                                          staticClass:
+                                            "list-group-item d-flex justify-content-between align-items-center list-group-item list-group-item-action h5 my-0",
+                                          class: {
+                                            active: _vm.talle_elegido == talles
+                                          },
+                                          staticStyle: { cursor: "pointer" },
+                                          attrs: { id: "niño_" + talles },
+                                          on: { click: _vm.click_on_talle }
+                                        },
+                                        [
+                                          _vm._v(
+                                            "\n\t\t\t\t\t\t\t\t\t\t   \t" +
+                                              _vm._s(talles) +
+                                              "\n\t\t\t\t\t\t\t\t\t\t    "
+                                          ),
+                                          _c(
+                                            "span",
+                                            {
+                                              staticClass:
+                                                "badge badge-primary badge-pill text-black h4"
+                                            },
+                                            [
+                                              _vm._v(
+                                                _vm._s(
+                                                  _vm.cantidad_talle(
+                                                    "niño",
+                                                    talles
+                                                  )
+                                                )
+                                              )
+                                            ]
+                                          )
+                                        ]
+                                      )
+                                    ]
+                                  )
+                                }),
+                                0
+                              ),
+                              _vm._v(" "),
+                              _c(
+                                "div",
+                                {
+                                  staticClass: "tab-pane fade",
+                                  attrs: {
+                                    id: "talles_niña",
+                                    role: "tabpanel",
+                                    "aria-labelledby": "list-talles-niña"
+                                  }
+                                },
+                                _vm._l(_vm.talles_productos_niñas, function(
+                                  talles
+                                ) {
+                                  return _c(
+                                    "ul",
+                                    { staticClass: "list-group" },
+                                    [
+                                      _c(
+                                        "li",
+                                        {
+                                          staticClass:
+                                            "list-group-item d-flex justify-content-between align-items-center list-group-item list-group-item-action h5 my-0",
+                                          class: {
+                                            active: _vm.talle_elegido == talles
+                                          },
+                                          staticStyle: { cursor: "pointer" },
+                                          attrs: { id: "niña_" + talles },
+                                          on: { click: _vm.click_on_talle }
+                                        },
+                                        [
+                                          _vm._v(
+                                            "\n\t\t\t\t\t\t\t\t\t\t    " +
+                                              _vm._s(talles) +
+                                              "\n\t\t\t\t\t\t\t\t\t\t    "
+                                          ),
+                                          _c(
+                                            "span",
+                                            {
+                                              staticClass:
+                                                "badge badge-primary badge-pill text-black h4"
+                                            },
+                                            [
+                                              _vm._v(
+                                                _vm._s(
+                                                  _vm.cantidad_talle(
+                                                    "niña",
+                                                    talles
+                                                  )
+                                                )
+                                              )
+                                            ]
+                                          )
+                                        ]
+                                      )
+                                    ]
+                                  )
+                                }),
+                                0
+                              ),
+                              _vm._v(" "),
+                              _c(
+                                "div",
+                                {
+                                  staticClass: "tab-pane fade",
+                                  attrs: {
+                                    id: "talles_unisex",
+                                    role: "tabpanel",
+                                    "aria-labelledby": "list-talles-unisex"
+                                  }
+                                },
+                                _vm._l(_vm.talles_productos_unisex, function(
+                                  talles
+                                ) {
+                                  return _c(
+                                    "ul",
+                                    { staticClass: "list-group" },
+                                    [
+                                      _c(
+                                        "li",
+                                        {
+                                          staticClass:
+                                            "list-group-item d-flex justify-content-between align-items-center list-group-item list-group-item-action h5 my-0",
+                                          class: {
+                                            active: _vm.talle_elegido == talles
+                                          },
+                                          staticStyle: { cursor: "pointer" },
+                                          attrs: { id: "unisex_" + talles },
+                                          on: { click: _vm.click_on_talle }
+                                        },
+                                        [
+                                          _vm._v(
+                                            "\n\t\t\t\t\t\t\t\t\t\t    " +
+                                              _vm._s(talles) +
+                                              "\n\t\t\t\t\t\t\t\t\t\t    "
+                                          ),
+                                          _c(
+                                            "span",
+                                            {
+                                              staticClass:
+                                                "badge badge-primary badge-pill text-black h4"
+                                            },
+                                            [
+                                              _vm._v(
+                                                _vm._s(
+                                                  _vm.cantidad_talle(
+                                                    "unisex",
+                                                    talles
+                                                  )
+                                                )
+                                              )
+                                            ]
+                                          )
+                                        ]
+                                      )
+                                    ]
+                                  )
+                                }),
+                                0
+                              )
+                            ])
+                          ])
+                        ]
+                      )
+                    ]),
+                    _vm._v(" "),
+                    _c("div", { staticClass: "col 3" }, [
+                      _vm._m(3),
+                      _vm._v(" "),
+                      _c(
+                        "div",
+                        {
+                          staticStyle: {
+                            height: "163px",
+                            "overflow-y": "scroll"
+                          },
+                          attrs: { "data-spy": "scroll", "data-offset": "0" }
+                        },
+                        [
+                          _c(
+                            "div",
+                            { staticClass: "overflow-auto" },
+                            _vm._l(_vm.colores_list, function(color) {
+                              return _c(
+                                "ul",
+                                {
+                                  staticClass: "list-group",
+                                  attrs: { id: "lista_colores" }
+                                },
+                                [
+                                  _c(
+                                    "li",
+                                    {
+                                      staticClass:
+                                        "list-group-item d-flex justify-content-between align-items-center list-group-item list-group-item-action h5 my-0",
+                                      class: {
+                                        active: _vm.color_elegido == color
+                                      },
+                                      attrs: { id: color },
+                                      on: { click: _vm.click_on_color }
+                                    },
+                                    [
+                                      _vm._v(
+                                        "\n\t\t\t\t\t\t\t\t    " +
+                                          _vm._s(_vm.color_format(color)) +
+                                          "\n\t\t\t\t\t\t\t\t    "
+                                      ),
+                                      _c(
+                                        "span",
+                                        {
+                                          staticClass:
+                                            "badge badge-primary badge-pill h4"
+                                        },
+                                        [
+                                          _vm._v(
+                                            _vm._s(_vm.cantidad_colores(color))
+                                          )
+                                        ]
+                                      )
+                                    ]
+                                  )
+                                ]
+                              )
+                            }),
+                            0
+                          )
+                        ]
+                      )
                     ])
-                  ]
-                ),
-                _vm._v(" "),
-                _c(
-                  "a",
-                  {
-                    staticClass: "list-group-item list-group-item-action",
-                    attrs: {
-                      id: "list-talles-niña",
-                      "data-toggle": "list",
-                      href: "#talles_niña",
-                      role: "tab"
-                    },
-                    on: { click: _vm.abrir_lista_colores }
-                  },
-                  [
-                    _c("h5", [
-                      _vm._v("Niñas : "),
-                      _c("strong", [
-                        _vm._v(_vm._s(_vm.cantidad_productos_niñas))
-                      ])
-                    ])
-                  ]
-                ),
-                _vm._v(" "),
-                _c(
-                  "a",
-                  {
-                    staticClass: "list-group-item list-group-item-action",
-                    attrs: {
-                      id: "list-talles-unisex",
-                      "data-toggle": "list",
-                      href: "#talles_unisex",
-                      role: "tab"
-                    },
-                    on: { click: _vm.abrir_lista_colores }
-                  },
-                  [
-                    _c("h5", [
-                      _vm._v("Unisex : "),
-                      _c("strong", [
-                        _vm._v(_vm._s(_vm.cantidad_productos_unisex))
-                      ])
-                    ])
-                  ]
-                )
+                  ])
+                ])
               ]
             )
           ])
-        ]),
-        _vm._v(" "),
-        _c("div", { staticClass: "col-3" }, [
-          _vm._m(1),
-          _vm._v(" "),
-          _c(
-            "div",
-            {
-              staticStyle: { height: "200px", "overflow-y": "scroll" },
-              attrs: { "data-spy": "scroll", "data-offset": "0" }
-            },
-            [
-              _c("div", { staticClass: "overflow-auto" }, [
-                _c("div", { staticClass: "tab-content" }, [
-                  _c(
-                    "div",
-                    {
-                      staticClass: "tab-pane fade",
-                      attrs: {
-                        id: "talles_niño",
-                        role: "tabpanel",
-                        "aria-labelledby": "list-talles-niño"
-                      }
-                    },
-                    _vm._l(_vm.talles_productos_niños, function(talles) {
-                      return _c("ul", { staticClass: "list-group" }, [
-                        _c(
-                          "li",
-                          {
-                            staticClass:
-                              "list-group-item d-flex justify-content-between align-items-center list-group-item list-group-item-action h5",
-                            staticStyle: { cursor: "pointer" },
-                            attrs: { id: talles },
-                            on: { click: _vm.click_on_talle }
-                          },
-                          [
-                            _vm._v(
-                              "\n\t\t\t\t\t\t\t\t   \t" +
-                                _vm._s(talles) +
-                                "\n\t\t\t\t\t\t\t\t    "
-                            ),
-                            _c(
-                              "span",
-                              {
-                                staticClass:
-                                  "badge badge-primary badge-pill text-black h4"
-                              },
-                              [
-                                _vm._v(
-                                  _vm._s(_vm.cantidad_talle("niño", talles))
-                                )
-                              ]
-                            )
-                          ]
-                        )
-                      ])
-                    }),
-                    0
-                  ),
-                  _vm._v(" "),
-                  _c(
-                    "div",
-                    {
-                      staticClass: "tab-pane fade",
-                      attrs: {
-                        id: "talles_niña",
-                        role: "tabpanel",
-                        "aria-labelledby": "list-talles-niña"
-                      }
-                    },
-                    _vm._l(_vm.talles_productos_niñas, function(talles) {
-                      return _c("ul", { staticClass: "list-group" }, [
-                        _c(
-                          "li",
-                          {
-                            staticClass:
-                              "list-group-item d-flex justify-content-between align-items-center list-group-item list-group-item-action h5",
-                            staticStyle: { cursor: "pointer" },
-                            attrs: { id: talles },
-                            on: { click: _vm.click_on_talle }
-                          },
-                          [
-                            _vm._v(
-                              "\n\t\t\t\t\t\t\t\t    " +
-                                _vm._s(talles) +
-                                "\n\t\t\t\t\t\t\t\t    "
-                            ),
-                            _c(
-                              "span",
-                              {
-                                staticClass:
-                                  "badge badge-primary badge-pill text-black h4"
-                              },
-                              [
-                                _vm._v(
-                                  _vm._s(_vm.cantidad_talle("niña", talles))
-                                )
-                              ]
-                            )
-                          ]
-                        )
-                      ])
-                    }),
-                    0
-                  ),
-                  _vm._v(" "),
-                  _c(
-                    "div",
-                    {
-                      staticClass: "tab-pane fade",
-                      attrs: {
-                        id: "talles_unisex",
-                        role: "tabpanel",
-                        "aria-labelledby": "list-talles-unisex"
-                      }
-                    },
-                    _vm._l(_vm.talles_productos_unisex, function(talles) {
-                      return _c("ul", { staticClass: "list-group" }, [
-                        _c(
-                          "li",
-                          {
-                            staticClass:
-                              "list-group-item d-flex justify-content-between align-items-center list-group-item list-group-item-action h5",
-                            staticStyle: { cursor: "pointer" },
-                            attrs: { id: talles },
-                            on: { click: _vm.click_on_talle }
-                          },
-                          [
-                            _vm._v(
-                              "\n\t\t\t\t\t\t\t\t    " +
-                                _vm._s(talles) +
-                                "\n\t\t\t\t\t\t\t\t    "
-                            ),
-                            _c(
-                              "span",
-                              {
-                                staticClass:
-                                  "badge badge-primary badge-pill text-black h4"
-                              },
-                              [
-                                _vm._v(
-                                  _vm._s(_vm.cantidad_talle("unisex", talles))
-                                )
-                              ]
-                            )
-                          ]
-                        )
-                      ])
-                    }),
-                    0
-                  )
-                ])
-              ])
-            ]
-          )
-        ]),
-        _vm._v(" "),
-        _vm._m(2)
-      ])
-    ])
-  ])
+        ]
+      )
+    ]
+  )
 }
 var staticRenderFns = [
   function() {
     var _vm = this
     var _h = _vm.$createElement
     var _c = _vm._self._c || _h
-    return _c("div", { staticClass: "row justify-content-center bg-primary" }, [
-      _c("h2", { staticClass: " pt-1 text-white " }, [_vm._v("Resumen")])
+    return _c(
+      "div",
+      { staticClass: "justify-content-center ", attrs: { id: "headingOne" } },
+      [
+        _c("h2", { staticClass: "mb-0 pt-1" }, [
+          _c(
+            "button",
+            {
+              staticClass: "btn btn-primary btn-link btn-block text-left",
+              attrs: {
+                type: "button",
+                "data-toggle": "collapse",
+                "data-target": "#collapseOne",
+                "aria-expanded": "true",
+                "aria-controls": "collapseOne"
+              }
+            },
+            [
+              _c("h2", { staticClass: "text-white text-center" }, [
+                _c("i", { staticClass: "fas fa-angle-double-down" })
+              ])
+            ]
+          )
+        ])
+      ]
+    )
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("h4", { staticClass: " mb-2" }, [
+      _c("strong", [_vm._v("Categorias")])
     ])
   },
   function() {
@@ -90195,98 +90454,8 @@ var staticRenderFns = [
     var _vm = this
     var _h = _vm.$createElement
     var _c = _vm._self._c || _h
-    return _c("div", { staticClass: "col 3" }, [
-      _c("h4", { staticClass: " mb-2" }, [
-        _c("strong", [_vm._v("Colores Disponibles")])
-      ]),
-      _vm._v(" "),
-      _c(
-        "div",
-        {
-          staticStyle: { height: "200px", "overflow-y": "scroll" },
-          attrs: { "data-spy": "scroll", "data-offset": "0" }
-        },
-        [
-          _c("div", { staticClass: "overflow-auto" }, [
-            _c("div", { staticClass: "tab-content" }, [
-              _c(
-                "div",
-                {
-                  staticClass: "tab-pane fade",
-                  attrs: { id: "", role: "tabpanel", "aria-labelledby": "" }
-                },
-                [
-                  _c("ul", { staticClass: "list-group" }, [
-                    _c(
-                      "li",
-                      {
-                        staticClass:
-                          "list-group-item d-flex justify-content-between align-items-center list-group-item list-group-item-action h5"
-                      },
-                      [
-                        _c("span", {
-                          staticClass:
-                            "badge badge-primary badge-pill text-black h4"
-                        })
-                      ]
-                    )
-                  ])
-                ]
-              ),
-              _vm._v(" "),
-              _c(
-                "div",
-                {
-                  staticClass: "tab-pane fade",
-                  attrs: { id: "", role: "tabpanel", "aria-labelledby": "" }
-                },
-                [
-                  _c("ul", { staticClass: "list-group" }, [
-                    _c(
-                      "li",
-                      {
-                        staticClass:
-                          "list-group-item d-flex justify-content-between align-items-center list-group-item list-group-item-action h5"
-                      },
-                      [
-                        _c("span", {
-                          staticClass:
-                            "badge badge-primary badge-pill text-black h4"
-                        })
-                      ]
-                    )
-                  ])
-                ]
-              ),
-              _vm._v(" "),
-              _c(
-                "div",
-                {
-                  staticClass: "tab-pane fade",
-                  attrs: { id: "", role: "tabpanel", "aria-labelledby": "" }
-                },
-                [
-                  _c("ul", { staticClass: "list-group" }, [
-                    _c(
-                      "li",
-                      {
-                        staticClass:
-                          "list-group-item d-flex justify-content-between align-items-center list-group-item list-group-item-action h5"
-                      },
-                      [
-                        _c("span", {
-                          staticClass:
-                            "badge badge-primary badge-pill text-black h4"
-                        })
-                      ]
-                    )
-                  ])
-                ]
-              )
-            ])
-          ])
-        ]
-      )
+    return _c("h4", { staticClass: " mb-2" }, [
+      _c("strong", [_vm._v("Colores Disponibles")])
     ])
   }
 ]
@@ -90409,80 +90578,40 @@ var render = function() {
           ])
         ]),
         _vm._v(" "),
-        _c("div", { staticClass: "row justify-content-between m-1" }, [
-          _c(
-            "button",
-            {
-              staticClass: "btn btn-primary",
-              on: {
-                click: function($event) {
-                  _vm.abrir_resumen = false
-                }
-              }
-            },
-            [_vm._v("Back")]
-          ),
-          _vm._v(" "),
-          _c(
-            "button",
-            {
-              staticClass: "btn btn-primary",
-              on: {
-                click: function($event) {
-                  _vm.abrir_resumen = true
-                }
-              }
-            },
-            [_vm._v("Next")]
-          )
-        ]),
+        _c("resumeninventario-component", {
+          attrs: { categorias: _vm.categorias }
+        }),
         _vm._v(" "),
-        _vm.abrir_resumen == false
-          ? _c(
-              "span",
-              [
-                _vm.pagina == 1
-                  ? _c("tableproducts-component", {
-                      attrs: {
-                        listStock: _vm.listStock,
-                        listaFiltrada: _vm.listaFiltrada,
-                        filtros: _vm.filtros
-                      },
-                      on: {
-                        updateProduct: _vm.updateProduct,
-                        deleteProduct: _vm.deleteProduct
-                      }
-                    })
-                  : _vm._e(),
-                _vm._v(" "),
-                _vm.pagina == 3
-                  ? _c("tablefiltro-component", {
-                      attrs: {
-                        listaFiltrada: _vm.listaFiltrada,
-                        filtros: _vm.filtros,
-                        informacionListaFiltrada: _vm.informacionListaFiltrada
-                      },
-                      on: {
-                        updateProduct: _vm.updateProduct,
-                        deleteProduct: _vm.deleteProduct,
-                        filtrarOtraVez: _vm.filtrarOtraVez
-                      }
-                    })
-                  : _vm._e(),
-                _vm._v(" "),
-                _vm.pagina == 2 ? _c("tablecategorias-component") : _vm._e()
-              ],
-              1
-            )
-          : _c(
-              "span",
-              [
-                _c("resumeninventario-component", {
-                  attrs: { categorias: _vm.categorias }
-                })
-              ],
-              1
-            )
+        _vm.pagina == 1
+          ? _c("tableproducts-component", {
+              attrs: {
+                listStock: _vm.listStock,
+                listaFiltrada: _vm.listaFiltrada,
+                filtros: _vm.filtros
+              },
+              on: {
+                updateProduct: _vm.updateProduct,
+                deleteProduct: _vm.deleteProduct
+              }
+            })
+          : _vm._e(),
+        _vm._v(" "),
+        _vm.pagina == 3
+          ? _c("tablefiltro-component", {
+              attrs: {
+                listaFiltrada: _vm.listaFiltrada,
+                filtros: _vm.filtros,
+                informacionListaFiltrada: _vm.informacionListaFiltrada
+              },
+              on: {
+                updateProduct: _vm.updateProduct,
+                deleteProduct: _vm.deleteProduct,
+                filtrarOtraVez: _vm.filtrarOtraVez
+              }
+            })
+          : _vm._e(),
+        _vm._v(" "),
+        _vm.pagina == 2 ? _c("tablecategorias-component") : _vm._e()
       ],
       1
     )
@@ -90733,7 +90862,7 @@ var render = function() {
         )
       ]),
       _vm._v(" "),
-      _c("table", { staticClass: "table table-bordered table-products mt-1" }, [
+      _c("table", { staticClass: "table table-bordered table-products mt-2" }, [
         _vm._m(0),
         _vm._v(" "),
         _vm.listaFiltrada.data.length
@@ -90987,7 +91116,7 @@ var render = function() {
   return _c(
     "div",
     [
-      _c("table", { staticClass: "table table-bordered table-products " }, [
+      _c("table", { staticClass: "table table-bordered table-products mt-2" }, [
         _vm._m(0),
         _vm._v(" "),
         _c(
