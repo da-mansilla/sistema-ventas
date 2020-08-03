@@ -40,62 +40,71 @@
               <div class="card-body">
 
                 
-                <div class="row">
+                <div class="row  align-items-end">
                   <div class="col-md-3">
-                    
-                  </div>
-                  <div class="col-md-3">
-                    <div class="form-group">
-                      <label class=" col-sm-4 colform-label">Ordenar Por</label>
-                      <div class="col-sm-8">
+
+                      <h4 class="text-center"><strong>Ordenar Por</strong></h4>
+
                         <select class="form-control" v-model="ordenarPor">
                           <option value="semana">Semana</option>
                           <option value="mes">Mes</option>
                           <option value="year">Año</option>
                         </select>
-                      </div>
-                    </div>
+
+
                   </div>
 
 
                   <div class="col-md-3">
                     
 
-                    <div class="" v-if="ordenarPor == 'semana'">
-                      <label class="col-sm-5 col-form-label">Semana</label>
-                      <div class="col-sm-7">
-                        <input type="week" name="" v-model="intervaloFecha">
-                      </div>
+                    <div v-if="ordenarPor == 'semana'">
+                      <h4 class="text-center"><strong>Semana</strong></h4>
+
+                        <input class="form-control" type="week"  v-model="intervaloFecha">
+
                     </div>
-                    <div class="" v-if="ordenarPor == 'mes'">
-                      <label class="col-sm-5 col-form-label">Mes</label>
-                      <div class="col-sm-7">
-                        <input type="month" name="" v-model="intervaloFecha" :placeholder="new Date().getMonth()">
-                      </div>
+                    <div v-if="ordenarPor == 'mes'">
+                      <h4 class="text-center"><strong>Mes</strong></h4>
+
+                        <input type="month" class="form-control" v-model="intervaloFecha" :placeholder="new Date().getMonth()">
+
                     </div>
-                    <div class="" v-if="ordenarPor == 'year'">
-                      <label class="col-sm-5 col-form-label">Año</label>
-                      <div class="col-sm-7">
+                    <div v-if="ordenarPor == 'year'">
+                      <h4 class="text-center"><strong>Año</strong></h4>
+
                         <select class="form-control" v-model="intervaloFecha">
                           <option>2020</option>
                         </select>
-                      </div>
+
                     </div>
 
+                  </div>
+
+                  <div class="col-md-3">
+                    
                   </div>
 
 
                   <div class="col-md-3">
-                    <div class="d-flex justify-content-center">
-                      <button class="btn btn-secondary w-75 mt-3 mr-3" v-on:click="ordenarPorFecha">Agregar</button> 
+                    <div class="">
+                      <button class="btn btn-secondary w-75  mr-3" v-on:click="ordenarPorFecha"><h5 class="mb-0">Agregar</h5></button> 
                     </div>
                   </div>
 
                 </div>
-                
+  
               </div>
             </div>
-            
+
+            <resumenInformacion-component
+              :opc="opc"
+              :listaVentasInformacion="listaVentasInformacion"
+              :lista_productos_vendidos="lista_productos_vendidos"
+
+              @filtrar='filtrar'>
+              
+            </resumenInformacion-component>
 
         
         </div>
@@ -280,6 +289,7 @@
                 colores.push('rgba(255, 99, 132, 1)');
           }
           return {
+            categorias: [],
             cantidadVentas: [],
             totalVentas: [],
             labelsFechas: [],
@@ -303,7 +313,9 @@
             click: false,
             click2: false,
             indexVenta: 0,
-            listVentasDetalle: []
+            listVentasDetalle: [],
+            opc:{},
+            lista_productos_vendidos: []
           }
 
               
@@ -313,6 +325,7 @@
           this.llenarGrafico();
         },
         methods:{
+
 
           llenarGrafico(){
                 var ordenarPorMes = true;
@@ -338,7 +351,7 @@
 
 
 
-              var opc = {
+              this.opc = {
                 fecha: {
                   dia:{
                     enabled: ordenarPorDia
@@ -358,13 +371,27 @@
                   }
                 }
               };
-              console.log(opc)
-              axios.post('/datosventas',opc).then((response)=>{
+              axios.post('/datosventas',this.opc).then((response)=>{
                 console.log(response.data);
                 this.cantidadVentas = response.data[0];
                 this.totalVentas = response.data[1];
                 this.listaVentasInformacion = response.data[2]
-                this.llenarLavels(opc);
+
+                this.lista_productos_vendidos= []
+                console.log('Lista Venta')
+                console.log(this.listaVentasInformacion);
+                this.listaVentasInformacion.forEach(element=>{
+                  if(element !== 0){
+                    element.forEach(venta=>{
+                      venta.productos.forEach(product=>{
+                        this.lista_productos_vendidos.push(product)
+
+                      })
+                    })
+                  }
+                })
+
+                this.llenarLavels(this.opc);
                 this.graficoVentas();
                 this.informacion();
               })
@@ -436,25 +463,6 @@
             this.productosTotalesVendidos = productosTotalesVendidos;
 
           },
-          getCategorias(){
-              axios.get('/cantidadcategorias').then((response)=>{
-                this.listaCategorias= response.data;
-                this.listaCategorias.forEach((element)=>{
-                if(this.tipoNiño && element.tipo == 'Niño')
-                {
-                  this.sugerenciasList.push(element);
-                }
-                if(this.tipoNiña && element.tipo == 'Niña')
-                {
-                  this.sugerenciasList.push(element);
-                }
-                if(this.tipoUnisex && element.tipo == 'Unisex')
-                {
-                  this.sugerenciasList.push(element);
-                }
-              })
-              })
-            },
           getTemporadas(){
             axios.get('/temporadas').then(response=>{
               response.data.forEach(element=>{
@@ -545,7 +553,7 @@
 
             }
 
-            var opc = {
+            this.opc = {
               fecha: {
                 dia:{
                   enabled: ordenarPorDia
@@ -567,14 +575,29 @@
                 }
               }
             };
-            console.log(opc);
-            axios.post('/datosventas',opc).then((response)=>{
+            console.log(this.opc);
+            axios.post('/datosventas',this.opc).then((response)=>{
               console.log(response.data);
               this.cantidadVentas = response.data[0];
               this.totalVentas = response.data[1];
               this.listaVentasInformacion = response.data[2]
+
+              this.lista_productos_vendidos= []
+              console.log('Lista Venta')
               console.log(this.listaVentasInformacion);
-              this.llenarLavels(opc);
+              this.listaVentasInformacion.forEach(element=>{
+                if(element !== 0){
+                  element.forEach(venta=>{
+                    venta.productos.forEach(product=>{
+                      this.lista_productos_vendidos.push(product)
+
+                    })
+                  })
+                }
+              })
+
+              console.log(this.listaVentasInformacion);
+              this.llenarLavels(this.opc);
               this.graficoVentas();
               this.informacion();
             })
@@ -703,6 +726,9 @@
             let promocion = estado.slice(indexInicio+1,indexFinal)
             console.log(promocion);
             return promocion
+          },
+          filtrar(){
+
           }
           
             

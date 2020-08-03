@@ -41,6 +41,7 @@ Route::apiResource('categorias','CategoriaController');
 Route::get('cantidadcategorias','CategoriaController@cantidadCategorias')->name('categoria.cantidadCategorias');
 Route::get('categoriastodas','CategoriaController@categoriasTodas')->name('categoria.categoriasTodas');
 Route::get('productsporcategoria/{id}','CategoriaController@productsPorCategoria')->name('categoria.productsPorCategoria');
+Route::get('categoriasProductsVendidos','CategoriaController@categoriasProductsVendidos')->name('categoria.categoriasProductsVendidos');
 
 Route::apiResource('tarjetas','TarjetaController');
 
@@ -64,6 +65,7 @@ Route::get('tipos/{tipo}','CategoriaController@categoriaTipo')->name('categorias
 Route::get('productsvendidos/{venta_id}','ProductVendidoController@index')->name('productsvendidos.index');
 Route::post('productsvendidos/{venta_id}','ProductVendidoController@save')->name('productsvendidos.save');
 Route::post('productsvendidos/{id}','ProductVendidoController@update')->name('productsvendidos.update');
+Route::post('productsVendidosPorCategoria','ProductVendidoController@productsVendidosPorCategoria')->name('productsvendidos.productsVendidosPorCategoria');
 Route::put('finalizarproducto/{id}','ProductVendidoController@finalizarProducto')->name('productsvendidos.finalizarProducto');
 
 Route::get('seriecolor/{codigo}','SerieColorController@index')->name('seriecolor.index');

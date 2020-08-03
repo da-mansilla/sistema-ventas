@@ -87,7 +87,7 @@ class VentaController extends Controller
 
         $productosVendidos = DB::table('product_vendidos')
                             ->leftJoin('categorias','product_vendidos.categoria_id','=','categorias.id')
-                            ->select('product_vendidos.*','categorias.nombre')
+                            ->select('product_vendidos.*','categorias.nombre','categorias.tipo')
                             ->whereIn('product_vendidos.venta_id',$listaIdVentas)
                             ->get();
 

@@ -59,12 +59,20 @@ class ProductVendidoController extends Controller
         return $productVendido;
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
+    public function productsVendidosPorCategoria(Request $request){
+        $categoriasList = $request->input();
+        $productos = [];
+
+            $products = DB::table('product_vendidos')
+                        ->leftJoin('categorias','product_vendidos.categoria_id','=','categorias.id')
+                        ->select('categorias.id', DB::raw('categorias.nombre as nombre_categoria'),'categorias.tipo','product_vendidos.*')
+                        ->whereIn('product_vendidos.categoria_id', $categoriasList)
+                        ->get();
+
+        return $products; 
+        
+    }
+
     public function show($id)
     {
         //

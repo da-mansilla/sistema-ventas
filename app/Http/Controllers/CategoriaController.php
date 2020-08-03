@@ -27,6 +27,15 @@ class CategoriaController extends Controller
                 ->get();
         return $categorias;
     }
+    public function categoriasProductsVendidos(){
+        $categorias = DB::table('categorias')
+                ->leftJoin('products','products.categoria_id','=','categorias.id')
+                ->select('categorias.*')
+                ->where('products.enabled',0)
+                ->groupBy('categorias.id')
+                ->get();
+        return $categorias;
+    }
     function store(Request $request)
     {
         $categoria = new Categoria;
@@ -61,15 +70,6 @@ class CategoriaController extends Controller
         $categorias = Categoria::where('tipo',strtoupper($tipo))->get();
 
         return $categorias;
-    }
-    public function cantidadCategorias(){
-        $cantidad = DB::table('categorias')
-                    ->leftJoin('products', 'products.categoria_id', '=', 'categorias.id')
-                    ->select('categorias.*')
-                    ->where('products.enabled',1)
-                    ->groupBy('categorias.id')
-                    ->get();
-        return $cantidad; 
     }
     public function productsPorCategoria($id){
         $productos = DB::table('categorias')

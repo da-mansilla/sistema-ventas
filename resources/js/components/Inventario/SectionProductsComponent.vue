@@ -93,7 +93,6 @@
           listaFiltrada: [],
           informacionListaFiltrada: [],
           cantidadProducts: 0,
-          cantidadCategorias: 0,
           filtros: {},
           modalFiltro: false,
           abrir_resumen: false
@@ -103,7 +102,6 @@
       mounted() {
 
           this.getCantidadProducts();
-          this.getCantidadCategorias();
           this.getCategorias();
       },
       methods:{
@@ -114,12 +112,6 @@
             async getCantidadProducts(){
                 let respuesta = await axios.get('/cantidadProducts')
                 this.cantidadProducts = respuesta.data[0].cantidad
-            },
-            async getCantidadCategorias(){
-              
-                let cantidad = await axios.get('/cantidadcategorias')
-                this.cantidadCategorias = cantidad.data.length
-              
             },
             addProduct(){
                 this.getCategorias();
@@ -166,6 +158,9 @@
             }
         },
         computed: {
+          cantidadCategorias(){
+            return this.categorias.length
+          }
         }
 
     }

@@ -101,10 +101,15 @@
 <script>
 	export default{
 		props:{
-			categorias:{}
+			opc:{},
+			listaVentasInformacion:{},
+			lista_productos_vendidos:{}
+			
 		},
 		data(){
 			return{
+				categorias: [],
+
 				categoria_seleccionada: '',
 				categoria_niños: false,
 				categoria_niñas: false,
@@ -124,14 +129,21 @@
 
 				color_elegido: '',
 
-				colores_list: []
+				colores_list: [],
+
 
 			}
 		},
 		mounted(){
+			this.getCategorias()
 			this.categoria_seleccionada = this.$refs.select.value
 		},
 		methods:{
+	        async getCategorias(){
+	            let respuesta = await axios.get('/categoriasProductsVendidos')
+	            this.categorias= respuesta.data;
+	            console.log(this.categorias);
+	        },
 			ver(){
 				this.categoria_seleccionada = this.$refs.select.value
 
@@ -342,12 +354,14 @@
 
             	};
             	this.$emit('filtrar',opciones);
+
+            	console.log(opciones);
             }
 
 
 		},
 		watch:{
-			 categoria_seleccionada:  async function(){
+			 categoria_seleccionada:  function(){
 			 	this.colores_list = []
 			 	this.talle_elegido = ''
 			 	this.color_elegido = ''
@@ -388,40 +402,85 @@
 				categorias_seleccionadas.forEach(categoria=>{
 					categoriasID.push(categoria.id)
 				})
-				await axios.post('/productsPorCategoria',categoriasID)
-					.then(response=>{
-						this.cantidad_productos_niñas  = 0
-						this.cantidad_productos_niños  = 0
-						this.cantidad_productos_unisex = 0
 
-						this.productos_niñas  = []
-						this.productos_niños  = []
-						this.productos_unisex = []
-						response.data.forEach(product=>{
-							if(product.tipo == 'Niño'){
-								this.cantidad_productos_niños++
-								this.productos_niños.push(product)
-							}
-							if(product.tipo == 'Niña'){
-								this.cantidad_productos_niñas++
-								this.productos_niñas.push(product)
-							}
-							if(product.tipo == 'Unisex'){
-								this.cantidad_productos_unisex++
-								this.productos_unisex.push(product)
-							}
-						})
-					})
-				this.filtrar()
+				this.cantidad_productos_niñas  = 0
+				this.cantidad_productos_niños  = 0
+				this.cantidad_productos_unisex = 0
+
+				this.productos_niñas  = []
+				this.productos_niños  = []
+				this.productos_unisex = []
+
+				this.lista_productos_vendidos.forEach(product=>{
+					if(product.nombre == this.categoria_seleccionada.toLowerCase())
+					{
+						
+						if(product.tipo == 'Niño'){
+							this.cantidad_productos_niños++
+							this.productos_niños.push(product)
+						}
+						if(product.tipo == 'Niña'){
+							this.cantidad_productos_niñas++
+							this.productos_niñas.push(product)
+						}
+						if(product.tipo == 'Unisex'){
+							this.cantidad_productos_unisex++
+							this.productos_unisex.push(product)
+						}
+					}
+
+				})
+
 				
 			}
 		},
 		computed:{
 			categorias_ordenadas(){
 				var categorias_ordenadas = []
-				this.categorias.forEach(cat=>{
-					let chart = cat.nombre.charAt(0).toUpperCase()
-					let string = cat.nombre.replace(cat.nombre.charAt(0),chart)
+
+				let por_semana = false
+				let por_mes = false
+				let por_year = false
+				let lista_categorias = []
+
+				console.log('Lista de Productos Vendidos')
+				console.log(this.lista_productos_vendidos)
+
+				this.lista_productos_vendidos.forEach(product=>{
+					if(lista_categorias.indexOf(product.nombre) == -1){
+						lista_categorias.push(product.nombre)
+					}
+				})
+				/*
+				this.listaVentasInformacion.forEach(element=>{
+					if(element !== 0){
+						element.forEach(venta=>{
+							venta.productos.forEach(product=>{
+								if(lista_categorias.indexOf(product.nombre) == -1){
+									lista_categorias.push(product.nombre)
+								}
+							})
+						})
+					}
+				})
+				*/
+				console.log('Lista de Categorias')
+				console.log(lista_categorias);
+				/*
+				let categorias_listadas = []
+				if(this.opc.fecha.semana.enabled){	por_semana = true	}
+				if(this.opc.fecha.mes.enabled)	 {	por_mes = true 		}
+				if(this.opc.fecha.year.enabled)	 {	por_year = true 	}
+
+				this.categorias.forEach(categoria=>{
+					if(por_semana){
+
+					}
+				})
+				*/
+				lista_categorias.forEach(cat=>{
+					let chart = cat.charAt(0).toUpperCase()
+					let string = cat.replace(cat.charAt(0),chart)
 					if(categorias_ordenadas.indexOf(string) == -1){
 						categorias_ordenadas.push(string)
 					}
