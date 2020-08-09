@@ -47,6 +47,7 @@ Vue.component('formclientes-component', require('./components/Clientes/FormClien
 // Informacion
 Vue.component('informacionsection-component', require('./components/Informacion/informacionSectionComponent.vue').default);
 Vue.component('resumenInformacion-component', require('./components/Informacion/ResumenInformacionComponent.vue').default);
+Vue.component('tableInformacion-component', require('./components/Informacion/InformacionTableComponent.vue').default);
 // Proveedores
 Vue.component('sectionproveedores-component', require('./components/Proveedores/SectionProveedoresComponent.vue').default);
 Vue.component('formproveedores-component', require('./components/Proveedores/FormProveedoresComponent.vue').default);
