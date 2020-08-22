@@ -1,14 +1,14 @@
 <template>
     <div class="card-content card w-100">
-      <div class="card-header ">
-        <h3 v-if="pagina==1">Ventas</h3>
+      <div class="card-header bg-gris" >
+        <h1 v-if="pagina==1" class="text-white"><strong>Ventas</strong></h1>
         <h3 v-if="pagina==4">Cuenta Corriente</h3>
       </div>
       <div class="card-body">
         <span v-if='pagina==1 || pagina==4'>
-          <button v-if="pagina != 4" type="button" class="btn btn-secondary" v-on:click="onClickCuenta">Ir a Cuenta Corriente <span class="badge badge-light mr-1">{{ cantidadCuentasActivas }}</span></button>
-          <button v-if="pagina != 1"type="button" class="btn btn-secondary" v-on:click="onClickInicio">Ir a Ventas</button>
-          <button type="button" class="btn btn-success" v-on:click="onClickNuevaVenta()">Nueva Venta <i class="fas fa-plus-circle"></i></button>
+          <button v-if="pagina != 4" type="button" class="btn barra-lateral" v-on:click="onClickCuenta"><span class="h5 text-white">Ir a Cuenta Corriente </span><span class="badge badge-light mr-1">{{ cantidadCuentasActivas }}</span></button>
+          <button v-if="pagina != 1"type="button" class="btn barra-lateral" v-on:click="onClickInicio"><span class="h5 text-white">Ir a Ventas </span></button>
+          <button type="button" class="btn barra-lateral" v-on:click="onClickNuevaVenta()"><span class="h5 text-white">Nueva Venta</span> <i class="fas fa-plus-circle text-white"></i></button>
         </span>
         
 

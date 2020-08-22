@@ -6,12 +6,15 @@
       <button type="button" class="btn btn-success btn-sm" v-on:click="habilitarFecha">Buscar</button> 
       
     </div>
-    <div class="row tarjetas" v-if="ventasSeña.length > 0" >
+    <div class="row tarjetas mb-4" v-if="ventasSeña.length > 0" >
 
       <div class="col-sm-4" style="cursor:pointer;" v-on:click="mostrarVentas">
         <div class="card text-center">
-          <div class="card-body">
+          <div class="card-header bg-success">
             <h4 class="card-title">Ventas</h4>
+          </div>
+          <div class="card-body">
+            
             <h5 class="card-text" style="color: blue;">{{ventasHoy}}</h5>
           </div>
         </div>
@@ -20,7 +23,7 @@
         <div class="card text-center">
           <div class="card-body">
             <h4 class="card-title">Ingresos</h4>
-            <h5 class="card-text" style="color: green;">${{ingresosHoy}}</h5>
+            <h5 class="card-text" style="color: black;">${{ingresosHoy}}</h5>
           </div>
         </div>
       </div>
@@ -28,27 +31,31 @@
         <div class="card text-center" >
           <div class="card-body"> 
             <h4 class="card-title">Ventas en Seña</h4>
-            <h5 class="card-text" style="color: blue;">{{ ventasSeña.length }}</h5>
+            <h5 class="card-text" style="color: black;">{{ ventasSeña.length }}</h5>
           </div>
         </div>
       </div>
 
     </div>
 
-    <div class="row tarjetas" v-else>
-      <div class="col-sm-6">
-        <div class="card text-center">
+    <div class="row tarjetas mb-4" v-else>
+      <div class="col-6" style="cursor:pointer;" v-on:click="mostrarVentas">
+        <div class="card text-center border border-dark">
+          <div class="card-header bg-gris">
+            <h4 class="card-title text-white">Ventas</h4>
+          </div>
           <div class="card-body">
-            <h4 class="card-title">Ventas</h4>
-            <h5 class="card-text" style="color: blue;">{{ventasHoy}}</h5>
+            <h2 class="card-text" style="color: black;">{{ventasHoy}}</h2>
           </div>
         </div>
       </div>
-      <div class="col-sm-6">
-        <div class="card text-center">
+      <div class="col-6">
+        <div class="card text-center border border-dark">
+          <div class="card-header bg-gris">
+            <h4 class="card-title text-white " >Ingresos</h4>
+          </div>
           <div class="card-body pointer"  v-on:click="detallesIngresos()">
-            <h4 class="card-title " >Ingresos</h4>
-            <h5 class="card-text" style="color: green;">${{ingresosHoy}}</h5>
+            <h2 class="card-text" style="color: black;">${{ingresosHoy}}</h2>
             <span v-if="mostrarDetallesIngresos">
               <h5>Efectivo: ${{ingresosEfectivo}}  -  Tarjeta: ${{ingresosTarjeta}}</h5>
             </span>
@@ -66,12 +73,11 @@
       <table class="table table-bordered mt-2">
         <thead >
           <tr class=" table-info ">
-            <th scope="col">Opciones</th>
-            <th scope="col">Usuario</th>
-            <th scope="col">Cliente</th>
-            <th scope="col">Fecha y Hora</th>
-            <th scope="col">Total</th>
-            <th scope="col">Estado</th>
+            <th scope="col"><strong><h4>Opciones</h4></strong></th>
+            <th scope="col"><strong><h4>Cliente</h4></strong></th>
+            <th scope="col"><strong><h4>Fecha y Hora</h4></strong></th>
+            <th scope="col"><strong><h4>Total</h4></strong></th>
+            <th scope="col"><strong><h4>Estado</h4></strong></th>
 
           </tr>
         </thead>
@@ -94,9 +100,6 @@
               </span>
 
 
-            </th>
-            <th>
-              <span>admin</span>
             </th>
             <th>
               <span>{{venta.cliente}}</span>

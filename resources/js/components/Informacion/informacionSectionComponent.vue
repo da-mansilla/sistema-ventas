@@ -113,12 +113,12 @@
           <div class="row">
             <div class="col">
               <div class="card position-relative">
-                <canvas id="canvas1" height="300" v-on:click="detalleVenta"></canvas>
+                <canvas id="canvas1" height="250" v-on:click="detalleVenta"></canvas>
               </div>
             </div>
             <div class="col position-relative">
               <div class="card">
-                <canvas id="canvas2" height="300" v-on:click="detalleVenta"></canvas>
+                <canvas id="canvas2" height="250" v-on:click="detalleVenta"></canvas>
               </div>
             </div>
             <div class="col">
@@ -619,13 +619,6 @@
             });
 
             
-          },
-          obtenerPromocionVenta(estado){
-            let indexInicio = estado.indexOf('(');
-            let indexFinal = estado.indexOf(')');
-            let promocion = estado.slice(indexInicio+1,indexFinal)
-            console.log(promocion);
-            return promocion
           },
           filtrar(){
 

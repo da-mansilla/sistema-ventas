@@ -7,15 +7,38 @@ body {
   overflow-x: hidden;
 
 
+
   ;
 }
 .cabecera{
- background-color:#3d1016 !important;
+ background-color:#D90368 !important;
+ tex
 }
 .titulo-cabecera{
   color: white !important;
 font-family: 'Bowlby One SC', cursive;
 font-size: 22px;
+}
+.barra-lateral{
+  background-color: #D90368 !important;
+}
+.element-barra-lateral{
+
+}
+.table-info, .table-info > th, .table-info > td {
+    background-color: #2EC4B6;
+    color:white;
+}
+.bg-turquesa{
+  background-color: #2EC4B6;
+    color:white;
+}
+.card-content{
+  border: 1px solid #dee2e6 !important;
+      border-color: #343a40 !important;
+}
+.bg-gris{
+  background-color: #67697c;
 }
 ¨/*
 .item-sidebar h5{
