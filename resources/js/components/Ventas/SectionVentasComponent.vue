@@ -1,14 +1,43 @@
 <template>
     <div class="card-content card w-100">
-      <div class="card-header bg-gris" >
-        <h1 v-if="pagina==1" class="text-white"><strong>Ventas</strong></h1>
+      <div class="card-header" >
+        <h1 v-if="pagina==1" class="display-4 mb-0 text-gray-800">Ventas</h1>
         <h3 v-if="pagina==4">Cuenta Corriente</h3>
       </div>
       <div class="card-body">
         <span v-if='pagina==1 || pagina==4'>
-          <button v-if="pagina != 4" type="button" class="btn barra-lateral" v-on:click="onClickCuenta"><span class="h5 text-white">Ir a Cuenta Corriente </span><span class="badge badge-light mr-1">{{ cantidadCuentasActivas }}</span></button>
+          <!--
+          <button v-if="pagina != 4" type="button" class="btn barra-lateral" v-on:click="onClickCuenta">
+            <span class="h5 text-white">Ir a Cuenta Corriente </span>
+            <span class="badge badge-light mr-1">{{ cantidadCuentasActivas }}</span>
+          </button>
+
           <button v-if="pagina != 1"type="button" class="btn barra-lateral" v-on:click="onClickInicio"><span class="h5 text-white">Ir a Ventas </span></button>
+
           <button type="button" class="btn barra-lateral" v-on:click="onClickNuevaVenta()"><span class="h5 text-white">Nueva Venta</span> <i class="fas fa-plus-circle text-white"></i></button>
+          -->
+          <button v-if="pagina != 4" type="button" v-on:click="onClickCuenta" class="btn btn-success shadow btn-icon-split">
+            <span class="icon text-white-50">
+              <i class="fas fa-check"></i>
+            </span>
+            <span class="text h5">Ir a Cuenta Corriente</span>
+          </button>
+
+          <button v-if="pagina != 1" type="button" v-on:click="onClickInicio" class="btn btn-success shadow btn-icon-split">
+            <span class="icon text-white-50">
+              <i class="fas fa-check"></i>
+            </span>
+            <span class="text h5">Ir a Ventas</span>
+          </button>
+
+          <button type="button" v-on:click="onClickNuevaVenta()" class="btn btn-success shadow btn-icon-split">
+            <span class="icon text-white-50">
+              <i class="fas fa-plus-circle"></i>
+            </span>
+            <span class="text h5">Nueva Venta</span>
+          </button>
+
+
         </span>
         
 

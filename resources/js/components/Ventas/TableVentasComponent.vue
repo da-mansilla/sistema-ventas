@@ -39,10 +39,44 @@
     </div>
 
     <div class="row tarjetas mb-4" v-else>
+      <!-- Earnings (Monthly) Card Example -->
+            <div class="col-md-6 mb-4">
+              <div class="card border-left-primary shadow h-100 py-2">
+                <div class="card-body">
+                  <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                      <div class="text-lg font-weight-bold text-primary text-uppercase mb-1">Ventas (Dia)</div>
+                      <div class="h5 mb-0 font-weight-bold text-gray-800">40</div>
+                    </div>
+                    <div class="col-auto">
+
+                      <i class="fas fa-tag fa-2x text-gray-300"></i>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!-- Earnings (Monthly) Card Example -->
+            <div class="col-md-6 mb-4">
+              <div class="card border-left-primary shadow h-100 py-2">
+                <div class="card-body">
+                  <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                      <div class="text-lg font-weight-bold text-primary text-uppercase mb-1">Ingresos</div>
+                      <div class="h5 mb-0 font-weight-bold text-gray-800">$40,000</div>
+                    </div>
+                    <div class="col-auto"> 
+                      <i class="fas fa-cash-register fa-2x text-gray-300"></i>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+      <!--
       <div class="col-6" style="cursor:pointer;" v-on:click="mostrarVentas">
-        <div class="card text-center border border-dark">
-          <div class="card-header bg-gris">
-            <h4 class="card-title text-white">Ventas</h4>
+        <div class="card text-center">
+          <div class="card-header">
+            <h4 class="card-title ">Ventas</h4>
           </div>
           <div class="card-body">
             <h2 class="card-text" style="color: black;">{{ventasHoy}}</h2>
@@ -50,9 +84,9 @@
         </div>
       </div>
       <div class="col-6">
-        <div class="card text-center border border-dark">
-          <div class="card-header bg-gris">
-            <h4 class="card-title text-white " >Ingresos</h4>
+        <div class="card text-center">
+          <div class="card-header">
+            <h4 class="card-title  " >Ingresos</h4>
           </div>
           <div class="card-body pointer"  v-on:click="detallesIngresos()">
             <h2 class="card-text" style="color: black;">${{ingresosHoy}}</h2>
@@ -62,6 +96,7 @@
           </div>
         </div>
       </div>
+    -->
     </div>
 
     <div class="mt-2 mb-0" v-if="busquedaPorFecha">
@@ -70,7 +105,8 @@
     </div>
 
     <div>
-      <table class="table table-bordered mt-2">
+
+      <table class="table  mt-2">
         <thead >
           <tr class=" table-info ">
             <th scope="col"><strong><h4>Opciones</h4></strong></th>
@@ -118,6 +154,12 @@
           </tr>
         </tbody>
       </table>
+
+      
+
+
+
+
       <pagination v-if="verSeñas" :data="listaVentas" @pagination-change-page="getVentasSeña" class="float-right">
       </pagination>
       <pagination v-else :data="listaVentas" :limit="2" @pagination-change-page="getResults" class="float-right">

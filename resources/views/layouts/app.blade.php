@@ -21,39 +21,46 @@
     <link href="{{ asset('css/app.css') }}" rel="stylesheet">
     <link href="{{ asset('css/style.css') }}" rel="stylesheet">
     <link href="/fontawesome/css/all.css" rel="stylesheet">
+    <link href="{{ asset('css/sb-admin-2.css') }}" rel="stylesheet">
 
 </head>
-<body>
+<body id="page-top">
     <div id="app">
-        <nav class="navbar navbar-expand-md navbar-light bg-light shadow-sm cabecera">
-            <div class="container">
-                <a class="navbar-brand titulo-cabecera" href="{{ url('/') }}">
-                    <h3 class="tex-white"><strong>Sistema de Ventas</strong></h3>
-                </a>
-                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="{{ __('Toggle navigation') }}">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
+        <!-- Page Wrapper -->
+        <div id="wrapper">
+            <!--  
+            <nav class="navbar navbar-expand-md navbar-light bg-light shadow-sm cabecera">
+                <div class="container">
+                    <a class="navbar-brand titulo-cabecera" href="{{ url('/') }}">
+                        <h3 class="tex-white"><strong>Sistema de Ventas</strong></h3>
+                    </a>
+                    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="{{ __('Toggle navigation') }}">
+                        <span class="navbar-toggler-icon"></span>
+                    </button>
 
-                <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                    <!-- Left Side Of Navbar -->
-                    <ul class="navbar-nav mr-auto">
+                    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                        // Left Side Of Navbar 
+                        <ul class="navbar-nav mr-auto">
 
-                    </ul>
+                        </ul>
 
-                    <!-- Right Side Of Navbar -->
-                    <ul class="navbar-nav ml-auto">
-                        <!-- Authentication Links -->
-                        <!--
-                        
-                        -->
-                    </ul>
+                        // Right Side Of Navbar
+                        <ul class="navbar-nav ml-auto">
+                            // Authentication Links
+
+                        </ul>
+                    </div>
                 </div>
-            </div>
-        </nav>
+            </nav>
+            -->
+            
 
-        <main class="py-4 mt-0">
-            @yield('content')
-        </main>
+            
+
+                        @yield('content')
+
+
+        </div>
     </div>
 </body>
 </html>
