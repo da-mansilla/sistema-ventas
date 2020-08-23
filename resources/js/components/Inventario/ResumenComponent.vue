@@ -5,7 +5,7 @@
 		  <div class="card">
 		    <div class="justify-content-center " id="headingOne">
 		      <h2 class="mb-0 pt-1">
-		        <button class="btn btn-primary btn-link btn-block text-left" type="button" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne" @click="ver">
+		        <button class="btn btn-info btn-link btn-block text-left" type="button" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne" @click="ver">
 		          <h2 class="text-white text-center"><i class="fas fa-angle-double-down"></i></h2>
 		        </button>
 		      </h2>
@@ -15,13 +15,13 @@
 			    <div class="card-body">
 			    	<div class="row mt-1">
 						<div class="col-3">
-							<h4 class=" mb-2"><strong>Categorias</strong></h4>
+							<h4 class=" mb-2 negro"><strong>Categorias</strong></h4>
 							<select class="form-control" ref="select" @click="ver">
 								<option v-for="categoria in categorias_ordenadas" >{{categoria}}</option>
 							</select>
 						</div>
 						<div class="col-3">
-							<h4 class="ml-3 mb-2"><strong>{{categoria_seleccionada}}: {{cantidad_productos}}</strong></h4>
+							<h4 class="ml-3 mb-2 negro"><strong>{{categoria_seleccionada}}: {{cantidad_productos}}</strong></h4>
 							<div class=" text-center">
 								<div class="list-group" id="lista_tipos" role="tablist">
 							      <a @click="seleccionar_tipo('niño')"   class="list-group-item list-group-item-action" id="list-talles-niño" data-toggle="list" href="#talles_niño" role="tab"><h5>Niños : <strong>{{ cantidad_productos_niños }}</strong></h5></a>
@@ -33,7 +33,7 @@
 							</div>
 						</div>
 						<div class="col-3">
-							<h4 class=" mb-2"><strong>Talles Disponibles</strong></h4>
+							<h4 class=" mb-2 negro"><strong>Talles Disponibles</strong></h4>
 							<div data-spy="scroll" data-offset="0" style="height: 163px; overflow-y:scroll;">
 								<div class="overflow-auto">
 									<div class="tab-content">
@@ -73,7 +73,7 @@
 							</div>
 						</div>
 						<div class="col 3">
-							<h4 class=" mb-2"><strong>Colores Disponibles</strong></h4>
+							<h4 class=" mb-2 negro"><strong>Colores Disponibles</strong></h4>
 							<div data-spy="scroll"  data-offset="0" style="height: 163px; overflow-y:scroll;">
 							 	 <div class="overflow-auto">
 									<ul v-for="color in colores_list" class="list-group" id="lista_colores">
@@ -473,3 +473,8 @@
 	}
 
 </script>
+<style>
+	.negro{
+		color: #04030f;
+	}
+</style>

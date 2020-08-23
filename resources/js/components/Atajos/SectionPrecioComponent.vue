@@ -1,10 +1,30 @@
 <template>
     <div class="card-content card w-100">
       <div class="card-header ">
-        <h3>Precio</h3>
+        <h1 class="display-4 mb-0 text-gray-800">Precio</h1>
       </div>
       <div class="card-body">
-      
+
+      <div class="row justify-content-center">  
+        <div class="col-md-6 mb-4">
+          <div class="card border-left-success shadow h-100 py-2">
+            <div class="card-body">
+              <div class="row no-gutters align-items-center">
+                <div class="col mr-2">
+                  <div class="text-lg font-weight-bold text-success text-uppercase mb-1">N° de Serie</div>
+                  <input type="text" class="form-control"v-model="n_serie" v-on:keydown.enter="filtrar">
+                </div>
+                <div class="col-auto">
+
+                  <i class="fas fa-search fa-2x text-gray-300"></i>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <h2 class="h2 lead">N° de Serie: {{titulo}}</h2>
+      <!--
         <div class="row">
           <div class="col-md-3"></div>
           <div class="col-md-6 ">
@@ -17,19 +37,19 @@
           </div>
         </div>
         <h4>N° de Serie: {{titulo}}</h4>
-
+      -->
 
         <div>
-          <table class="table table-bordered table-products ">
+          <table class="table ">
               <thead>
-                <tr class=" table-primary ">
+                <tr class=" table-info ">
 
-                  <th scope="col">Categoria</th>
-                  <th scope="col">Tipo</th>
-                  <th scope="col">N° Serie</th>
-                  <th scope="col">Talle</th>
-                  <th scope="col">Color</th>
-                  <th scope="col">Precio</th>
+                  <th scope="col"><strong><h4>Categoria</h4></strong></th>
+                  <th scope="col"><strong><h4>Tipo</h4></strong></th>
+                  <th scope="col"><strong><h4>N° Serie</h4></strong></th>
+                  <th scope="col"><strong><h4>Talle</h4></strong></th>
+                  <th scope="col"><strong><h4>Color</h4></strong></th>
+                  <th scope="col"><strong><h4>Precio</h4></strong></th>
 
                 </tr>
               </thead>

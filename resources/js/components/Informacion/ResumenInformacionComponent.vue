@@ -5,7 +5,7 @@
 		  <div class="card">
 		    <div class="justify-content-center " id="headingOne">
 		      <h2 class="mb-0 pt-1">
-		        <button class="btn btn-primary btn-link btn-block text-left" type="button" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne" @click="ver">
+		        <button class="btn btn-info btn-link btn-block text-left" type="button" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne" @click="ver">
 		          <h2 class="text-white text-center"><i class="fas fa-angle-double-down"></i></h2>
 		        </button>
 		      </h2>

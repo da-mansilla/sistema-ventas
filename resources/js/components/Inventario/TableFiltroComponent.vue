@@ -1,14 +1,14 @@
 <template>
     <div>
-        <table class="table table-bordered table-products mt-2">
+        <table class="table">
           <thead>
-            <tr class=" table-primary ">
-              <th scope="col">Opciones</th>
-              <th scope="col">Temporada</th>
-              <th scope="col">Categoria</th>
-              <th scope="col">Stock</th>
-              <th scope="col">Tipo</th>
-              <th scope="col">N° Serie</th>
+            <tr class=" table-info ">
+              <th scope="col"><h4><strong>Opciones</strong></h4></th>
+              <th scope="col"><h4><strong>Temporada</strong></h4></th>
+              <th scope="col"><h4><strong>Categoria</strong></h4></th>
+              <th scope="col"><h4><strong>Stock</strong></h4></th>
+              <th scope="col"><h4><strong>Tipo</strong></h4></th>
+              <th scope="col"><h4><strong>N° Serie</strong></h4></th>
 
             </tr>
           </thead>
@@ -55,11 +55,11 @@
                           <div class="card-body">
                               <table class="table mt-0">
                                 <thead>
-                                  <tr class=" table-primary">
+                                  <tr class=" table-info">
                                     <th scope="col"></th>
-                                    <th scope="col">Color</th>
-                                    <th scope="col">Talle</th>
-                                    <th scope="col">Precio</th>
+                                    <th scope="col"><h5><strong>Color</strong></h5></th>
+                                    <th scope="col"><h5><strong>Talle</strong></h5></th>
+                                    <th scope="col"><h5><strong>Precio</strong></h5></th>
                                   </tr>
                                 </thead>
                                 <tbody>

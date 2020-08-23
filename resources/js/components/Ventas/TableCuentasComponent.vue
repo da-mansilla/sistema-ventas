@@ -94,6 +94,8 @@
             this.cargado = true;
             this.getCantidad();
             this.getCobrar();
+            console.log('list cuentas')
+            console.log(this.listaCuentas)
           })
       },
       methods:{

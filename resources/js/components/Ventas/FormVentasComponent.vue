@@ -13,7 +13,7 @@
 
               <span v-else>
                 <!-- Modal Button -->
-                <button type="button" class="form-control btn btn-primary" data-toggle="modal" data-target="#exampleModalCenter2">{{cliente}}</button>
+                <button type="button" class="form-control btn btn-info" data-toggle="modal" data-target="#exampleModalCenter2">{{cliente}}</button>
               </span>
 
             </div>
@@ -139,7 +139,7 @@
                    <!-- Button trigger modal
                   <input type="text" class="form-control" v-model="producto">
                    -->
-                   <button type="button" class="form-control btn btn-primary" data-toggle="modal" data-target="#exampleModalCenter">{{producto}}</button>
+                   <button type="button" class="form-control btn btn-info" data-toggle="modal" data-target="#exampleModalCenter">{{producto}}</button>
                   
                 </div>
                 <div class="form-group col-md-2">
@@ -299,16 +299,16 @@
               </table>
           </div>
           <div v-else>
-            <table class="table table-bordered table-ventas">
+            <table class="table">
               <thead>
-                <tr class=" table-primary ">
+                <tr class=" table-info ">
                   <th scope="col"></th>
-                  <th scope="col">N° Serie</th>
-                  <th scope="col">Categoria</th>
-                  <th scope="col">Precio</th>
-                  <th scope="col">Talle</th>
-                  <th scope="col">Color</th>
-                  <th scope="col">Total</th>
+                  <th scope="col"><h5><strong>N° Serie</strong></h5></th>
+                  <th scope="col"><h5><strong>Categoria</strong></h5></th>
+                  <th scope="col"><h5><strong>Precio</strong></h5></th>
+                  <th scope="col"><h5><strong>Talle</strong></h5></th>
+                  <th scope="col"><h5><strong>Color</strong></h5></th>
+                  <th scope="col"><h5><strong>Total</strong></h5></th>
                 </tr>
               </thead>
               <tbody v-if="editMode && disabled">
@@ -470,17 +470,17 @@
                 <button  type="submit" class="btn btn-secondary btn-lg ml-2" v-on:click="onClickCancelar">Cancelar</button>
                 <button type="submit" class="btn btn-secondary btn-lg ml-2" v-on:click="editVenta(indexEdit)">Guardar</button>
               </span>
-              <button type="submit" class="btn btn-primary btn-lg ml-5" v-on:click="exitEditMode">Salir</button> 
+              <button type="submit" class="btn btn-secondary btn-lg ml-5" v-on:click="exitEditMode">Salir</button> 
           </div>
           </span>
 
           <span v-else>
             <div class="form-row justify-content-end">
-              <button type="submit" class="btn btn-primary btn-lg mr-5" v-on:click="exitEditMode">Salir</button>
+              <button type="submit" class="btn btn-secondary btn-lg mr-5" v-on:click="exitEditMode">Salir</button>
 
-              <button v-if="cuentaActivada && forma_pago == 'Cuenta'"type="submit" class="btn btn-primary btn-lg" v-on:click="modiicarCuenta()">Hecho</button> 
-              <button v-else-if="forma_pago == 'Seña'" type="submit" class="btn btn-primary btn-lg"v-on:click="saveVenta()">Hecho</button> 
-              <button v-else type="submit" class="btn btn-primary btn-lg" :disabled="hechoDesactivado"v-on:click="saveVenta()">Hecho</button> 
+              <button v-if="cuentaActivada && forma_pago == 'Cuenta'"type="submit" class="btn btn-success btn-lg" v-on:click="modiicarCuenta()">Hecho</button> 
+              <button v-else-if="forma_pago == 'Seña'" type="submit" class="btn btn-success btn-lg"v-on:click="saveVenta()">Hecho</button> 
+              <button v-else type="submit" class="btn btn-success btn-lg" :disabled="hechoDesactivado"v-on:click="saveVenta()">Hecho</button> 
           </div>
           </span>
         

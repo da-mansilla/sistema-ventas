@@ -1,7 +1,7 @@
 <template>
     <div class="card-content card w-100">
       <div class="card-header ">
-        <h3>Productos</h3>
+        <h1 class="display-4 mb-0 text-gray-800">Productos</h1>
       </div>
       <div class="card-body">
         
@@ -22,11 +22,60 @@
           :listStock='listStock'
           @filtrar='filtrar'>
         </filtroproducts-component>
-
+        <button type="button" data-toggle="modal" data-target="#exampleModal" class="btn btn-success shadow btn-icon-split">
+          <span class="icon text-white-50">
+            <i class="fas fa-check"></i>
+          </span>
+          <span class="text h5">Agregar</span>
+        </button>
+        <button type="button" data-toggle="modal" data-target="#ModalPrecio" class="btn btn-success shadow btn-icon-split">
+          <span class="icon text-white-50">
+            <i class="fas fa-check"></i>
+          </span>
+          <span class="text h5">Precio</span>
+        </button>
+        <!--
         <button type="button" class="btn btn-success" data-toggle="modal" data-target="#exampleModal">Agregar</button>
         <button type="button" class="btn btn-success" data-toggle="modal" data-target="#ModalPrecio">Precio</button>
-
+    -->
         <div class="row tarjetas">
+
+          <div class="col-md-6 mb-4">
+            <div class="card border-left-primary shadow h-100 py-2">
+              <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                  <div class="col mr-2">
+                    <div class="text-lg font-weight-bold text-primary text-uppercase mb-1">Productos</div>
+                    <div class="h5 mb-0 font-weight-bold text-gray-800">{{ cantidadProducts }}</div>
+                  </div>
+                  <div class="col-auto">
+
+                    <i class="fas fa-tshirt fa-2x text-gray-300"></i>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-md-6 mb-4">
+            <div class="card border-left-primary shadow h-100 py-2">
+              <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                  <div class="col mr-2">
+                    <div class="text-lg font-weight-bold text-primary text-uppercase mb-1">Categorias</div>
+                    <div class="h5 mb-0 font-weight-bold text-gray-800">{{ cantidadCategorias }}</div>
+                  </div>
+                  <div class="col-auto">
+
+                    <i class="fas fa-boxes fa-2x text-gray-300"></i>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+
+          <!--
           <div class="col-sm-6">
             <div class="card text-center">
               <div class="card-body">
@@ -43,6 +92,7 @@
               </div>
             </div>
           </div>
+        -->
         </div>
 
         <!-- Tablas -->

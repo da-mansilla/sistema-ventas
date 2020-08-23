@@ -5,6 +5,55 @@
       </div>
       <div class="card-body">
         <div class="row tarjetas">
+          <div class="col-4 mb-4">
+            <div class="card border-left-primary shadow h-100 py-2">
+              <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                  <div class="col mr-2">
+                    <div class="text-lg font-weight-bold text-primary text-uppercase mb-1">Ventas</div>
+                    <div class="h5 mb-0 font-weight-bold text-gray-800">{{ ventasTotal }}</div>
+                  </div>
+                  <div class="col-auto">
+
+                    <i class="fas fa-tshirt fa-2x text-gray-300"></i>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-4 mb-4">
+            <div class="card border-left-primary shadow h-100 py-2">
+              <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                  <div class="col mr-2">
+                    <div class="text-lg font-weight-bold text-primary text-uppercase mb-1">Ingresos</div>
+                    <div class="h5 mb-0 font-weight-bold text-gray-800">${{ ventasTotalIngresos }}</div>
+                  </div>
+                  <div class="col-auto">
+
+                    <i class="fas fa-tshirt fa-2x text-gray-300"></i>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-4 mb-4">
+            <div class="card border-left-primary shadow h-100 py-2">
+              <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                  <div class="col mr-2">
+                    <div class="text-lg font-weight-bold text-primary text-uppercase mb-1">Productos Vendidos</div>
+                    <div class="h5 mb-0 font-weight-bold text-gray-800">{{ productosTotalesVendidos }}</div>
+                  </div>
+                  <div class="col-auto">
+
+                    <i class="fas fa-tshirt fa-2x text-gray-300"></i>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!--
           <div class="col-sm-4">
             <div class="card text-center">
               <div class="card-body">
@@ -29,12 +78,13 @@
               </div>
             </div>
           </div>
+        -->
         </div>
 
         <div class="m-3">
 
             <div class="card">
-              <div class="card-header text-center bg-primary">
+              <div class="card-header text-center bg-info">
                 <h4 class="text-white"><strong>Ventas</strong></h4>
               </div>
               <div class="card-body">

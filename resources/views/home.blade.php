@@ -21,26 +21,26 @@
 
                 <!-- Begin Page Content -->
                 <div class="container-fluid">
-                    <template v-if="menu==0">
+                    <template v-if="menu==100">
                         <sectionhome-component></sectionhome-component>            
                     </template>
                     <template v-if="menu==1">
                         <sectionventas-component></sectionventas-component>            
                     </template>
                     <template v-if="menu==2">
-                        <sectionproducts-component></sectionproducts-component>            
+                            <preciosection-component></preciosection-component>            
                     </template>
                     <template v-if="menu==3">
-                        <sectionclientes-component></sectionclientes-component>            
+                        <sectionproducts-component></sectionproducts-component>            
                     </template>
                     <template v-if="menu==4">
-                            <sectionproveedores-component></sectionproveedores-component>            
-                    </template>
-                    <template v-if="menu==5">
                             <informacionsection-component></informacionsection-component>            
                     </template>
-                    <template v-if="menu==6">
-                            <preciosection-component></preciosection-component>            
+                    <template v-if="menu==99">
+                        <sectionclientes-component></sectionclientes-component>            
+                    </template>
+                    <template v-if="menu==98">
+                            <sectionproveedores-component></sectionproveedores-component>            
                     </template>
                 </div>
                 <!-- /#page-content-wrapper -->

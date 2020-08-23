@@ -16,7 +16,7 @@
       <li class="nav-item active">
         <a class="nav-link" href="#">
           <i class="fas fa-fw fa-tachometer-alt"></i>
-          <span>Sistema de Ventas</span></a>
+          <span class="h5">Sistema de Ventas</span></a>
       </li>
 
       <!-- Divider -->
@@ -29,18 +29,18 @@
 
       <!-- Nav Item - Pages Collapse Menu -->
       <li class="nav-item">
-        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="true" aria-controls="collapseTwo">
+        <a @click="menu=1" class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="true" aria-controls="collapseTwo">
           <i class="fas fa-shopping-cart"></i>
-          <span>Ventas</span>
+          <span class="h5">Ventas</span>
         </a>
 
       </li>
 
       <!-- Nav Item - Utilities Collapse Menu -->
       <li class="nav-item">
-        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseUtilities" aria-expanded="true" aria-controls="collapseUtilities">
+        <a @click="menu=2" class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseUtilities" aria-expanded="true" aria-controls="collapseUtilities">
           <i class="fas fa-money-bill-wave"></i>
-          <span>Precios</span>
+          <span class="h5">Precios</span>
         </a>
       </li>
 
@@ -54,24 +54,24 @@
 
       <!-- Nav Item - Pages Collapse Menu -->
       <li class="nav-item">
-        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapsePages" aria-expanded="true" aria-controls="collapsePages">
+        <a @click="menu=3" class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapsePages" aria-expanded="true" aria-controls="collapsePages">
           <i class="fas fa-tshirt"></i>
-          <span>Stock</span>
+          <span class="h5">Stock</span>
         </a>
       </li>
 
       <!-- Nav Item - Charts -->
       <li class="nav-item">
-        <a class="nav-link" href="charts.html">
+        <a @click="menu=4" class="nav-link">
           <i class="fas fa-fw fa-chart-area"></i>
-          <span>Charts</span></a>
+          <span class="h5">Info</span></a>
       </li>
 
       <!-- Nav Item - Tables -->
       <li class="nav-item">
-        <a class="nav-link" href="tables.html">
+        <a @click="menu=5" class="nav-link">
           <i class="fas fa-fw fa-table"></i>
-          <span>Tables</span></a>
+          <span class="h5">Tables</span></a>
       </li>
 
       <!-- Divider -->

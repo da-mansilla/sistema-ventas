@@ -87,14 +87,14 @@
 
                     <table class="table mt-0">
                       <thead>
-                        <tr class=" table-primary">
+                        <tr class=" table-info">
                           <th scope="col"></th>
-                          <th scope="col">N° Serie</th>
-                          <th scope="col">Categoria</th>
-                          <th scope="col">Talle</th>
-                          <th scope="col">Color</th>
-                          <th scope="col">Precio</th>
-                          <th scope="col" >Nuevo Precio</th>
+                          <th scope="col"><h5><strong>N° Serie</strong></h5></th>
+                          <th scope="col"><h5><strong>Categoria</strong></h5></th>
+                          <th scope="col"><h5><strong>Talle</strong></h5></th>
+                          <th scope="col"><h5><strong>Color</strong></h5></th>
+                          <th scope="col"><h5><strong>Precio</strong></h5></th>
+                          <th scope="col"><h5><strong>Nuevo Precio</strong></h5></th>
                         </tr>
                       </thead>
                       <paginate ref="paginator" name="productsModificar" :list="productsModificar" :per="10" tag="tbody">

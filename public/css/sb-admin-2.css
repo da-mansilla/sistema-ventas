@@ -4865,7 +4865,7 @@ a.badge:hover, a.badge:focus {
 
 .badge-primary {
   color: #fff;
-  background-color: #4e73df;
+  background-color: #B8B3BE;
 }
 
 a.badge-primary:hover, a.badge-primary:focus {
@@ -5267,8 +5267,8 @@ a.badge-dark:focus, a.badge-dark.focus {
 .list-group-item.active {
   z-index: 2;
   color: #fff;
-  background-color: #4e73df;
-  border-color: #4e73df;
+  background-color: #36b9cc;
+  border-color: #36b9cc;
 }
 
 .list-group-item + .list-group-item {
@@ -10302,7 +10302,7 @@ a:focus {
 }
 
 .sidebar .nav-item .nav-link span {
-  font-size: 0.65rem;
+  
   display: block;
 }
 
@@ -10470,11 +10470,10 @@ a:focus {
     width: 14rem;
   }
   .sidebar .nav-item .nav-link i {
-    font-size: 0.85rem;
+
     margin-right: 0.25rem;
   }
   .sidebar .nav-item .nav-link span {
-    font-size: 0.85rem;
     display: inline;
   }
   .sidebar .nav-item .nav-link[data-toggle="collapse"]::after {
