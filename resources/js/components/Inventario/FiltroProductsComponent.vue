@@ -231,7 +231,7 @@ export default {
         },
         methods: {
             getCategorias(){
-              axios.get('/cantidadcategorias').then((response)=>{
+              axios.get('/categoriastodas').then((response)=>{
                 this.categorias= response.data;
                 this.categorias.forEach((element)=>{
             		if(this.tipoNiño && element.tipo == 'Niño')

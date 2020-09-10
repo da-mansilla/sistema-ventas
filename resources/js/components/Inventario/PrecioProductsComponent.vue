@@ -22,6 +22,7 @@
                           <label for="grupo">Seleccionar Por:</label>
                           <select id="grupo" class="form-control" v-on:click="seleccionarPor">
                             <option selected>Categoria</option>
+                            <option>Temporada</option>
                             <option>Producto</option>
                             <option>Todos</option>
                           </select>
@@ -59,6 +60,18 @@
                               <label for="sub-grupo-producto">N° Serie</label>
                               <input type="text" class="form-control" id="sub-grupo-producto" v-model="productoSerie" v-on:keydown.enter='inputSerie'>
                             </div>
+                            <!-- Temporada -->
+                            <div v-if="seleccionado==3" class="form-group col-md-3">
+                              <label>Tipo</label>
+                              <div class="input-group">
+                                  <select class="form-control" v-model="temporadaElegida" >
+                                    <option v-for="temporada in listadoTemporadas">{{temporada}}</option>
+                                  </select>
+                                  <div class="input-group-append">
+                                    <button class="btn btn-outline-secondary" type="button" v-on:click="elegirTemporada"><i class="fas fa-plus"></i></button>
+                                  </div>
+                              </div>
+                            </div>
                       </div>
                       <hr>
                       <div class="form-row">
@@ -75,7 +88,7 @@
                                 <label for="cantidad">Cantidad</label>
                             </div>
                             <div class="input-group">
-                              <input type="number" class="form-control " required id="cantidad" placeholder="10%" v-model="cantidad"v-on:keyup="agregarPrecios">
+                              <input type="number" class="form-control " required id="cantidad" v-model="cantidad"v-on:keyup="agregarPrecios">
                               <div class="input-group-append">
                                 <button class="btn btn-outline-secondary" style="cursor: default;" type="button"><i class="fas fa-percentage"></i></button>
                               </div>
@@ -90,6 +103,7 @@
                         <tr class=" table-info">
                           <th scope="col"></th>
                           <th scope="col"><h5><strong>N° Serie</strong></h5></th>
+                          <th scope="col"><h5><strong>Temporada</strong></h5></th>
                           <th scope="col"><h5><strong>Categoria</strong></h5></th>
                           <th scope="col"><h5><strong>Talle</strong></h5></th>
                           <th scope="col"><h5><strong>Color</strong></h5></th>
@@ -99,6 +113,7 @@
                       </thead>
                       <paginate ref="paginator" name="productsModificar" :list="productsModificar" :per="10" tag="tbody">
                         <tr v-for="(product,index) in paginated('productsModificar')" :key="product.id">
+
                             <td><button  v-if="!activateModificarCategoria"type="button" class="btn btn-danger btn-sm" v-on:click="onClickDelete(index)"><i class="fas fa-times-circle"></i></button></td>
                             <td>{{product.n_serie}}</td>
                             <td v-if="activateModificarCategoria != product.id">
@@ -111,11 +126,12 @@
                                     <option v-for="sugerencia in sortedArrayCategorias" :value="sugerencia.id">{{sugerencia.nombre.replace(/\w\S*/g, (w) => (w.replace(/^\w/, (c) => c.toUpperCase())))}} ({{sugerencia.tipo}})</option>
                                 </select>
                             </td>
+                            <td>{{product.nombre}}</td>
                             <td>{{product.talle}}</td>
                             <td>{{product.color}}</td>
                             <td>{{product.precio}}</td>
-                            <td v-if="accion == 'aumentar'" style="width: 100px;"><input  style="width: 100px;" :id="product.id" v-on:keyup="cambiarPrecioIndividual(product.id)" type="number" :value="product.nuevoPrecio"></td>
-                            <td v-if="accion == 'disminuir'" style="width: 100px;"><input style="width: 100px;" :id="product.id" v-on:keyup="cambiarPrecioIndividual(product.id)" type="number" :value="product.nuevoPrecio"></td>
+                            <td v-if="accion == 'aumentar'" style="width: 75px;"><input  style="width: 75px;" :id="product.id" v-on:keyup="cambiarPrecioIndividual(product.id)" type="number" :value="product.nuevoPrecio"></td>
+                            <td v-if="accion == 'disminuir'" style="width: 75px;"><input style="width: 75px;" :id="product.id" v-on:keyup="cambiarPrecioIndividual(product.id)" type="number" :value="product.nuevoPrecio"></td>
                         </tr>
                       </paginate>
                       
@@ -170,12 +186,15 @@
                 precioIndividual: 0,
                 activateModificarCategoria: false,
                 nuevaCategoria: '',
-                cambiarCategoria:[]
+                cambiarCategoria:[],
+                listadoTemporadas: [],
+                temporadaElegida: ''
 
     		}
     	},
         mounted() {
             $('#ModalPrecio').on('hidden.bs.modal', this.cerrarModal);
+            this.getTemporadas();
         },
         methods: {
             cerrarModal(){
@@ -188,6 +207,14 @@
             },
             getTodosProductos(){
                 axios.get('todosproductos').then(response=>{
+
+                })
+            },
+            getTemporadas(){
+                axios.get('/temporadas').then(response=>{
+                    response.data.forEach(element=>{
+                        this.listadoTemporadas.push(element.nombre)
+                    })
 
                 })
             },
@@ -215,10 +242,30 @@
                     if(seleccionar == 'Producto'){
                         this.seleccionado = 2;
                     }
+                    if(seleccionar == 'Temporada'){
+                        this.seleccionado = 3;
+                    }
                 } else {
                     this.clickSeleccionar = true;
                 }
 
+            },
+            elegirTemporada(e){
+                console.log(this.temporadaElegida)
+                this.productsModificar = [];
+                this.preciosModificar = [];
+                axios.get('productsPorTemporadas/'+this.temporadaElegida).then(response=>{
+                    console.log(response);
+                    response.data.forEach(element=>{
+                        element.nuevoPrecio = element.precio
+                        this.productsModificar.push(element);
+                    })
+                    this.productsModificar.forEach(producto=>{
+                            this.preciosModificar.push(producto.precio);
+                    })
+                    this.agregarPrecios();
+                    this.$refs.paginator.goToPage(1)
+                })
             },
             elegirTipo(e){
                 if (this.clickCategoria){
@@ -284,6 +331,7 @@
             cargarProductos(){
                     console.log('Id de categoria '+ this.categoriaElegida)
                     this.productsModificar = [];
+                    this.preciosModificar = [];
                     axios.get('productsporcategoria/'+this.categoriaElegida).then(response=>{
                         response.data.forEach(element=>{
                             element.nuevoPrecio = element.precio
@@ -379,17 +427,31 @@
             },
             agregarPrecios(){
                 this.preciosModificar = [];
-                this.productsModificar.forEach(product=>{
-                    if(this.accion == 'aumentar'){
-                        var precioFinal = this.redondeoAumentar(product.precio)
+                console.log(this.cantidad)
+                
+                    
+                
 
-                    }
-                    if(this.accion == 'disminuir'){
-                        var precioFinal = this.redondeoDisminuir(product.precio)
-                    }
-                    product.nuevoPrecio = precioFinal
-                })
-                console.log(this.productsModificar);
+                        
+                    this.productsModificar.forEach(product=>{
+                        if(this.accion == 'aumentar'){
+                            var precioFinal = this.redondeoAumentar(product.precio)
+
+                        }
+                        if(this.accion == 'disminuir'){
+                            var precioFinal = this.redondeoDisminuir(product.precio)
+                        }
+                        
+                        if(this.cantidad !== ''){
+                            product.nuevoPrecio = precioFinal
+                        }else{
+                            product.nuevoPrecio = product.precio
+                        }
+                        
+                    })
+
+                
+                
             },
             cambiarPrecioIndividual(id){
                 var precioingresado = $('#'+id).val()

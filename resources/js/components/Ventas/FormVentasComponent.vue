@@ -2,7 +2,13 @@
 
       <div class="card-body">
         <form v-on:submit.prevent="newProductVenta()">
+            <span class="mb-4"v-if="editMode && disabled">
+              <h3 class="display-4 mb-3 text-gray-800">Fecha y Hora: {{$moment(editMode.created_at).format("DD MMMM YYYY HH:mm:ss")}}</h3>  
+              
+            </span>
           <div class="form-row">
+
+
             <div class="form-group col-md-6">
               <label for="inputEmail4">Cliente</label>
 
@@ -259,38 +265,38 @@
 
                   </tr>
                   <tr>
-                      <td colspan="5" class="text-right table-light td-venta" ><strong>Total Neto</strong></td>
-                      <td class="td-venta">${{totalNeto}}</td> 
+                      <td colspan="5" class="text-right table-light td-venta2" ><strong>Total Neto</strong></td>
+                      <td class="td-venta2">${{totalNeto}}</td> 
                   </tr> 
 
                   <tr v-if="Cuenta_formaPago == 'Efectivo'">
-                    <td colspan="5" class="text-right table-light td-venta"><strong>Efectivo</strong></td>
-                    <td class="td-venta"><input type="number" class="input-venta" v-model="pagandoEfectivo" v-on:keyup="insertPagado"></td> 
+                    <td colspan="5" class="text-right table-light td-venta2"><strong>Efectivo</strong></td>
+                    <td class="td-venta2"><input type="number" class="input-venta" v-model="pagandoEfectivo" v-on:keyup="insertPagado"></td> 
                 </tr>
 
                 <tr v-if="Cuenta_formaPago == 'Tarjeta'" v-for='(tarjeta,index) in listTarjetas'>
-                    <td colspan="5" class="text-right table-light td-venta">
+                    <td colspan="5" class="text-right table-light td-venta2">
                       <button type="button" class="btn btn-danger btn-sm" v-on:click="eliminarTarjeta(index)">X</button>
                       <strong>{{tarjeta.nombre}}</strong>
                     </td>
-                    <td class="td-venta"><input :id="tarjeta.nombre" type="number" class="input-venta" v-on:keyup="FormaTarjeta"></td> 
+                    <td class="td-venta2"><input :id="tarjeta.nombre" type="number" class="input-venta" v-on:keyup="FormaTarjeta"></td> 
                 </tr> 
 
                 <tr v-if="Cuenta_formaPago == 'efectivoTarjeta'">
-                    <td colspan="5" class="text-right table-light td-venta"><strong>Efectivo</strong></td>
-                    <td class="td-venta"><input type="number" class="input-venta" v-model="pagandoEfectivo" v-on:keyup="insertPagado"></td> 
+                    <td colspan="5" class="text-right table-light td-venta2"><strong>Efectivo</strong></td>
+                    <td class="td-venta2"><input type="number" class="input-venta" v-model="pagandoEfectivo" v-on:keyup="insertPagado"></td> 
                 </tr>
                 <tr v-if="Cuenta_formaPago == 'efectivoTarjeta'" v-for='(tarjeta,index) in listTarjetas'>
-                    <td colspan="5" class="text-right table-light td-venta">
+                    <td colspan="5" class="text-right table-light td-venta2">
                       <button type="button" class="btn btn-danger btn-sm" v-on:click="eliminarTarjeta(index)">X</button>
                       <strong>{{tarjeta.nombre}}</strong>
                     </td>
-                    <td class="td-venta"><input :id="tarjeta.nombre" type="number" class="input-venta" v-on:keyup="FormaTarjeta"></td> 
+                    <td class="td-venta2"><input :id="tarjeta.nombre" type="number" class="input-venta" v-on:keyup="FormaTarjeta"></td> 
                 </tr>
 
                   <tr>
-                      <td colspan="5" class="text-right table-light td-venta"><strong>Total a Pagar</strong></td>
-                      <td class="td-venta">${{totalNeto - señaPagado}}</td>  
+                      <td colspan="5" class="text-right table-light td-venta2"><strong>Total a Pagar</strong></td>
+                      <td class="td-venta2">${{totalNeto - señaPagado}}</td>  
                   </tr> 
 
 
@@ -336,34 +342,34 @@
                   </td>
                 </tr>
                 <tr v-if="editMode.descuento > 0">
-                    <td colspan="6" class="text-right table-light td-venta"><strong>Descuento</strong></td>
-                    <td class="td-venta" v-bind:value="editMode.pagoEfectivo" style="color:red;">${{editMode.descuento}}</td> 
+                    <td colspan="6" class="text-right table-light td-venta2"><strong>Descuento</strong></td>
+                    <td class="td-venta2" v-bind:value="editMode.pagoEfectivo" style="color:red;">${{editMode.descuento}}</td> 
                 </tr>
                 <tr v-if="editMode.recargo > 0">
-                    <td colspan="6" class="text-right table-light td-venta"><strong>Recargo</strong></td>
-                    <td class="td-venta" v-bind:value="editMode.pagoEfectivo">${{editMode.recargo}}</td> 
+                    <td colspan="6" class="text-right table-light td-venta2"><strong>Recargo</strong></td>
+                    <td class="td-venta2" v-bind:value="editMode.pagoEfectivo">${{editMode.recargo}}</td> 
                 </tr>
                 <tr v-if="editMode.forma_pago=='Efectivo'">
-                    <td colspan="6" class="text-right table-light td-venta"><strong>Efectivo</strong></td>
-                    <td class="td-venta" v-bind:value="editMode.pagoEfectivo">${{editMode.pagoEfectivo}}</td> 
+                    <td colspan="6" class="text-right table-light td-venta2"><strong>Efectivo</strong></td>
+                    <td class="td-venta2" v-bind:value="editMode.pagoEfectivo">${{editMode.pagoEfectivo}}</td> 
                 </tr> 
 
                 <tr v-if="editMode.forma_pago=='Tarjeta'" v-for="tarjeta in editMode.tarjetas">
                     <!--
-                    <td colspan="6" class="text-right table-light td-venta"><strong>Tarjeta</strong></td>
-                    <td class="td-venta" v-bind:value="editMode.pagoTarjeta" disabled>{{editMode.pagoTarjeta}}</td> 
+                    <td colspan="6" class="text-right table-light td-venta2"><strong>Tarjeta</strong></td>
+                    <td class="td-venta2" v-bind:value="editMode.pagoTarjeta" disabled>{{editMode.pagoTarjeta}}</td> 
                     -->
-                    <td colspan="6" class="text-right table-light td-venta"><strong>{{tarjeta.nombre}}</strong></td>
-                    <td class="td-venta" disabled>${{tarjeta.total}}</td>
+                    <td colspan="6" class="text-right table-light td-venta2"><strong>{{tarjeta.nombre}}</strong></td>
+                    <td class="td-venta2" disabled>${{tarjeta.total}}</td>
                 </tr>
 
                 <tr v-if="editMode.forma_pago=='efectivoTarjeta'">
-                    <td colspan="6" class="text-right table-light td-venta"><strong>Efectivo</strong></td>
-                    <td class="td-venta"><input type="number" class="input-venta" v-bind:value="editMode.pagoEfectivo" disabled></td> 
+                    <td colspan="6" class="text-right table-light td-venta2"><strong>Efectivo</strong></td>
+                    <td class="td-venta2"><input type="number" class="input-venta" v-bind:value="editMode.pagoEfectivo" disabled></td> 
                 </tr> 
                 <tr v-if="editMode.forma_pago=='efectivoTarjeta'" v-for="tarjeta in editMode.tarjetas">
-                    <td colspan="6" class="text-right table-light td-venta"><strong>{{tarjeta.nombre}}</strong></td>
-                    <td class="td-venta"><input type="number" class="input-venta" v-bind:value="tarjeta.total" disabled></td> 
+                    <td colspan="6" class="text-right table-light td-venta2"><strong>{{tarjeta.nombre}}</strong></td>
+                    <td class="td-venta2"><input type="number" class="input-venta" v-bind:value="tarjeta.total" disabled></td> 
                 </tr>
                 <tr>
                     <td colspan="6" class="text-right table-light" style="font-size: 19px;"><strong>Total Neto</strong></td>
@@ -396,48 +402,48 @@
                   </td>
                 </tr>
                 <tr v-if="recargoActivate">
-                    <td colspan="6" class="text-right table-light td-venta">
+                    <td colspan="6" class="text-right table-light td-venta2">
                       <button type="button" class="btn btn-danger btn-sm" v-on:click="eliminarRecargo()">X</button>
                       <strong>{{TitulovalorRecargo}}</strong>
                     </td>
-                    <td class="td-venta" style="color:green;">+${{totalRecargo}}</td>
+                    <td class="td-venta2" style="color:green;">+${{totalRecargo}}</td>
                 </tr>
                 <tr v-if="descuentoActivate">
-                    <td colspan="6" class="text-right table-light td-venta">
+                    <td colspan="6" class="text-right table-light td-venta2">
                       <button type="button" class="btn btn-danger btn-sm" v-on:click="eliminarDescuento()">X</button>
                       <strong>{{TitulovalorDescuento}}</strong>
                     </td>
-                    <td class="td-venta" style="color:red;">-${{totalDescuento}}</td>
+                    <td class="td-venta2" style="color:red;">-${{totalDescuento}}</td>
                 </tr>
                 <tr v-if="promocion == 'descuentoCantidad'">
-                    <td colspan="6" class="text-right table-light td-venta">
+                    <td colspan="6" class="text-right table-light td-venta2">
                       <strong>Descuento</strong>
                     </td>
-                    <td class="td-venta" style="color:red;">-${{cantidadDescuento}}</td>
+                    <td class="td-venta2" style="color:red;">-${{cantidadDescuento}}</td>
                 </tr>
                 <tr v-if="forma_pago=='Efectivo'">
-                    <td colspan="6" class="text-right table-light td-venta"><strong>Efectivo</strong></td>
-                    <td class="td-venta">${{totalNeto}}</td> 
+                    <td colspan="6" class="text-right table-light td-venta2"><strong>Efectivo</strong></td>
+                    <td class="td-venta2">${{totalNeto}}</td> 
                 </tr> 
 
                 <tr v-if="forma_pago=='Tarjeta'" v-for='(tarjeta,index) in listTarjetas'>
 
-                    <td colspan="6" class="text-right table-light td-venta">
+                    <td colspan="6" class="text-right table-light td-venta2">
                       <button type="button" class="btn btn-danger btn-sm" v-on:click="eliminarTarjeta(index)">X</button>
                       <strong>{{tarjeta.nombre}}</strong>
                     </td>
 
-                    <td class="td-venta"><input type="number" value="0"placeholder="0" :id="tarjeta.nombre" class="input-venta" v-on:keyup="FormaTarjeta"></td> 
+                    <td class="td-venta2"><input type="number" value="0"placeholder="0" :id="tarjeta.nombre" class="input-venta" v-on:keyup="FormaTarjeta"></td> 
 
                 </tr>
 
                 <tr v-if="forma_pago=='efectivoTarjeta'">
-                    <td colspan="6" class="text-right table-light td-venta"><strong>Efectivo</strong></td>
-                    <td class="td-venta"><input type="number" class="input-venta" v-model="pagoEfectivo" v-on:keyup="FormaEyT"></td> 
+                    <td colspan="6" class="text-right table-light td-venta2"><strong>Efectivo</strong></td>
+                    <td class="td-venta2"><input type="number" class="input-venta" v-model="pagoEfectivo" v-on:keyup="FormaEyT"></td> 
                 </tr> 
                 <tr v-if="forma_pago=='efectivoTarjeta'" v-for='tarjeta in listTarjetas'>
-                    <td colspan="6" class="text-right table-light td-venta"><strong>{{tarjeta.nombre}}</strong></td>
-                    <td class="td-venta"><input type="number" :id="tarjeta.nombre" class="input-venta" v-on:keyup="FormaEyT"></td> 
+                    <td colspan="6" class="text-right table-light td-venta2"><strong>{{tarjeta.nombre}}</strong></td>
+                    <td class="td-venta2"><input type="number" :id="tarjeta.nombre" class="input-venta" v-on:keyup="FormaEyT"></td> 
                 </tr>
                 
 
@@ -1721,8 +1727,8 @@
     table-layout: fixed;
     width: 100%;
 }
-.td-venta {
-    border: 1px solid blue;
+.td-venta2 {
+    
     width: 100px;
     word-wrap: break-word;
 }

@@ -364,4 +364,13 @@ class ProductController extends Controller
         return $products; 
         
     }
+    public function productsPorTemporadas($temporada){
+        $products = DB::table('products')
+                    ->leftJoin('categorias','products.categoria_id','=','categorias.id')
+                    ->select('products.*',DB::raw('categorias.nombre as categoria'))
+                    ->where('products.enabled',1)
+                    ->where('products.nombre','=',$temporada)
+                    ->get();
+        return $products;
+    }
 }

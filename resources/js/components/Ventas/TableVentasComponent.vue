@@ -7,7 +7,60 @@
       
     </div>
     <div class="row tarjetas mb-4" v-if="ventasSeña.length > 0" >
+            <div class="col-md-4 mb-4">
+              <div class="card border-left-primary shadow h-100 py-2">
+                <div class="card-body">
+                  <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                      <div class="text-lg font-weight-bold text-primary text-uppercase mb-1">Ventas (Dia)</div>
+                      <div class="h5 mb-0 font-weight-bold text-gray-800">{{ventasHoy}}</div>
+                    </div>
+                    <div class="col-auto">
 
+                      <i class="fas fa-tag fa-2x text-gray-300"></i>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!-- Earnings (Monthly) Card Example -->
+            <div class="col-md-4 mb-4" style="cursor:pointer;">
+              <div class="card border-left-primary shadow h-100 py-2">
+                <div class="card-body">
+                  <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                      <div class="text-lg font-weight-bold text-primary text-uppercase mb-1"v-on:click="detallesIngresos()">Ingresos</div>
+                      <div class="h5 mb-0 font-weight-bold text-gray-800">${{ingresosHoy}}</div>
+
+                      <span v-if="mostrarDetallesIngresos">
+                        <h5>Efectivo: ${{ingresosEfectivo}}  -  Tarjeta: ${{ingresosTarjeta}}</h5>
+                      </span>
+                    </div>
+                    <div class="col-auto"> 
+                      <i class="fas fa-cash-register fa-2x text-gray-300"></i>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+             <div class="col-md-4 mb-4" style="cursor:pointer;" v-on:click="mostrarSena">
+              <div class="card border-left-primary shadow h-100 py-2">
+                <div class="card-body">
+                  <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                      <div class="text-lg font-weight-bold text-primary text-uppercase mb-1">Ventas en Seña</div>
+                      <div class="h5 mb-0 font-weight-bold text-gray-800">{{ ventasSeña.length }}</div>
+                    </div>
+                    <div class="col-auto">
+
+                      <i class="fas fa-tag fa-2x text-gray-300"></i>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+      <!--
       <div class="col-sm-4" style="cursor:pointer;" v-on:click="mostrarVentas">
         <div class="card text-center">
           <div class="card-header bg-success">
@@ -35,7 +88,7 @@
           </div>
         </div>
       </div>
-
+      -->
     </div>
 
     <div class="row tarjetas mb-4" v-else>
@@ -46,7 +99,7 @@
                   <div class="row no-gutters align-items-center">
                     <div class="col mr-2">
                       <div class="text-lg font-weight-bold text-primary text-uppercase mb-1">Ventas (Dia)</div>
-                      <div class="h5 mb-0 font-weight-bold text-gray-800">40</div>
+                      <div class="h5 mb-0 font-weight-bold text-gray-800">{{ventasHoy}}</div>
                     </div>
                     <div class="col-auto">
 
@@ -57,13 +110,17 @@
               </div>
             </div>
             <!-- Earnings (Monthly) Card Example -->
-            <div class="col-md-6 mb-4">
+            <div class="col-md-6 mb-4" style="cursor:pointer;" v-on:click="detallesIngresos()">
               <div class="card border-left-primary shadow h-100 py-2">
                 <div class="card-body">
                   <div class="row no-gutters align-items-center">
                     <div class="col mr-2">
                       <div class="text-lg font-weight-bold text-primary text-uppercase mb-1">Ingresos</div>
-                      <div class="h5 mb-0 font-weight-bold text-gray-800">$40,000</div>
+                      <div class="h5 mb-0 font-weight-bold text-gray-800">${{ingresosHoy}}</div>
+
+                      <span v-if="mostrarDetallesIngresos">
+                        <h5>Efectivo: ${{ingresosEfectivo}}  -  Tarjeta: ${{ingresosTarjeta}}</h5>
+                      </span>
                     </div>
                     <div class="col-auto"> 
                       <i class="fas fa-cash-register fa-2x text-gray-300"></i>

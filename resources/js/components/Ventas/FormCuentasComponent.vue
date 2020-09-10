@@ -594,7 +594,7 @@
     width: 100%;
 }
 .td-venta {
-    border: 1px solid blue;
+    border: 1px solid;
     width: 100px;
     word-wrap: break-word;
 }

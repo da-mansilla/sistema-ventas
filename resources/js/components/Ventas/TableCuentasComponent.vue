@@ -1,6 +1,39 @@
 <template>
   <div>
     <div class="row tarjetas">
+      <div class="col-md-6 mb-4">
+              <div class="card border-left-primary shadow h-100 py-2">
+                <div class="card-body">
+                  <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                      <div class="text-lg font-weight-bold text-primary text-uppercase mb-1">Cuentas Activas</div>
+                      <div class="h5 mb-0 font-weight-bold text-gray-800">{{cantidadCuentasActivas}}</div>
+                    </div>
+                    <div class="col-auto">
+
+                      <i class="fas fa-tag fa-2x text-gray-300"></i>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-6 mb-4">
+              <div class="card border-left-primary shadow h-100 py-2">
+                <div class="card-body">
+                  <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                      <div class="text-lg font-weight-bold text-primary text-uppercase mb-1">Por Cobrar</div>
+                      <div class="h5 mb-0 font-weight-bold text-gray-800">{{cobrarCuenta}}</div>
+                    </div>
+                    <div class="col-auto">
+
+                      <i class="fas fa-tag fa-2x text-gray-300"></i>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+      <!--
       <div class="col-sm-6">
         <div class="card text-center">
           <div class="card-body">
@@ -17,20 +50,21 @@
           </div>
         </div>
       </div>
+    -->
     </div>
     
 
     <div>
-      <table class="table table-bordered " v-if="cargado">
+      <table class="table  " v-if="cargado">
         <thead>
-          <tr class=" table-primary ">
-            <th scope="col">Opciones</th>
-            <th scope="col">Cliente</th>
-            <th scope="col">Productos</th>
-            <th scope="col">Total</th>
-            <th scope="col">Pagado</th>
-            <th scope="col">Deuda</th>
-            <th scope="col">Estado</th>
+          <tr class=" table-info ">
+            <th scope="col"><strong> <h4>Opciones</h4></strong></th>
+            <th scope="col"><strong> <h4>Cliente</h4></strong></th>
+            <th scope="col"><strong> <h4>Productos</h4></strong></th>
+            <th scope="col"><strong> <h4>Total</h4></strong></th>
+            <th scope="col"><strong> <h4>Pagado</h4></strong></th>
+            <th scope="col"><strong> <h4>Deuda</h4></strong></th>
+            <th scope="col"><strong> <h4>Estado</h4></strong></th>
 
           </tr>
         </thead>

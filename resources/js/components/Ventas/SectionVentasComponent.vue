@@ -2,7 +2,7 @@
     <div class="card-content card w-100">
       <div class="card-header" >
         <h1 v-if="pagina==1" class="display-4 mb-0 text-gray-800">Ventas</h1>
-        <h3 v-if="pagina==4">Cuenta Corriente</h3>
+        <h3 v-if="pagina==4" class="display-4 mb-0 text-gray-800">Cuenta Corriente</h3>
       </div>
       <div class="card-body">
         <span v-if='pagina==1 || pagina==4'>
