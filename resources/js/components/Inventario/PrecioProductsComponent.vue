@@ -373,19 +373,24 @@
                 }
             },
             async modificarPrecio(){
-                let cantidadProductos=this.productsModificar.length
+                let cantidadProductos=0;
                 var listaParam = [];
                 this.productsModificar.forEach((elemento)=>{
                     var precioFinal
                     if(this.accion == 'aumentar'){
                         precioFinal = elemento.nuevoPrecio
-                        console.log('El producto ' + elemento.id + ' de precio ' + elemento.precio+ ' se aumentara a '+ precioFinal);
+                        //console.log('El producto ' + elemento.id + ' de precio ' + elemento.precio+ ' se aumentara a '+ precioFinal);
                     } else if(this.accion == 'disminuir'){
                         precioFinal = elemento.nuevoPrecio
-                        console.log('El producto ' + elemento.id + ' de precio ' + elemento.precio+ ' se disminuira a '+ precioFinal);
+                        //console.log('El producto ' + elemento.id + ' de precio ' + elemento.precio+ ' se disminuira a '+ precioFinal);
                     }
-                    let productoCambiar = [elemento.id,precioFinal];
-                    listaParam.push(productoCambiar);
+
+                    if(precioFinal !== elemento.precio){
+                        cantidadProductos++
+                        let productoCambiar = [elemento.id,precioFinal];
+                        listaParam.push(productoCambiar);
+
+                    }
                     
                     /*
                     let params= {
@@ -406,6 +411,11 @@
                     await axios.post('/modificarProductos', this.cambiarCategoria)
                     .then(response=>{
                         console.log(response)
+                        this.$toasted.show('Se actualizaron la categoria de '+this.cambiarCategoria.length+' productos exitosamente', { 
+                            theme: "toasted-primary", 
+                            position: "top-right", 
+                            duration : 4000
+                        });
                     })
                 }
                 await axios.put('/precio',listaParam)
@@ -414,7 +424,7 @@
                         this.$toasted.show('Se actualizaron los precios de '+cantidadProductos+' productos exitosamente', { 
                             theme: "toasted-primary", 
                             position: "top-right", 
-                            duration : 2000
+                            duration : 4000
                         });
                         $("#ModalPrecio").modal('hide');
                     })

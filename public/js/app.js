@@ -5515,22 +5515,23 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
           while (1) {
             switch (_context.prev = _context.next) {
               case 0:
-                cantidadProductos = _this8.productsModificar.length;
+                cantidadProductos = 0;
                 listaParam = [];
 
                 _this8.productsModificar.forEach(function (elemento) {
                   var precioFinal;
 
                   if (_this8.accion == 'aumentar') {
-                    precioFinal = elemento.nuevoPrecio;
-                    console.log('El producto ' + elemento.id + ' de precio ' + elemento.precio + ' se aumentara a ' + precioFinal);
+                    precioFinal = elemento.nuevoPrecio; //console.log('El producto ' + elemento.id + ' de precio ' + elemento.precio+ ' se aumentara a '+ precioFinal);
                   } else if (_this8.accion == 'disminuir') {
-                    precioFinal = elemento.nuevoPrecio;
-                    console.log('El producto ' + elemento.id + ' de precio ' + elemento.precio + ' se disminuira a ' + precioFinal);
+                    precioFinal = elemento.nuevoPrecio; //console.log('El producto ' + elemento.id + ' de precio ' + elemento.precio+ ' se disminuira a '+ precioFinal);
                   }
 
-                  var productoCambiar = [elemento.id, precioFinal];
-                  listaParam.push(productoCambiar);
+                  if (precioFinal !== elemento.precio) {
+                    cantidadProductos++;
+                    var productoCambiar = [elemento.id, precioFinal];
+                    listaParam.push(productoCambiar);
+                  }
                   /*
                   let params= {
                       precio: precioFinal
@@ -5544,6 +5545,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
                       this.tipo = '';
                   })
                   */
+
                 });
 
                 cantidadProductosCategoria = _this8.cambiarCategoria.length;
@@ -5556,6 +5558,12 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
                 _context.next = 7;
                 return axios.post('/modificarProductos', _this8.cambiarCategoria).then(function (response) {
                   console.log(response);
+
+                  _this8.$toasted.show('Se actualizaron la categoria de ' + _this8.cambiarCategoria.length + ' productos exitosamente', {
+                    theme: "toasted-primary",
+                    position: "top-right",
+                    duration: 4000
+                  });
                 });
 
               case 7:
@@ -5566,7 +5574,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
                   _this8.$toasted.show('Se actualizaron los precios de ' + cantidadProductos + ' productos exitosamente', {
                     theme: "toasted-primary",
                     position: "top-right",
-                    duration: 2000
+                    duration: 4000
                   });
 
                   $("#ModalPrecio").modal('hide');
