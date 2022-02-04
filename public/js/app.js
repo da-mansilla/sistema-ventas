@@ -4268,7 +4268,7 @@ __webpack_require__.r(__webpack_exports__);
     getCategorias: function getCategorias() {
       var _this = this;
 
-      axios.get('/categoriastodas').then(function (response) {
+      axios.get('/cantidadcategorias').then(function (response) {
         _this.categorias = response.data;
 
         _this.categorias.forEach(function (element) {
@@ -5261,22 +5261,6 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
 //
 //
 //
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
 /* harmony default export */ __webpack_exports__["default"] = ({
   props: {
     categorias: {},
@@ -5302,14 +5286,11 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       precioIndividual: 0,
       activateModificarCategoria: false,
       nuevaCategoria: '',
-      cambiarCategoria: [],
-      listadoTemporadas: [],
-      temporadaElegida: ''
+      cambiarCategoria: []
     };
   },
   mounted: function mounted() {
     $('#ModalPrecio').on('hidden.bs.modal', this.cerrarModal);
-    this.getTemporadas();
   },
   methods: {
     cerrarModal: function cerrarModal() {
@@ -5322,17 +5303,8 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
     getTodosProductos: function getTodosProductos() {
       axios.get('todosproductos').then(function (response) {});
     },
-    getTemporadas: function getTemporadas() {
-      var _this = this;
-
-      axios.get('/temporadas').then(function (response) {
-        response.data.forEach(function (element) {
-          _this.listadoTemporadas.push(element.nombre);
-        });
-      });
-    },
     seleccionarPor: function seleccionarPor(e) {
-      var _this2 = this;
+      var _this = this;
 
       if (this.clickSeleccionar) {
         this.clickSeleccionar = false;
@@ -5346,9 +5318,9 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
             response.data.forEach(function (element) {
               element.nuevoPrecio = element.precio;
 
-              _this2.productsModificar.push(element);
+              _this.productsModificar.push(element);
 
-              _this2.$refs.paginator.goToPage(1);
+              _this.$refs.paginator.goToPage(1);
             });
           });
         }
@@ -5360,39 +5332,12 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
         if (seleccionar == 'Producto') {
           this.seleccionado = 2;
         }
-
-        if (seleccionar == 'Temporada') {
-          this.seleccionado = 3;
-        }
       } else {
         this.clickSeleccionar = true;
       }
     },
-    elegirTemporada: function elegirTemporada(e) {
-      var _this3 = this;
-
-      console.log(this.temporadaElegida);
-      this.productsModificar = [];
-      this.preciosModificar = [];
-      axios.get('productsPorTemporadas/' + this.temporadaElegida).then(function (response) {
-        console.log(response);
-        response.data.forEach(function (element) {
-          element.nuevoPrecio = element.precio;
-
-          _this3.productsModificar.push(element);
-        });
-
-        _this3.productsModificar.forEach(function (producto) {
-          _this3.preciosModificar.push(producto.precio);
-        });
-
-        _this3.agregarPrecios();
-
-        _this3.$refs.paginator.goToPage(1);
-      });
-    },
     elegirTipo: function elegirTipo(e) {
-      var _this4 = this;
+      var _this2 = this;
 
       if (this.clickCategoria) {
         this.clickCategoria = false;
@@ -5403,27 +5348,27 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
           console.log('Categorias Niño');
           axios.get('tipos/Niño').then(function (response) {
             response.data.forEach(function (element) {
-              _this4.listaElegida.push(element);
+              _this2.listaElegida.push(element);
             });
           });
         } else if (tipo == 'Niña') {
           console.log('Categorias Niña');
           axios.get('tipos/Niña').then(function (response) {
             response.data.forEach(function (element) {
-              _this4.listaElegida.push(element);
+              _this2.listaElegida.push(element);
             });
           });
         } else if (tipo == 'Unisex') {
           console.log('Categorias Unisex');
           axios.get('tipos/Unisex').then(function (response) {
             response.data.forEach(function (element) {
-              _this4.listaElegida.push(element);
+              _this2.listaElegida.push(element);
             });
           });
         } else if (tipo == 'Todos') {
           console.log('Todas Categorias');
           this.categorias.forEach(function (elemento) {
-            _this4.listaElegida.push(elemento);
+            _this2.listaElegida.push(elemento);
           });
         }
       } else {
@@ -5432,7 +5377,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       }
     },
     inputSerie: function inputSerie() {
-      var _this5 = this;
+      var _this3 = this;
 
       console.log(this.productoSerie);
       var numSerie = '';
@@ -5448,46 +5393,45 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
         response.data.forEach(function (element) {
           element.nuevoPrecio = element.precio;
 
-          _this5.productsModificar.push(element);
+          _this3.productsModificar.push(element);
 
-          _this5.productoSerie = '';
+          _this3.productoSerie = '';
         });
 
-        _this5.$refs.paginator.goToPage(1);
+        _this3.$refs.paginator.goToPage(1);
       });
     },
     cargarProductos: function cargarProductos() {
-      var _this6 = this;
+      var _this4 = this;
 
       console.log('Id de categoria ' + this.categoriaElegida);
       this.productsModificar = [];
-      this.preciosModificar = [];
       axios.get('productsporcategoria/' + this.categoriaElegida).then(function (response) {
         response.data.forEach(function (element) {
           element.nuevoPrecio = element.precio;
 
-          _this6.productsModificar.push(element);
+          _this4.productsModificar.push(element);
         });
         console.log('Productos a modificar');
-        console.log(_this6.productsModificar);
+        console.log(_this4.productsModificar);
 
-        _this6.productsModificar.forEach(function (producto) {
-          _this6.preciosModificar.push(producto.precio);
+        _this4.productsModificar.forEach(function (producto) {
+          _this4.preciosModificar.push(producto.precio);
         });
 
-        _this6.agregarPrecios();
+        _this4.agregarPrecios();
 
-        _this6.$refs.paginator.goToPage(1);
+        _this4.$refs.paginator.goToPage(1);
       });
     },
     onClickDelete: function onClickDelete(index) {
-      var _this7 = this;
+      var _this5 = this;
 
       var productoID = this.productsModificar[index].id;
       this.productsModificar.splice(index, 1);
       this.cambiarCategoria.forEach(function (product, i) {
         if (product.producto.id == productoID) {
-          _this7.cambiarCategoria.splice(i, 1);
+          _this5.cambiarCategoria.splice(i, 1);
         }
       });
       console.log(this.cambiarCategoria);
@@ -5507,7 +5451,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       }
     },
     modificarPrecio: function modificarPrecio() {
-      var _this8 = this;
+      var _this6 = this;
 
       return _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee() {
         var cantidadProductos, listaParam, cantidadProductosCategoria;
@@ -5515,23 +5459,22 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
           while (1) {
             switch (_context.prev = _context.next) {
               case 0:
-                cantidadProductos = 0;
+                cantidadProductos = _this6.productsModificar.length;
                 listaParam = [];
 
-                _this8.productsModificar.forEach(function (elemento) {
+                _this6.productsModificar.forEach(function (elemento) {
                   var precioFinal;
 
-                  if (_this8.accion == 'aumentar') {
-                    precioFinal = elemento.nuevoPrecio; //console.log('El producto ' + elemento.id + ' de precio ' + elemento.precio+ ' se aumentara a '+ precioFinal);
-                  } else if (_this8.accion == 'disminuir') {
-                    precioFinal = elemento.nuevoPrecio; //console.log('El producto ' + elemento.id + ' de precio ' + elemento.precio+ ' se disminuira a '+ precioFinal);
+                  if (_this6.accion == 'aumentar') {
+                    precioFinal = elemento.nuevoPrecio;
+                    console.log('El producto ' + elemento.id + ' de precio ' + elemento.precio + ' se aumentara a ' + precioFinal);
+                  } else if (_this6.accion == 'disminuir') {
+                    precioFinal = elemento.nuevoPrecio;
+                    console.log('El producto ' + elemento.id + ' de precio ' + elemento.precio + ' se disminuira a ' + precioFinal);
                   }
 
-                  if (precioFinal !== elemento.precio) {
-                    cantidadProductos++;
-                    var productoCambiar = [elemento.id, precioFinal];
-                    listaParam.push(productoCambiar);
-                  }
+                  var productoCambiar = [elemento.id, precioFinal];
+                  listaParam.push(productoCambiar);
                   /*
                   let params= {
                       precio: precioFinal
@@ -5545,10 +5488,9 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
                       this.tipo = '';
                   })
                   */
-
                 });
 
-                cantidadProductosCategoria = _this8.cambiarCategoria.length;
+                cantidadProductosCategoria = _this6.cambiarCategoria.length;
 
                 if (!(cantidadProductosCategoria > 0)) {
                   _context.next = 7;
@@ -5556,14 +5498,8 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
                 }
 
                 _context.next = 7;
-                return axios.post('/modificarProductos', _this8.cambiarCategoria).then(function (response) {
+                return axios.post('/modificarProductos', _this6.cambiarCategoria).then(function (response) {
                   console.log(response);
-
-                  _this8.$toasted.show('Se actualizaron la categoria de ' + _this8.cambiarCategoria.length + ' productos exitosamente', {
-                    theme: "toasted-primary",
-                    position: "top-right",
-                    duration: 4000
-                  });
                 });
 
               case 7:
@@ -5571,10 +5507,10 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
                 return axios.put('/precio', listaParam).then(function (response) {
                   console.log(response);
 
-                  _this8.$toasted.show('Se actualizaron los precios de ' + cantidadProductos + ' productos exitosamente', {
+                  _this6.$toasted.show('Se actualizaron los precios de ' + cantidadProductos + ' productos exitosamente', {
                     theme: "toasted-primary",
                     position: "top-right",
-                    duration: 4000
+                    duration: 2000
                   });
 
                   $("#ModalPrecio").modal('hide');
@@ -5591,35 +5527,31 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       }))();
     },
     agregarPrecios: function agregarPrecios() {
-      var _this9 = this;
+      var _this7 = this;
 
       this.preciosModificar = [];
-      console.log(this.cantidad);
       this.productsModificar.forEach(function (product) {
-        if (_this9.accion == 'aumentar') {
-          var precioFinal = _this9.redondeoAumentar(product.precio);
+        if (_this7.accion == 'aumentar') {
+          var precioFinal = _this7.redondeoAumentar(product.precio);
         }
 
-        if (_this9.accion == 'disminuir') {
-          var precioFinal = _this9.redondeoDisminuir(product.precio);
+        if (_this7.accion == 'disminuir') {
+          var precioFinal = _this7.redondeoDisminuir(product.precio);
         }
 
-        if (_this9.cantidad !== '') {
-          product.nuevoPrecio = precioFinal;
-        } else {
-          product.nuevoPrecio = product.precio;
-        }
+        product.nuevoPrecio = precioFinal;
       });
+      console.log(this.productsModificar);
     },
     cambiarPrecioIndividual: function cambiarPrecioIndividual(id) {
-      var _this10 = this;
+      var _this8 = this;
 
       var precioingresado = $('#' + id).val();
       console.log(precioingresado);
       this.productsModificar.forEach(function (element, index) {
         if (element.id == id) {
           console.log("El precio de este producto se va a modificar de " + element.nuevoPrecio + " a " + precioingresado);
-          _this10.productsModificar[index].nuevoPrecio = parseInt(precioingresado);
+          _this8.productsModificar[index].nuevoPrecio = parseInt(precioingresado);
         }
       });
       console.log(this.preciosModificar);
@@ -5683,26 +5615,26 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       this.activateModificarCategoria = id;
     },
     modificarCategoria: function modificarCategoria(id) {
-      var _this11 = this;
+      var _this9 = this;
 
       var categoriaNueva = '';
       this.categorias.forEach(function (categoria) {
-        if (categoria.id == _this11.nuevaCategoria) {
+        if (categoria.id == _this9.nuevaCategoria) {
           categoriaNueva = categoria.nombre;
         }
       });
       console.log('El producto de id ' + id + ' se va a cambiar a la cateogoria ' + this.nuevaCategoria);
       this.productsModificar.forEach(function (product, index) {
-        if (product.id == id && product.categoria_id != _this11.nuevaCategoria) {
-          _this11.productsModificar[index].categoria = categoriaNueva;
-          _this11.productsModificar[index].cambio = true;
+        if (product.id == id && product.categoria_id != _this9.nuevaCategoria) {
+          _this9.productsModificar[index].categoria = categoriaNueva;
+          _this9.productsModificar[index].cambio = true;
           var param = {
             producto: product,
-            categoria: _this11.nuevaCategoria,
+            categoria: _this9.nuevaCategoria,
             cambio: 'categoria'
           };
 
-          _this11.cambiarCategoria.push(param);
+          _this9.cambiarCategoria.push(param);
         }
       });
       this.activateModificarCategoria = false;
@@ -9601,12 +9533,6 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
 //
 //
 //
-//
-//
-//
-//
-//
-//
 /* harmony default export */ __webpack_exports__["default"] = ({
   props: {
     editMode: {},
@@ -11564,40 +11490,6 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
 /* harmony default export */ __webpack_exports__["default"] = ({
   props: {},
   data: function data() {
@@ -11690,63 +11582,6 @@ function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try
 
 function _asyncToGenerator(fn) { return function () { var self = this, args = arguments; return new Promise(function (resolve, reject) { var gen = fn.apply(self, args); function _next(value) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value); } function _throw(err) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err); } _next(undefined); }); }; }
 
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
 //
 //
 //
@@ -32788,7 +32623,7 @@ exports = module.exports = __webpack_require__(/*! ../../../../node_modules/css-
 
 
 // module
-exports.push([module.i, "\n.table-products{\r\n    table-layout: fixed;\r\n    width: 100%;\n}\n.td-venta {\r\n    border: 1px solid;\r\n    width: 100px;\r\n    word-wrap: break-word;\n}\n.input-venta{\r\n  width: 100%;\n}\r\n\r\n", ""]);
+exports.push([module.i, "\n.table-products{\r\n    table-layout: fixed;\r\n    width: 100%;\n}\n.td-venta {\r\n    border: 1px solid blue;\r\n    width: 100px;\r\n    word-wrap: break-word;\n}\n.input-venta{\r\n  width: 100%;\n}\r\n\r\n", ""]);
 
 // exports
 
@@ -32807,7 +32642,7 @@ exports = module.exports = __webpack_require__(/*! ../../../../node_modules/css-
 
 
 // module
-exports.push([module.i, "\n.table-products{\r\n    table-layout: fixed;\r\n    width: 100%;\n}\n.td-venta {\r\n    border: 1px solid;\r\n    width: 100px;\r\n    word-wrap: break-word;\n}\n.input-venta{\r\n  width: 100%;\n}\r\n\r\n", ""]);
+exports.push([module.i, "\n.table-products{\r\n    table-layout: fixed;\r\n    width: 100%;\n}\n.td-venta {\r\n    border: 1px solid blue;\r\n    width: 100px;\r\n    word-wrap: break-word;\n}\n.input-venta{\r\n  width: 100%;\n}\r\n\r\n", ""]);
 
 // exports
 
@@ -32826,7 +32661,7 @@ exports = module.exports = __webpack_require__(/*! ../../../../node_modules/css-
 
 
 // module
-exports.push([module.i, "\n.table-products{\n    table-layout: fixed;\n    width: 100%;\n}\n.td-venta {\n    border: 1px solid;\n    width: 100px;\n    word-wrap: break-word;\n}\n.input-venta{\n  width: 100%;\n}\n\n", ""]);
+exports.push([module.i, "\n.table-products{\n    table-layout: fixed;\n    width: 100%;\n}\n.td-venta {\n    border: 1px solid blue;\n    width: 100px;\n    word-wrap: break-word;\n}\n.input-venta{\n  width: 100%;\n}\n\n", ""]);
 
 // exports
 
@@ -32864,7 +32699,7 @@ exports = module.exports = __webpack_require__(/*! ../../../../node_modules/css-
 
 
 // module
-exports.push([module.i, "\n.totalPagado{\n  text-decoration: none;\n  padding: 10px;\n\n  cursor: pointer;\n  border: 2px solid #0016b0;\n}\n.totalPagado:hover{\n  background-color: rgba(0,0,0,.075);\n}\n.table-ventas{\n  table-layout: fixed;\n  width: 100%;\n}\n.td-venta {\n    border: 1px solid;\n    width: 100px;\n    word-wrap: break-word;\n}\n.input-venta{\n  width: 100%;\n}\n", ""]);
+exports.push([module.i, "\n.totalPagado{\n  text-decoration: none;\n  padding: 10px;\n\n  cursor: pointer;\n  border: 2px solid #0016b0;\n}\n.totalPagado:hover{\n  background-color: rgba(0,0,0,.075);\n}\n.table-ventas{\n  table-layout: fixed;\n  width: 100%;\n}\n.td-venta {\n    border: 1px solid blue;\n    width: 100px;\n    word-wrap: break-word;\n}\n.input-venta{\n  width: 100%;\n}\n", ""]);
 
 // exports
 
@@ -32902,7 +32737,7 @@ exports = module.exports = __webpack_require__(/*! ../../../../node_modules/css-
 
 
 // module
-exports.push([module.i, "\n.card-body{\r\n    margin-top: 10px;\n}\n.table-ventas{\r\n    table-layout: fixed;\r\n    width: 100%;\n}\n.td-venta {\r\n    border: 1px solid;\r\n    width: 100px;\r\n    word-wrap: break-word;\n}\n.input-venta{\r\n  width: 100%;\n}\n.paginate-links{\r\n    text-align: center;\r\n    margin-bottom: 0px;\n}\n.paginate-links li {\r\n    cursor:pointer;\r\n    border-radius: 3px;\r\n    padding-top: 10px;\r\n    padding-bottom: 5px;\n}\r\n\r\n", ""]);
+exports.push([module.i, "\n.card-body{\r\n    margin-top: 10px;\n}\n.table-ventas{\r\n    table-layout: fixed;\r\n    width: 100%;\n}\n.td-venta {\r\n    border: 1px solid blue;\r\n    width: 100px;\r\n    word-wrap: break-word;\n}\n.input-venta{\r\n  width: 100%;\n}\n.paginate-links{\r\n    text-align: center;\r\n    margin-bottom: 0px;\n}\n.paginate-links li {\r\n    cursor:pointer;\r\n    border-radius: 3px;\r\n    padding-top: 10px;\r\n    padding-bottom: 5px;\n}\r\n\r\n", ""]);
 
 // exports
 
@@ -32921,7 +32756,7 @@ exports = module.exports = __webpack_require__(/*! ../../../../node_modules/css-
 
 
 // module
-exports.push([module.i, "\n.card-body{\r\n    margin-top: 10px;\n}\n.table-ventas{\r\n    table-layout: fixed;\r\n    width: 100%;\n}\n.td-venta {\r\n    border: 1px solid;\r\n    width: 100px;\r\n    word-wrap: break-word;\n}\n.input-venta{\r\n  width: 100%;\n}\n.paginate-links{\r\n    text-align: center;\r\n    margin-bottom: 0px;\n}\n.paginate-links li {\r\n    cursor:pointer;\r\n    border-radius: 3px;\r\n    padding-top: 10px;\r\n    padding-bottom: 5px;\n}\r\n\r\n", ""]);
+exports.push([module.i, "\n.card-body{\r\n    margin-top: 10px;\n}\n.table-ventas{\r\n    table-layout: fixed;\r\n    width: 100%;\n}\n.td-venta {\r\n    border: 1px solid blue;\r\n    width: 100px;\r\n    word-wrap: break-word;\n}\n.input-venta{\r\n  width: 100%;\n}\n.paginate-links{\r\n    text-align: center;\r\n    margin-bottom: 0px;\n}\n.paginate-links li {\r\n    cursor:pointer;\r\n    border-radius: 3px;\r\n    padding-top: 10px;\r\n    padding-bottom: 5px;\n}\r\n\r\n", ""]);
 
 // exports
 
@@ -32940,7 +32775,7 @@ exports = module.exports = __webpack_require__(/*! ../../../../node_modules/css-
 
 
 // module
-exports.push([module.i, "\n.card-body{\r\n    margin-top: 10px;\n}\n.table-ventas{\r\n    table-layout: fixed;\r\n    width: 100%;\n}\n.td-venta2 {\r\n    \r\n    width: 100px;\r\n    word-wrap: break-word;\n}\n.input-venta{\r\n  width: 100%;\n}\n.paginate-links{\r\n    text-align: center;\r\n    margin-bottom: 0px;\n}\n.paginate-links li {\r\n    cursor:pointer;\r\n    border-radius: 3px;\r\n    padding-top: 10px;\r\n    padding-bottom: 5px;\n}\r\n\r\n", ""]);
+exports.push([module.i, "\n.card-body{\r\n    margin-top: 10px;\n}\n.table-ventas{\r\n    table-layout: fixed;\r\n    width: 100%;\n}\n.td-venta {\r\n    border: 1px solid blue;\r\n    width: 100px;\r\n    word-wrap: break-word;\n}\n.input-venta{\r\n  width: 100%;\n}\n.paginate-links{\r\n    text-align: center;\r\n    margin-bottom: 0px;\n}\n.paginate-links li {\r\n    cursor:pointer;\r\n    border-radius: 3px;\r\n    padding-top: 10px;\r\n    padding-bottom: 5px;\n}\r\n\r\n", ""]);
 
 // exports
 
@@ -91759,8 +91594,6 @@ var render = function() {
                               _vm._v("Categoria")
                             ]),
                             _vm._v(" "),
-                            _c("option", [_vm._v("Temporada")]),
-                            _vm._v(" "),
                             _c("option", [_vm._v("Producto")]),
                             _vm._v(" "),
                             _c("option", [_vm._v("Todos")])
@@ -91959,68 +91792,6 @@ var render = function() {
                               }
                             })
                           ])
-                        : _vm._e(),
-                      _vm._v(" "),
-                      _vm.seleccionado == 3
-                        ? _c("div", { staticClass: "form-group col-md-3" }, [
-                            _c("label", [_vm._v("Tipo")]),
-                            _vm._v(" "),
-                            _c("div", { staticClass: "input-group" }, [
-                              _c(
-                                "select",
-                                {
-                                  directives: [
-                                    {
-                                      name: "model",
-                                      rawName: "v-model",
-                                      value: _vm.temporadaElegida,
-                                      expression: "temporadaElegida"
-                                    }
-                                  ],
-                                  staticClass: "form-control",
-                                  on: {
-                                    change: function($event) {
-                                      var $$selectedVal = Array.prototype.filter
-                                        .call($event.target.options, function(
-                                          o
-                                        ) {
-                                          return o.selected
-                                        })
-                                        .map(function(o) {
-                                          var val =
-                                            "_value" in o ? o._value : o.value
-                                          return val
-                                        })
-                                      _vm.temporadaElegida = $event.target
-                                        .multiple
-                                        ? $$selectedVal
-                                        : $$selectedVal[0]
-                                    }
-                                  }
-                                },
-                                _vm._l(_vm.listadoTemporadas, function(
-                                  temporada
-                                ) {
-                                  return _c("option", [
-                                    _vm._v(_vm._s(temporada))
-                                  ])
-                                }),
-                                0
-                              ),
-                              _vm._v(" "),
-                              _c("div", { staticClass: "input-group-append" }, [
-                                _c(
-                                  "button",
-                                  {
-                                    staticClass: "btn btn-outline-secondary",
-                                    attrs: { type: "button" },
-                                    on: { click: _vm.elegirTemporada }
-                                  },
-                                  [_c("i", { staticClass: "fas fa-plus" })]
-                                )
-                              ])
-                            ])
-                          ])
                         : _vm._e()
                     ]),
                     _vm._v(" "),
@@ -92070,7 +91841,8 @@ var render = function() {
                             attrs: {
                               type: "number",
                               required: "",
-                              id: "cantidad"
+                              id: "cantidad",
+                              placeholder: "10%"
                             },
                             domProps: { value: _vm.cantidad },
                             on: {
@@ -92269,8 +92041,6 @@ var render = function() {
                                     )
                                   ]),
                               _vm._v(" "),
-                              _c("td", [_vm._v(_vm._s(product.nombre))]),
-                              _vm._v(" "),
                               _c("td", [_vm._v(_vm._s(product.talle))]),
                               _vm._v(" "),
                               _c("td", [_vm._v(_vm._s(product.color))]),
@@ -92278,37 +92048,55 @@ var render = function() {
                               _c("td", [_vm._v(_vm._s(product.precio))]),
                               _vm._v(" "),
                               _vm.accion == "aumentar"
-                                ? _c("td", { staticStyle: { width: "75px" } }, [
-                                    _c("input", {
-                                      staticStyle: { width: "75px" },
-                                      attrs: { id: product.id, type: "number" },
-                                      domProps: { value: product.nuevoPrecio },
-                                      on: {
-                                        keyup: function($event) {
-                                          return _vm.cambiarPrecioIndividual(
-                                            product.id
-                                          )
+                                ? _c(
+                                    "td",
+                                    { staticStyle: { width: "100px" } },
+                                    [
+                                      _c("input", {
+                                        staticStyle: { width: "100px" },
+                                        attrs: {
+                                          id: product.id,
+                                          type: "number"
+                                        },
+                                        domProps: {
+                                          value: product.nuevoPrecio
+                                        },
+                                        on: {
+                                          keyup: function($event) {
+                                            return _vm.cambiarPrecioIndividual(
+                                              product.id
+                                            )
+                                          }
                                         }
-                                      }
-                                    })
-                                  ])
+                                      })
+                                    ]
+                                  )
                                 : _vm._e(),
                               _vm._v(" "),
                               _vm.accion == "disminuir"
-                                ? _c("td", { staticStyle: { width: "75px" } }, [
-                                    _c("input", {
-                                      staticStyle: { width: "75px" },
-                                      attrs: { id: product.id, type: "number" },
-                                      domProps: { value: product.nuevoPrecio },
-                                      on: {
-                                        keyup: function($event) {
-                                          return _vm.cambiarPrecioIndividual(
-                                            product.id
-                                          )
+                                ? _c(
+                                    "td",
+                                    { staticStyle: { width: "100px" } },
+                                    [
+                                      _c("input", {
+                                        staticStyle: { width: "100px" },
+                                        attrs: {
+                                          id: product.id,
+                                          type: "number"
+                                        },
+                                        domProps: {
+                                          value: product.nuevoPrecio
+                                        },
+                                        on: {
+                                          keyup: function($event) {
+                                            return _vm.cambiarPrecioIndividual(
+                                              product.id
+                                            )
+                                          }
                                         }
-                                      }
-                                    })
-                                  ])
+                                      })
+                                    ]
+                                  )
                                 : _vm._e()
                             ])
                           }),
@@ -92450,10 +92238,6 @@ var staticRenderFns = [
         _vm._v(" "),
         _c("th", { attrs: { scope: "col" } }, [
           _c("h5", [_c("strong", [_vm._v("N° Serie")])])
-        ]),
-        _vm._v(" "),
-        _c("th", { attrs: { scope: "col" } }, [
-          _c("h5", [_c("strong", [_vm._v("Temporada")])])
         ]),
         _vm._v(" "),
         _c("th", { attrs: { scope: "col" } }, [
@@ -97432,21 +97216,6 @@ var render = function() {
         }
       },
       [
-        _vm.editMode && _vm.disabled
-          ? _c("span", { staticClass: "mb-4" }, [
-              _c("h3", { staticClass: "display-4 mb-3 text-gray-800" }, [
-                _vm._v(
-                  "Fecha y Hora: " +
-                    _vm._s(
-                      _vm
-                        .$moment(_vm.editMode.created_at)
-                        .format("DD MMMM YYYY HH:mm:ss")
-                    )
-                )
-              ])
-            ])
-          : _vm._e(),
-        _vm._v(" "),
         _c("div", { staticClass: "form-row" }, [
           _c("div", { staticClass: "form-group col-md-6" }, [
             _c("label", { attrs: { for: "inputEmail4" } }, [_vm._v("Cliente")]),
@@ -98248,7 +98017,7 @@ var render = function() {
                 _c("tr", [
                   _vm._m(3),
                   _vm._v(" "),
-                  _c("td", { staticClass: "td-venta2" }, [
+                  _c("td", { staticClass: "td-venta" }, [
                     _vm._v("$" + _vm._s(_vm.totalNeto))
                   ])
                 ]),
@@ -98257,7 +98026,7 @@ var render = function() {
                   ? _c("tr", [
                       _vm._m(4),
                       _vm._v(" "),
-                      _c("td", { staticClass: "td-venta2" }, [
+                      _c("td", { staticClass: "td-venta" }, [
                         _c("input", {
                           directives: [
                             {
@@ -98290,7 +98059,7 @@ var render = function() {
                         _c(
                           "td",
                           {
-                            staticClass: "text-right table-light td-venta2",
+                            staticClass: "text-right table-light td-venta",
                             attrs: { colspan: "5" }
                           },
                           [
@@ -98312,7 +98081,7 @@ var render = function() {
                           ]
                         ),
                         _vm._v(" "),
-                        _c("td", { staticClass: "td-venta2" }, [
+                        _c("td", { staticClass: "td-venta" }, [
                           _c("input", {
                             staticClass: "input-venta",
                             attrs: { id: tarjeta.nombre, type: "number" },
@@ -98327,7 +98096,7 @@ var render = function() {
                   ? _c("tr", [
                       _vm._m(5),
                       _vm._v(" "),
-                      _c("td", { staticClass: "td-venta2" }, [
+                      _c("td", { staticClass: "td-venta" }, [
                         _c("input", {
                           directives: [
                             {
@@ -98360,7 +98129,7 @@ var render = function() {
                         _c(
                           "td",
                           {
-                            staticClass: "text-right table-light td-venta2",
+                            staticClass: "text-right table-light td-venta",
                             attrs: { colspan: "5" }
                           },
                           [
@@ -98382,7 +98151,7 @@ var render = function() {
                           ]
                         ),
                         _vm._v(" "),
-                        _c("td", { staticClass: "td-venta2" }, [
+                        _c("td", { staticClass: "td-venta" }, [
                           _c("input", {
                             staticClass: "input-venta",
                             attrs: { id: tarjeta.nombre, type: "number" },
@@ -98396,7 +98165,7 @@ var render = function() {
                 _c("tr", [
                   _vm._m(6),
                   _vm._v(" "),
-                  _c("td", { staticClass: "td-venta2" }, [
+                  _c("td", { staticClass: "td-venta" }, [
                     _vm._v("$" + _vm._s(_vm.totalNeto - _vm.señaPagado))
                   ])
                 ])
@@ -98460,7 +98229,7 @@ var render = function() {
                           _c(
                             "td",
                             {
-                              staticClass: "td-venta2",
+                              staticClass: "td-venta",
                               staticStyle: { color: "red" },
                               attrs: { value: _vm.editMode.pagoEfectivo }
                             },
@@ -98476,7 +98245,7 @@ var render = function() {
                           _c(
                             "td",
                             {
-                              staticClass: "td-venta2",
+                              staticClass: "td-venta",
                               attrs: { value: _vm.editMode.pagoEfectivo }
                             },
                             [_vm._v("$" + _vm._s(_vm.editMode.recargo))]
@@ -98491,7 +98260,7 @@ var render = function() {
                           _c(
                             "td",
                             {
-                              staticClass: "td-venta2",
+                              staticClass: "td-venta",
                               attrs: { value: _vm.editMode.pagoEfectivo }
                             },
                             [_vm._v("$" + _vm._s(_vm.editMode.pagoEfectivo))]
@@ -98505,7 +98274,7 @@ var render = function() {
                             _c(
                               "td",
                               {
-                                staticClass: "text-right table-light td-venta2",
+                                staticClass: "text-right table-light td-venta",
                                 attrs: { colspan: "6" }
                               },
                               [_c("strong", [_vm._v(_vm._s(tarjeta.nombre))])]
@@ -98514,7 +98283,7 @@ var render = function() {
                             _c(
                               "td",
                               {
-                                staticClass: "td-venta2",
+                                staticClass: "td-venta",
                                 attrs: { disabled: "" }
                               },
                               [_vm._v("$" + _vm._s(tarjeta.total))]
@@ -98527,7 +98296,7 @@ var render = function() {
                       ? _c("tr", [
                           _vm._m(11),
                           _vm._v(" "),
-                          _c("td", { staticClass: "td-venta2" }, [
+                          _c("td", { staticClass: "td-venta" }, [
                             _c("input", {
                               staticClass: "input-venta",
                               attrs: { type: "number", disabled: "" },
@@ -98543,13 +98312,13 @@ var render = function() {
                             _c(
                               "td",
                               {
-                                staticClass: "text-right table-light td-venta2",
+                                staticClass: "text-right table-light td-venta",
                                 attrs: { colspan: "6" }
                               },
                               [_c("strong", [_vm._v(_vm._s(tarjeta.nombre))])]
                             ),
                             _vm._v(" "),
-                            _c("td", { staticClass: "td-venta2" }, [
+                            _c("td", { staticClass: "td-venta" }, [
                               _c("input", {
                                 staticClass: "input-venta",
                                 attrs: { type: "number", disabled: "" },
@@ -98636,7 +98405,7 @@ var render = function() {
                           _c(
                             "td",
                             {
-                              staticClass: "text-right table-light td-venta2",
+                              staticClass: "text-right table-light td-venta",
                               attrs: { colspan: "6" }
                             },
                             [
@@ -98663,7 +98432,7 @@ var render = function() {
                           _c(
                             "td",
                             {
-                              staticClass: "td-venta2",
+                              staticClass: "td-venta",
                               staticStyle: { color: "green" }
                             },
                             [_vm._v("+$" + _vm._s(_vm.totalRecargo))]
@@ -98676,7 +98445,7 @@ var render = function() {
                           _c(
                             "td",
                             {
-                              staticClass: "text-right table-light td-venta2",
+                              staticClass: "text-right table-light td-venta",
                               attrs: { colspan: "6" }
                             },
                             [
@@ -98703,7 +98472,7 @@ var render = function() {
                           _c(
                             "td",
                             {
-                              staticClass: "td-venta2",
+                              staticClass: "td-venta",
                               staticStyle: { color: "red" }
                             },
                             [_vm._v("-$" + _vm._s(_vm.totalDescuento))]
@@ -98718,7 +98487,7 @@ var render = function() {
                           _c(
                             "td",
                             {
-                              staticClass: "td-venta2",
+                              staticClass: "td-venta",
                               staticStyle: { color: "red" }
                             },
                             [_vm._v("-$" + _vm._s(_vm.cantidadDescuento))]
@@ -98730,7 +98499,7 @@ var render = function() {
                       ? _c("tr", [
                           _vm._m(14),
                           _vm._v(" "),
-                          _c("td", { staticClass: "td-venta2" }, [
+                          _c("td", { staticClass: "td-venta" }, [
                             _vm._v("$" + _vm._s(_vm.totalNeto))
                           ])
                         ])
@@ -98742,7 +98511,7 @@ var render = function() {
                             _c(
                               "td",
                               {
-                                staticClass: "text-right table-light td-venta2",
+                                staticClass: "text-right table-light td-venta",
                                 attrs: { colspan: "6" }
                               },
                               [
@@ -98764,7 +98533,7 @@ var render = function() {
                               ]
                             ),
                             _vm._v(" "),
-                            _c("td", { staticClass: "td-venta2" }, [
+                            _c("td", { staticClass: "td-venta" }, [
                               _c("input", {
                                 staticClass: "input-venta",
                                 attrs: {
@@ -98784,7 +98553,7 @@ var render = function() {
                       ? _c("tr", [
                           _vm._m(15),
                           _vm._v(" "),
-                          _c("td", { staticClass: "td-venta2" }, [
+                          _c("td", { staticClass: "td-venta" }, [
                             _c("input", {
                               directives: [
                                 {
@@ -98817,13 +98586,13 @@ var render = function() {
                             _c(
                               "td",
                               {
-                                staticClass: "text-right table-light td-venta2",
+                                staticClass: "text-right table-light td-venta",
                                 attrs: { colspan: "6" }
                               },
                               [_c("strong", [_vm._v(_vm._s(tarjeta.nombre))])]
                             ),
                             _vm._v(" "),
-                            _c("td", { staticClass: "td-venta2" }, [
+                            _c("td", { staticClass: "td-venta" }, [
                               _c("input", {
                                 staticClass: "input-venta",
                                 attrs: { type: "number", id: tarjeta.nombre },
@@ -99123,7 +98892,7 @@ var staticRenderFns = [
     return _c(
       "td",
       {
-        staticClass: "text-right table-light td-venta2",
+        staticClass: "text-right table-light td-venta",
         attrs: { colspan: "5" }
       },
       [_c("strong", [_vm._v("Total Neto")])]
@@ -99136,7 +98905,7 @@ var staticRenderFns = [
     return _c(
       "td",
       {
-        staticClass: "text-right table-light td-venta2",
+        staticClass: "text-right table-light td-venta",
         attrs: { colspan: "5" }
       },
       [_c("strong", [_vm._v("Efectivo")])]
@@ -99149,7 +98918,7 @@ var staticRenderFns = [
     return _c(
       "td",
       {
-        staticClass: "text-right table-light td-venta2",
+        staticClass: "text-right table-light td-venta",
         attrs: { colspan: "5" }
       },
       [_c("strong", [_vm._v("Efectivo")])]
@@ -99162,7 +98931,7 @@ var staticRenderFns = [
     return _c(
       "td",
       {
-        staticClass: "text-right table-light td-venta2",
+        staticClass: "text-right table-light td-venta",
         attrs: { colspan: "5" }
       },
       [_c("strong", [_vm._v("Total a Pagar")])]
@@ -99209,7 +98978,7 @@ var staticRenderFns = [
     return _c(
       "td",
       {
-        staticClass: "text-right table-light td-venta2",
+        staticClass: "text-right table-light td-venta",
         attrs: { colspan: "6" }
       },
       [_c("strong", [_vm._v("Descuento")])]
@@ -99222,7 +98991,7 @@ var staticRenderFns = [
     return _c(
       "td",
       {
-        staticClass: "text-right table-light td-venta2",
+        staticClass: "text-right table-light td-venta",
         attrs: { colspan: "6" }
       },
       [_c("strong", [_vm._v("Recargo")])]
@@ -99235,7 +99004,7 @@ var staticRenderFns = [
     return _c(
       "td",
       {
-        staticClass: "text-right table-light td-venta2",
+        staticClass: "text-right table-light td-venta",
         attrs: { colspan: "6" }
       },
       [_c("strong", [_vm._v("Efectivo")])]
@@ -99248,7 +99017,7 @@ var staticRenderFns = [
     return _c(
       "td",
       {
-        staticClass: "text-right table-light td-venta2",
+        staticClass: "text-right table-light td-venta",
         attrs: { colspan: "6" }
       },
       [_c("strong", [_vm._v("Efectivo")])]
@@ -99275,7 +99044,7 @@ var staticRenderFns = [
     return _c(
       "td",
       {
-        staticClass: "text-right table-light td-venta2",
+        staticClass: "text-right table-light td-venta",
         attrs: { colspan: "6" }
       },
       [_c("strong", [_vm._v("Descuento")])]
@@ -99288,7 +99057,7 @@ var staticRenderFns = [
     return _c(
       "td",
       {
-        staticClass: "text-right table-light td-venta2",
+        staticClass: "text-right table-light td-venta",
         attrs: { colspan: "6" }
       },
       [_c("strong", [_vm._v("Efectivo")])]
@@ -99301,7 +99070,7 @@ var staticRenderFns = [
     return _c(
       "td",
       {
-        staticClass: "text-right table-light td-venta2",
+        staticClass: "text-right table-light td-venta",
         attrs: { colspan: "6" }
       },
       [_c("strong", [_vm._v("Efectivo")])]
@@ -99819,11 +99588,7 @@ var render = function() {
           ])
         : _vm._e(),
       _vm._v(" "),
-      _vm.pagina == 4
-        ? _c("h3", { staticClass: "display-4 mb-0 text-gray-800" }, [
-            _vm._v("Cuenta Corriente")
-          ])
-        : _vm._e()
+      _vm.pagina == 4 ? _c("h3", [_vm._v("Cuenta Corriente")]) : _vm._e()
     ]),
     _vm._v(" "),
     _c("div", { staticClass: "card-body" }, [
@@ -100048,66 +99813,34 @@ var render = function() {
   var _c = _vm._self._c || _h
   return _c("div", [
     _c("div", { staticClass: "row tarjetas" }, [
-      _c("div", { staticClass: "col-md-6 mb-4" }, [
-        _c(
-          "div",
-          { staticClass: "card border-left-primary shadow h-100 py-2" },
-          [
-            _c("div", { staticClass: "card-body" }, [
-              _c("div", { staticClass: "row no-gutters align-items-center" }, [
-                _c("div", { staticClass: "col mr-2" }, [
-                  _c(
-                    "div",
-                    {
-                      staticClass:
-                        "text-lg font-weight-bold text-primary text-uppercase mb-1"
-                    },
-                    [_vm._v("Cuentas Activas")]
-                  ),
-                  _vm._v(" "),
-                  _c(
-                    "div",
-                    { staticClass: "h5 mb-0 font-weight-bold text-gray-800" },
-                    [_vm._v(_vm._s(_vm.cantidadCuentasActivas))]
-                  )
-                ]),
-                _vm._v(" "),
-                _vm._m(0)
-              ])
-            ])
-          ]
-        )
+      _c("div", { staticClass: "col-sm-6" }, [
+        _c("div", { staticClass: "card text-center" }, [
+          _c("div", { staticClass: "card-body" }, [
+            _c("h4", { staticClass: "card-title" }, [
+              _vm._v("Cuentas Activas")
+            ]),
+            _vm._v(" "),
+            _c(
+              "h5",
+              { staticClass: "card-text", staticStyle: { color: "blue" } },
+              [_vm._v(_vm._s(_vm.cantidadCuentasActivas))]
+            )
+          ])
+        ])
       ]),
       _vm._v(" "),
-      _c("div", { staticClass: "col-md-6 mb-4" }, [
-        _c(
-          "div",
-          { staticClass: "card border-left-primary shadow h-100 py-2" },
-          [
-            _c("div", { staticClass: "card-body" }, [
-              _c("div", { staticClass: "row no-gutters align-items-center" }, [
-                _c("div", { staticClass: "col mr-2" }, [
-                  _c(
-                    "div",
-                    {
-                      staticClass:
-                        "text-lg font-weight-bold text-primary text-uppercase mb-1"
-                    },
-                    [_vm._v("Por Cobrar")]
-                  ),
-                  _vm._v(" "),
-                  _c(
-                    "div",
-                    { staticClass: "h5 mb-0 font-weight-bold text-gray-800" },
-                    [_vm._v(_vm._s(_vm.cobrarCuenta))]
-                  )
-                ]),
-                _vm._v(" "),
-                _vm._m(1)
-              ])
-            ])
-          ]
-        )
+      _c("div", { staticClass: "col-sm-6" }, [
+        _c("div", { staticClass: "card text-center" }, [
+          _c("div", { staticClass: "card-body" }, [
+            _c("h4", { staticClass: "card-title" }, [_vm._v("Por Cobrar")]),
+            _vm._v(" "),
+            _c(
+              "h5",
+              { staticClass: "card-text", staticStyle: { color: "red" } },
+              [_vm._v(_vm._s(_vm.cobrarCuenta))]
+            )
+          ])
+        ])
       ])
     ]),
     _vm._v(" "),
@@ -100115,8 +99848,8 @@ var render = function() {
       "div",
       [
         _vm.cargado
-          ? _c("table", { staticClass: "table  " }, [
-              _vm._m(2),
+          ? _c("table", { staticClass: "table table-bordered " }, [
+              _vm._m(0),
               _vm._v(" "),
               _c(
                 "tbody",
@@ -100209,51 +99942,21 @@ var staticRenderFns = [
     var _vm = this
     var _h = _vm.$createElement
     var _c = _vm._self._c || _h
-    return _c("div", { staticClass: "col-auto" }, [
-      _c("i", { staticClass: "fas fa-tag fa-2x text-gray-300" })
-    ])
-  },
-  function() {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c("div", { staticClass: "col-auto" }, [
-      _c("i", { staticClass: "fas fa-tag fa-2x text-gray-300" })
-    ])
-  },
-  function() {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
     return _c("thead", [
-      _c("tr", { staticClass: " table-info " }, [
-        _c("th", { attrs: { scope: "col" } }, [
-          _c("strong", [_c("h4", [_vm._v("Opciones")])])
-        ]),
+      _c("tr", { staticClass: " table-primary " }, [
+        _c("th", { attrs: { scope: "col" } }, [_vm._v("Opciones")]),
         _vm._v(" "),
-        _c("th", { attrs: { scope: "col" } }, [
-          _c("strong", [_c("h4", [_vm._v("Cliente")])])
-        ]),
+        _c("th", { attrs: { scope: "col" } }, [_vm._v("Cliente")]),
         _vm._v(" "),
-        _c("th", { attrs: { scope: "col" } }, [
-          _c("strong", [_c("h4", [_vm._v("Productos")])])
-        ]),
+        _c("th", { attrs: { scope: "col" } }, [_vm._v("Productos")]),
         _vm._v(" "),
-        _c("th", { attrs: { scope: "col" } }, [
-          _c("strong", [_c("h4", [_vm._v("Total")])])
-        ]),
+        _c("th", { attrs: { scope: "col" } }, [_vm._v("Total")]),
         _vm._v(" "),
-        _c("th", { attrs: { scope: "col" } }, [
-          _c("strong", [_c("h4", [_vm._v("Pagado")])])
-        ]),
+        _c("th", { attrs: { scope: "col" } }, [_vm._v("Pagado")]),
         _vm._v(" "),
-        _c("th", { attrs: { scope: "col" } }, [
-          _c("strong", [_c("h4", [_vm._v("Deuda")])])
-        ]),
+        _c("th", { attrs: { scope: "col" } }, [_vm._v("Deuda")]),
         _vm._v(" "),
-        _c("th", { attrs: { scope: "col" } }, [
-          _c("strong", [_c("h4", [_vm._v("Estado")])])
-        ])
+        _c("th", { attrs: { scope: "col" } }, [_vm._v("Estado")])
       ])
     ])
   }
@@ -100320,254 +100023,76 @@ var render = function() {
     _vm._v(" "),
     _vm.ventasSeña.length > 0
       ? _c("div", { staticClass: "row tarjetas mb-4" }, [
-          _c("div", { staticClass: "col-md-4 mb-4" }, [
-            _c(
-              "div",
-              { staticClass: "card border-left-primary shadow h-100 py-2" },
-              [
+          _c(
+            "div",
+            {
+              staticClass: "col-sm-4",
+              staticStyle: { cursor: "pointer" },
+              on: { click: _vm.mostrarVentas }
+            },
+            [
+              _c("div", { staticClass: "card text-center" }, [
+                _vm._m(0),
+                _vm._v(" "),
                 _c("div", { staticClass: "card-body" }, [
                   _c(
-                    "div",
-                    { staticClass: "row no-gutters align-items-center" },
-                    [
-                      _c("div", { staticClass: "col mr-2" }, [
-                        _c(
-                          "div",
-                          {
-                            staticClass:
-                              "text-lg font-weight-bold text-primary text-uppercase mb-1"
-                          },
-                          [_vm._v("Ventas (Dia)")]
-                        ),
-                        _vm._v(" "),
-                        _c(
-                          "div",
-                          {
-                            staticClass:
-                              "h5 mb-0 font-weight-bold text-gray-800"
-                          },
-                          [_vm._v(_vm._s(_vm.ventasHoy))]
-                        )
-                      ]),
-                      _vm._v(" "),
-                      _vm._m(0)
-                    ]
+                    "h5",
+                    {
+                      staticClass: "card-text",
+                      staticStyle: { color: "blue" }
+                    },
+                    [_vm._v(_vm._s(_vm.ventasHoy))]
                   )
                 ])
-              ]
-            )
+              ])
+            ]
+          ),
+          _vm._v(" "),
+          _c("div", { staticClass: "col-sm-4" }, [
+            _c("div", { staticClass: "card text-center" }, [
+              _c("div", { staticClass: "card-body" }, [
+                _c("h4", { staticClass: "card-title" }, [_vm._v("Ingresos")]),
+                _vm._v(" "),
+                _c(
+                  "h5",
+                  { staticClass: "card-text", staticStyle: { color: "black" } },
+                  [_vm._v("$" + _vm._s(_vm.ingresosHoy))]
+                )
+              ])
+            ])
           ]),
           _vm._v(" "),
           _c(
             "div",
             {
-              staticClass: "col-md-4 mb-4",
-              staticStyle: { cursor: "pointer" }
-            },
-            [
-              _c(
-                "div",
-                { staticClass: "card border-left-primary shadow h-100 py-2" },
-                [
-                  _c("div", { staticClass: "card-body" }, [
-                    _c(
-                      "div",
-                      { staticClass: "row no-gutters align-items-center" },
-                      [
-                        _c("div", { staticClass: "col mr-2" }, [
-                          _c(
-                            "div",
-                            {
-                              staticClass:
-                                "text-lg font-weight-bold text-primary text-uppercase mb-1",
-                              on: {
-                                click: function($event) {
-                                  return _vm.detallesIngresos()
-                                }
-                              }
-                            },
-                            [_vm._v("Ingresos")]
-                          ),
-                          _vm._v(" "),
-                          _c(
-                            "div",
-                            {
-                              staticClass:
-                                "h5 mb-0 font-weight-bold text-gray-800"
-                            },
-                            [_vm._v("$" + _vm._s(_vm.ingresosHoy))]
-                          ),
-                          _vm._v(" "),
-                          _vm.mostrarDetallesIngresos
-                            ? _c("span", [
-                                _c("h5", [
-                                  _vm._v(
-                                    "Efectivo: $" +
-                                      _vm._s(_vm.ingresosEfectivo) +
-                                      "  -  Tarjeta: $" +
-                                      _vm._s(_vm.ingresosTarjeta)
-                                  )
-                                ])
-                              ])
-                            : _vm._e()
-                        ]),
-                        _vm._v(" "),
-                        _vm._m(1)
-                      ]
-                    )
-                  ])
-                ]
-              )
-            ]
-          ),
-          _vm._v(" "),
-          _c(
-            "div",
-            {
-              staticClass: "col-md-4 mb-4",
+              staticClass: "col-sm-4",
               staticStyle: { cursor: "pointer" },
               on: { click: _vm.mostrarSena }
             },
             [
-              _c(
-                "div",
-                { staticClass: "card border-left-primary shadow h-100 py-2" },
-                [
-                  _c("div", { staticClass: "card-body" }, [
-                    _c(
-                      "div",
-                      { staticClass: "row no-gutters align-items-center" },
-                      [
-                        _c("div", { staticClass: "col mr-2" }, [
-                          _c(
-                            "div",
-                            {
-                              staticClass:
-                                "text-lg font-weight-bold text-primary text-uppercase mb-1"
-                            },
-                            [_vm._v("Ventas en Seña")]
-                          ),
-                          _vm._v(" "),
-                          _c(
-                            "div",
-                            {
-                              staticClass:
-                                "h5 mb-0 font-weight-bold text-gray-800"
-                            },
-                            [_vm._v(_vm._s(_vm.ventasSeña.length))]
-                          )
-                        ]),
-                        _vm._v(" "),
-                        _vm._m(2)
-                      ]
-                    )
-                  ])
-                ]
-              )
+              _c("div", { staticClass: "card text-center" }, [
+                _c("div", { staticClass: "card-body" }, [
+                  _c("h4", { staticClass: "card-title" }, [
+                    _vm._v("Ventas en Seña")
+                  ]),
+                  _vm._v(" "),
+                  _c(
+                    "h5",
+                    {
+                      staticClass: "card-text",
+                      staticStyle: { color: "black" }
+                    },
+                    [_vm._v(_vm._s(_vm.ventasSeña.length))]
+                  )
+                ])
+              ])
             ]
           )
         ])
       : _c("div", { staticClass: "row tarjetas mb-4" }, [
-          _c("div", { staticClass: "col-md-6 mb-4" }, [
-            _c(
-              "div",
-              { staticClass: "card border-left-primary shadow h-100 py-2" },
-              [
-                _c("div", { staticClass: "card-body" }, [
-                  _c(
-                    "div",
-                    { staticClass: "row no-gutters align-items-center" },
-                    [
-                      _c("div", { staticClass: "col mr-2" }, [
-                        _c(
-                          "div",
-                          {
-                            staticClass:
-                              "text-lg font-weight-bold text-primary text-uppercase mb-1"
-                          },
-                          [_vm._v("Ventas (Dia)")]
-                        ),
-                        _vm._v(" "),
-                        _c(
-                          "div",
-                          {
-                            staticClass:
-                              "h5 mb-0 font-weight-bold text-gray-800"
-                          },
-                          [_vm._v(_vm._s(_vm.ventasHoy))]
-                        )
-                      ]),
-                      _vm._v(" "),
-                      _vm._m(3)
-                    ]
-                  )
-                ])
-              ]
-            )
-          ]),
+          _vm._m(1),
           _vm._v(" "),
-          _c(
-            "div",
-            {
-              staticClass: "col-md-6 mb-4",
-              staticStyle: { cursor: "pointer" },
-              on: {
-                click: function($event) {
-                  return _vm.detallesIngresos()
-                }
-              }
-            },
-            [
-              _c(
-                "div",
-                { staticClass: "card border-left-primary shadow h-100 py-2" },
-                [
-                  _c("div", { staticClass: "card-body" }, [
-                    _c(
-                      "div",
-                      { staticClass: "row no-gutters align-items-center" },
-                      [
-                        _c("div", { staticClass: "col mr-2" }, [
-                          _c(
-                            "div",
-                            {
-                              staticClass:
-                                "text-lg font-weight-bold text-primary text-uppercase mb-1"
-                            },
-                            [_vm._v("Ingresos")]
-                          ),
-                          _vm._v(" "),
-                          _c(
-                            "div",
-                            {
-                              staticClass:
-                                "h5 mb-0 font-weight-bold text-gray-800"
-                            },
-                            [_vm._v("$" + _vm._s(_vm.ingresosHoy))]
-                          ),
-                          _vm._v(" "),
-                          _vm.mostrarDetallesIngresos
-                            ? _c("span", [
-                                _c("h5", [
-                                  _vm._v(
-                                    "Efectivo: $" +
-                                      _vm._s(_vm.ingresosEfectivo) +
-                                      "  -  Tarjeta: $" +
-                                      _vm._s(_vm.ingresosTarjeta)
-                                  )
-                                ])
-                              ])
-                            : _vm._e()
-                        ]),
-                        _vm._v(" "),
-                        _vm._m(4)
-                      ]
-                    )
-                  ])
-                ]
-              )
-            ]
-          )
+          _vm._m(2)
         ]),
     _vm._v(" "),
     _vm.busquedaPorFecha
@@ -100595,7 +100120,7 @@ var render = function() {
       "div",
       [
         _c("table", { staticClass: "table  mt-2" }, [
-          _vm._m(5),
+          _vm._m(3),
           _vm._v(" "),
           _c(
             "tbody",
@@ -100734,40 +100259,76 @@ var staticRenderFns = [
     var _vm = this
     var _h = _vm.$createElement
     var _c = _vm._self._c || _h
-    return _c("div", { staticClass: "col-auto" }, [
-      _c("i", { staticClass: "fas fa-tag fa-2x text-gray-300" })
+    return _c("div", { staticClass: "card-header bg-success" }, [
+      _c("h4", { staticClass: "card-title" }, [_vm._v("Ventas")])
     ])
   },
   function() {
     var _vm = this
     var _h = _vm.$createElement
     var _c = _vm._self._c || _h
-    return _c("div", { staticClass: "col-auto" }, [
-      _c("i", { staticClass: "fas fa-cash-register fa-2x text-gray-300" })
+    return _c("div", { staticClass: "col-md-6 mb-4" }, [
+      _c("div", { staticClass: "card border-left-primary shadow h-100 py-2" }, [
+        _c("div", { staticClass: "card-body" }, [
+          _c("div", { staticClass: "row no-gutters align-items-center" }, [
+            _c("div", { staticClass: "col mr-2" }, [
+              _c(
+                "div",
+                {
+                  staticClass:
+                    "text-lg font-weight-bold text-primary text-uppercase mb-1"
+                },
+                [_vm._v("Ventas (Dia)")]
+              ),
+              _vm._v(" "),
+              _c(
+                "div",
+                { staticClass: "h5 mb-0 font-weight-bold text-gray-800" },
+                [_vm._v("40")]
+              )
+            ]),
+            _vm._v(" "),
+            _c("div", { staticClass: "col-auto" }, [
+              _c("i", { staticClass: "fas fa-tag fa-2x text-gray-300" })
+            ])
+          ])
+        ])
+      ])
     ])
   },
   function() {
     var _vm = this
     var _h = _vm.$createElement
     var _c = _vm._self._c || _h
-    return _c("div", { staticClass: "col-auto" }, [
-      _c("i", { staticClass: "fas fa-tag fa-2x text-gray-300" })
-    ])
-  },
-  function() {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c("div", { staticClass: "col-auto" }, [
-      _c("i", { staticClass: "fas fa-tag fa-2x text-gray-300" })
-    ])
-  },
-  function() {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c("div", { staticClass: "col-auto" }, [
-      _c("i", { staticClass: "fas fa-cash-register fa-2x text-gray-300" })
+    return _c("div", { staticClass: "col-md-6 mb-4" }, [
+      _c("div", { staticClass: "card border-left-primary shadow h-100 py-2" }, [
+        _c("div", { staticClass: "card-body" }, [
+          _c("div", { staticClass: "row no-gutters align-items-center" }, [
+            _c("div", { staticClass: "col mr-2" }, [
+              _c(
+                "div",
+                {
+                  staticClass:
+                    "text-lg font-weight-bold text-primary text-uppercase mb-1"
+                },
+                [_vm._v("Ingresos")]
+              ),
+              _vm._v(" "),
+              _c(
+                "div",
+                { staticClass: "h5 mb-0 font-weight-bold text-gray-800" },
+                [_vm._v("$40,000")]
+              )
+            ]),
+            _vm._v(" "),
+            _c("div", { staticClass: "col-auto" }, [
+              _c("i", {
+                staticClass: "fas fa-cash-register fa-2x text-gray-300"
+              })
+            ])
+          ])
+        ])
+      ])
     ])
   },
   function() {
